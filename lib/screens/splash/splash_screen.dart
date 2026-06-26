@@ -21,7 +21,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final prefs = await SharedPreferences.getInstance();
     final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
 
-    if (!hasSeenOnboarding) {
+    if (hasSeenOnboarding) {
       await prefs.setBool('hasSeenOnboarding', true);
       _navigateTo(const OnboardingScreen());
       return;

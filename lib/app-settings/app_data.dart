@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class AppDefaults {
@@ -23,33 +24,33 @@ class AppDefaults {
   static Color errorColor = const Color(0xFFDC2626);
   static Color successColor = const Color(0XFF28A745);
 
-  static TextStyle headLiner1(BuildContext context) => TextStyle(
+  static TextStyle headLiner1(BuildContext context, {FontWeight fontWeight = FontWeight.w600}) => GoogleFonts.inter(
     fontSize: isSmallScreen(context) ? 22 : 26,
     color: headerTextColor,
-    fontWeight: FontWeight.w900,
+    fontWeight: fontWeight,
   );
 
-  static TextStyle defaultButtonStyle(BuildContext context) => TextStyle(
+  static TextStyle defaultButtonStyle(BuildContext context) => GoogleFonts.inter(
     color: white,
     fontSize: isSmallScreen(context) ? 14 : 16,
     fontWeight: FontWeight.bold,
   );
-  static TextStyle defaultOutlineButtonStyle(BuildContext context) => TextStyle(
+  static TextStyle defaultOutlineButtonStyle(BuildContext context) => GoogleFonts.inter(
     color: primaryColor.withAlpha(140),
     fontSize: isSmallScreen(context) ? 15 : 18,
     fontWeight: FontWeight.bold,
   );
 
-  static TextStyle headLine3(BuildContext context) => TextStyle(
+  static TextStyle headLine3(BuildContext context) => GoogleFonts.inter(
     fontSize: isSmallScreen(context) ? 15 : 18,
     color: headerTextColor,
     fontWeight: FontWeight.w300,
   );
 
-  static TextStyle textStyle(BuildContext context) => TextStyle(
+  static TextStyle textStyle(BuildContext context, {FontWeight fontWeight = FontWeight.w300}) => GoogleFonts.inter(
     fontSize: isSmallScreen(context) ? 14 : 16,
     color: textColor,
-    fontWeight: FontWeight.w300,
+    fontWeight: fontWeight,
   );
 
   static EdgeInsets defaultPadding = const EdgeInsets.symmetric(
@@ -83,7 +84,11 @@ class AppDefaults {
 }
 
 // -------spinner
-Widget showSpinner({double scale = 1, bool androidOnly = false, double androidStrokeWidth = 1.5,}) {
+Widget showSpinner({
+  double scale = 1,
+  bool androidOnly = false,
+  double androidStrokeWidth = 1.5,
+}) {
   return Platform.isIOS && androidOnly != true
       ? Transform.scale(
           scale: scale,
@@ -132,4 +137,16 @@ String toTitleCase(String text) {
             : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}',
       )
       .join(' ');
+}
+
+//
+
+Color getDefaultBgColor(BuildContext context) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  return isDark ? AppDefaults.darkBgColor : AppDefaults.white;
+}
+
+Color getDefaultHeaderColor(BuildContext context, {int lightAlpha = 250, int darkAlpha = 250}) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  return  isDark ? AppDefaults.white.withAlpha(lightAlpha) : AppDefaults.headerTextColor.withAlpha(darkAlpha);
 }
