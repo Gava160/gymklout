@@ -23,62 +23,54 @@ class Header extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final customer = ref.watch(authStateProvider).asData?.value;
 
-    return SafeArea(
-        child: SizedBox(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hello ",
-                        style:
-                            AppDefaults.headLiner1(
-                              context,
-                              fontWeight: FontWeight.w200,
-                            ).copyWith(
-                              color: getDefaultHeaderColor(context),
-                              fontSize:
-                                  (AppDefaults.headLiner1(context).fontSize ??
-                                      21) +
-                                  15,
-                            ),
+    return  SizedBox(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Hello ",
+                  style:
+                      AppDefaults.headLiner1(
+                        context,
+                        fontWeight: FontWeight.w200,
+                      ).copyWith(
+                        color: getDefaultHeaderColor(context),
+                        fontSize:
+                            (AppDefaults.headLiner1(context).fontSize ?? 21) +
+                            15,
                       ),
-                      Text(
-                        "Juietta",
-                        style:
-                            AppDefaults.headLiner1(
-                              context,
-                              fontWeight: FontWeight.w800,
-                            ).copyWith(
-                              color: getDefaultHeaderColor(context),
-                              fontSize:
-                                  (AppDefaults.headLiner1(context).fontSize ??
-                                      21) +
-                                  15,
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Text(
-                getGreeting(),
-                style: AppDefaults.textStyle(context).copyWith(
-                  color: AppDefaults.textStyle(context).color,
-                  fontWeight: FontWeight.w100,
-                  fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 3,
                 ),
+                Text(
+                  "Juietta",
+                  style:
+                      AppDefaults.headLiner1(
+                        context,
+                        fontWeight: FontWeight.w800,
+                      ).copyWith(
+                        color: getDefaultHeaderColor(context),
+                        fontSize:
+                            (AppDefaults.headLiner1(context).fontSize ?? 21) +
+                            15,
+                      ),
+                ),
+              ],
+            ),
+            Text(
+              getGreeting(),
+              style: AppDefaults.textStyle(context).copyWith(
+                color: AppDefaults.textStyle(context).color,
+                fontWeight: FontWeight.w100,
+                fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 3,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      
-    );
+      );
   }
 }
