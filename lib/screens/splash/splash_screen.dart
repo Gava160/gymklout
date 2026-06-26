@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/screens/onboarding/onboarding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -15,29 +17,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fade;
 
-  // Future<void> _checkFirstLaunch() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
+  Future<void> _checkFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
 
-  //   if (!hasSeenOnboarding) {
-  //     await prefs.setBool('hasSeenOnboarding', true);
-  //     // _navigateTo(const OnboardingScreen());
-  //     return;
-  //   }
+    if (!hasSeenOnboarding) {
+      await prefs.setBool('hasSeenOnboarding', true);
+      _navigateTo(const OnboardingScreen());
+      return;
+    }
 
-  // }
+  }
 
-  // void _navigateTo(Widget screen) {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(builder: (_) => screen),
-  //   );
-  // }
+  void _navigateTo(Widget screen) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => screen),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    // _checkFirstLaunch();
+    _checkFirstLaunch();
     // animation
     _controller = AnimationController(
       vsync: this,
