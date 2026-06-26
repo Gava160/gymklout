@@ -11,8 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
   cupertino_icons: ^1.0.8
   google_fonts: ^8.0.1
   intl: ^0.20.2
@@ -33,7 +31,6 @@ dependencies:
   dio: ^5.9.2
   iconsax: ^0.0.8
   country_flags: ^4.1.2
-  flutter_local_notifications: ^18.0.1
   package_info_plus: ^9.0.1
   uuid: ^4.5.3
   app_links: ^7.1.1
