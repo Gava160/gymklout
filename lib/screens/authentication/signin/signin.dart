@@ -7,6 +7,7 @@ import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
+import 'package:gymklout/screens/authentication/forgot-password/forgot_password.dart';
 import 'package:gymklout/screens/authentication/signup/signup.dart';
 import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
 
@@ -198,7 +199,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       height: size.height * 0.60,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(AppMedia.onboarding3),
+                          image: AssetImage(AppMedia.onboarding4),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -374,19 +375,29 @@ class _SignInScreenState extends State<SignInScreen> {
                     SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
-                      child: Text(
-                        "Forget Password?",
-                        style:
-                            AppDefaults.textStyle(
-                              context,
-                              fontWeight: FontWeight.w400,
-                            ).copyWith(
-                              color: AppDefaults.primaryColor,
-                              fontSize:
-                                  (AppDefaults.textStyle(context).fontSize ??
-                                  21),
-                            ),
-                        textAlign: TextAlign.right,
+                      child: GestureDetector(
+                        onTap: () {
+                           HapticFeedback.selectionClick();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ForgotPasswordScreen(),
+                                ),
+                              );
+                        },
+                        child: Text(
+                          "Forgot Password?",
+                          style:
+                              AppDefaults.textStyle(
+                                context,
+                                fontWeight: FontWeight.w400,
+                              ).copyWith(
+                                color: AppDefaults.primaryColor,
+                                fontSize:
+                                    (AppDefaults.textStyle(context).fontSize ??
+                                    21),
+                              ),
+                          textAlign: TextAlign.right,
+                        ),
                       ),
                     ),
                     SafeArea(

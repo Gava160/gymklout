@@ -200,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: size.height * 0.55,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(AppMedia.onboarding3),
+                          image: AssetImage(AppMedia.onboarding5),
                           fit: BoxFit.cover,
                         ),
                       ),
