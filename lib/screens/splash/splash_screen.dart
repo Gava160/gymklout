@@ -47,7 +47,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
     _controller.forward();
-
   }
 
   @override
@@ -70,9 +69,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircularProgressIndicator.adaptive(
-                backgroundColor: AppDefaults.white.withAlpha(200),
-                strokeWidth: 1.2,
+              SizedBox(
+                width: 40,
+                child: showSpinner(
+                  scale: 1.05,
+                  androidOnly: false,
+                  androidStrokeWidth: 4,
+                ),
               ),
               SizedBox(height: 14),
             ],
@@ -86,8 +89,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(
-                isDark ? AppMedia.logoWhite : AppMedia.logoBlack, 
-                width: MediaQuery.of(context).size.width * 0.80,
+                isDark ? AppMedia.logoWhite : AppMedia.logoBlack,
+                width: MediaQuery.of(context).size.width * 0.60,
               ),
             ],
           ),

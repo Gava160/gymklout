@@ -82,6 +82,23 @@ class AppDefaults {
   );
 }
 
+// -------spinner
+Widget showSpinner({double scale = 1, bool androidOnly = false, double androidStrokeWidth = 1.5,}) {
+  return Platform.isIOS && androidOnly != true
+      ? Transform.scale(
+          scale: scale,
+          child: CupertinoActivityIndicator(color: AppDefaults.primaryColor),
+        )
+      : Transform.scale(
+          scale: scale,
+          child: CircularProgressIndicator(
+            backgroundColor: Colors.white.withAlpha(10),
+            strokeWidth: androidStrokeWidth,
+            valueColor: AlwaysStoppedAnimation<Color>(AppDefaults.primaryColor),
+          ),
+        );
+}
+
 //  Color functions
 
 Color lighten(Color color, [double amount = .3]) {
@@ -116,4 +133,3 @@ String toTitleCase(String text) {
       )
       .join(' ');
 }
-

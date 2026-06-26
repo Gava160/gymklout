@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gymklout/app-settings/app_preferences.dart';
@@ -13,23 +12,19 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final savedTheme = prefs.getString('themeMode');
-  final hideBalance = prefs.getBool('hideBalance') ?? false;
   final biometricLogin = prefs.getBool('biometricLogin') ?? false;
   final biometricAuth = prefs.getBool('biometricAuth') ?? false;
-
 
   final themeMode = switch (savedTheme) {
     'dark' => ThemeMode.dark,
     'light' => ThemeMode.light,
     _ => ThemeMode.system,
   };
-  
-  
+
   runApp(
     ProviderScope(
       overrides: [
         themeProvider.overrideWith((ref) => themeMode),
-        hideBalanceProvider.overrideWith((ref) => hideBalance),
         biometricAuthProvider.overrideWith((ref) => biometricAuth),
         biometricLoginProvider.overrideWith((ref) => biometricLogin),
       ],
@@ -46,25 +41,13 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  late AppLifecycleListener _listener;
-  bool _isInactive = false;
-
   @override
   void initState() {
     super.initState();
-    _listener = AppLifecycleListener(
-      onInactive: () {
-        final biometricActive = ref.read(biometricActiveProvider);
-        if (biometricActive) return;
-        setState(() => _isInactive = true);
-      },
-      onResume: () => setState(() => _isInactive = false),
-    );
   }
 
   @override
   void dispose() {
-    _listener.dispose();
     super.dispose();
   }
 
@@ -73,46 +56,25 @@ class _MyAppState extends ConsumerState<MyApp> {
     final themeMode = ref.watch(themeProvider);
 
     return MaterialApp(
-     debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       themeMode: themeMode ?? ThemeMode.system,
       theme: ThemeData(
         brightness: Brightness.light,
-        textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme),
-        primaryTextTheme: GoogleFonts.montserratTextTheme(
+        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+        primaryTextTheme: GoogleFonts.interTextTheme(
           Theme.of(context).primaryTextTheme,
         ),
         scaffoldBackgroundColor: AppDefaults.bgColor,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme),
-        primaryTextTheme: GoogleFonts.montserratTextTheme(
+        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+        primaryTextTheme: GoogleFonts.interTextTheme(
           Theme.of(context).primaryTextTheme,
         ),
         scaffoldBackgroundColor: AppDefaults.darkBgColor,
       ),
       home: const SplashScreen(),
-      builder: (context, child) => Stack(
-        children: [
-          child!,
-          if (_isInactive)
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  color: AppDefaults.black.withAlpha(20),
-                  child: Center(
-                    child: Icon(
-                      Icons.lock,
-                      size: 40,
-                      color: AppDefaults.white.withAlpha(190),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
     );
   }
 }
