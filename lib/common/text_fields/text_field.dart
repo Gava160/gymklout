@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -41,6 +42,25 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool hidePass = true;
+  late FocusNode _focusNode;
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,24 +68,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        widget.label != ""
-            ? Text(
-                widget.label ?? "",
-                style: AppDefaults.textStyle(context).copyWith(
-                  color: isDark ? AppDefaults.white : AppDefaults.black,
-                ),
-              )
-            : SizedBox.shrink(),
-        widget.label != "" ? const SizedBox(height: 8) : SizedBox.shrink(),
-
         TextField(
+          focusNode: _focusNode,
           controller: widget.controller,
           onChanged: widget.onChange,
           enabled: widget.enabled,
           keyboardType: widget.keyboardType,
           style: AppDefaults.textStyle(context).copyWith(
-            fontSize: AppDefaults.textStyle(context).fontSize,
-            color: getDefaultTextColor(context),
+            fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 4,
+              fontWeight: FontWeight.w600,
           ),
           obscureText: widget.passField == true || widget.pinField == true
               ? hidePass
@@ -87,12 +98,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ? TextAlign.center
               : TextAlign.left,
           decoration: InputDecoration(
-            hintText: widget.hintText,
-            prefixText: widget.prefixText,
-            prefixStyle: TextStyle(
-              color: isDark ? AppDefaults.white : AppDefaults.textColor,
+            labelText: widget.hintText,
+            labelStyle: GoogleFonts.inter(
+              color: getDefaultTextColor(context, lightAlpha: 100),
+              fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 4,
+              fontWeight: FontWeight.w500,
             ),
-            prefixIconColor: isDark ? AppDefaults.white : AppDefaults.textColor,
+            floatingLabelStyle: GoogleFonts.inter(
+              color: _isFocused
+                  ? AppDefaults.primaryColor
+                  : getDefaultTextColor(context, lightAlpha: 200),
+              fontSize: (AppDefaults.textStyle(context).fontSize ?? 16),
+              fontWeight: FontWeight.w500,
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            prefixText: widget.prefixText,
+            prefixStyle: TextStyle(color: getDefaultTextColor(context)),
+            prefixIconColor: getDefaultTextColor(context),
             suffixIconColor: isDark
                 ? AppDefaults.white
                 : AppDefaults.primaryColor,
@@ -126,8 +148,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             enabledBorder: UnderlineInputBorder(
               borderRadius: BorderRadius.circular(0),
               borderSide: BorderSide(
-                color: isDark ? AppDefaults.white.withAlpha(100) : Colors.grey,
-                width: 1.2,
+                color: isDark ? AppDefaults.white.withAlpha(40) : Colors.grey,
+                width: 0.5,
               ),
             ),
 
@@ -135,13 +157,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.circular(0),
               borderSide: BorderSide(
                 color: isDark ? AppDefaults.white.withAlpha(100) : Colors.grey,
-                width: 1.2,
+                width: 1,
               ),
-            ),
-
-            hintStyle: TextStyle(
-              color: isDark ? AppDefaults.white : Colors.grey,
-              fontSize: AppDefaults.textStyle(context).fontSize,
             ),
           ),
         ),

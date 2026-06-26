@@ -1,6 +1,10 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/media.dart';
+import 'package:gymklout/common/buttons/custom_button.dart';
+import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -170,95 +174,196 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: getDefaultBgColor(context),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Stack(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: true,
+        backgroundColor: getDefaultBgColor(context),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ClipPath(
-                clipper: SlantedBottomClipper(),
-                child: Container(
-                  width: double.infinity,
-                  height: size.height * 0.60,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(AppMedia.onboarding3),
-                      fit: BoxFit.cover,
+              Stack(
+                children: [
+                  ClipPath(
+                    clipper: SlantedBottomClipper(),
+                    child: Container(
+                      width: double.infinity,
+                      height: size.height * 0.60,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(AppMedia.onboarding3),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: AppDefaults.defaultPadding,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Expanded(child: SizedBox()),
+                            Text(
+                              "Welcome back,",
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w200,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(context),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) +
+                                        20,
+                                  ),
+                            ),
+                            Text(
+                              "Juietta",
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w800,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(context),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) +
+                                        26,
+                                  ),
+                            ),
+                            SizedBox(height: 50),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  child: Padding(
-                    padding: AppDefaults.defaultPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(child: SizedBox()),
-                        Text(
-                          "Welcome back,",
-                          style:
-                              AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w200,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) +
-                                    20,
-                              ),
-                        ),
-                        Text(
-                          "Juietta",
-                          style:
-                              AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w800,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) +
-                                    26,
-                              ),
-                        ),
-                        SizedBox(height: 50),
-                      ],
+                  Positioned.fill(
+                    child: ClipPath(
+                      clipper: SlantedBottomClipper(),
+                      child: Container(
+                        color: AppDefaults.darkBgColor.withAlpha(170),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              Positioned.fill(
-                child: ClipPath(
-                  clipper: SlantedBottomClipper(),
-                  child: Container(
-                    color: AppDefaults.darkBgColor.withAlpha(170),
-                  ),
+
+              Padding(
+                padding: AppDefaults.defaultPadding,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomTextField(
+                      label: "Email address",
+                      hintText: "Email",
+                      prefixIcon: null,
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    SizedBox(height: 5),
+                    CustomTextField(
+                      label: "Password",
+                      hintText: "Password",
+                      prefixIcon: null,
+                      passField: true,
+                      controller: passwordController,
+                      keyboardType: TextInputType.text,
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "Forget Password?",
+                        style:
+                            AppDefaults.textStyle(
+                              context,
+                              fontWeight: FontWeight.w400,
+                            ).copyWith(
+                              color: AppDefaults.primaryColor,
+                              fontSize:
+                                  (AppDefaults.textStyle(context).fontSize ??
+                                  21),
+                            ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                    SafeArea(
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: IconCustomButtonAuth(
+                                noPadding: true,
+                                fontAwesomeIcon: FontAwesomeIcons.google,
+                                backgroundColor: AppDefaults.textColor.withAlpha(40),
+                                foregroundColor:AppDefaults.textColor,
+                                onSubmit: () {},
+                              ),
+                            ),
+                            SizedBox(width: 7,),
+                             SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: IconCustomButtonAuth(
+                                noPadding: true,
+                                fontAwesomeIcon: FontAwesomeIcons.apple,
+                                backgroundColor: AppDefaults.textColor.withAlpha(40),
+                                foregroundColor:AppDefaults.textColor,
+                                onSubmit: () {},
+                              ),
+                            ),
+                            Spacer(),
+
+                            SizedBox(
+                              width: size.width * 0.50,
+                              child: AppCustomButton(
+                                noPadding: true,
+                                label: Text(
+                                  "Login",
+                                  style:
+                                      AppDefaults.textStyle(
+                                        context,
+                                        fontWeight: FontWeight.w800,
+                                      ).copyWith(
+                                        color: AppDefaults.white,
+                                        fontSize:
+                                            (AppDefaults.textStyle(
+                                                  context,
+                                                ).fontSize ??
+                                                16) +
+                                            4,
+                                      ),
+                                ),
+                                icon: Icon(
+                                  FluentIcons.arrow_right_12_regular,
+                                  size: 20,
+                                ),
+                                onSubmit: () {},
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-
-          Padding(
-            padding: AppDefaults.defaultPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                CustomTextField(
-                  label: "Email address",
-                  hintText: "Email",
-                  prefixIcon: null,
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

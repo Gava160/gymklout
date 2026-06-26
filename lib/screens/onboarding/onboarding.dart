@@ -240,7 +240,7 @@ class OnboardPage extends StatelessWidget {
                 style:
                     AppDefaults.textStyle(
                       context,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w800,
                     ).copyWith(
                       color: AppDefaults.white,
                       fontSize:
