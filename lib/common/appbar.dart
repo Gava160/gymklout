@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:iconsax/iconsax.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String? title;

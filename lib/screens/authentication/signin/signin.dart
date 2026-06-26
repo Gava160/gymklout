@@ -9,7 +9,7 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
 import 'package:gymklout/screens/authentication/forgot-password/forgot_password.dart';
 import 'package:gymklout/screens/authentication/signup/signup.dart';
-import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
+import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -461,7 +461,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 onSubmit: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (_) => WelcomeBackScreen(),
+                                      builder: (_) => BottomNavBarController(),
                                     ),
                                   );
                                 },
