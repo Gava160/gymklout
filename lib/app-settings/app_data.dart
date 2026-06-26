@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,15 +7,15 @@ class AppDefaults {
   static bool isSmallScreen(BuildContext context) =>
       MediaQuery.of(context).size.height < 700;
 
-  static String appName = "gymklout";
+  static String appName = "GymKlout";
 
-  static Color primaryColor = const Color(0xFF32673d);
+  static Color primaryColor = const Color(0xFFbf5af2);
   static Color secondaryColor = const Color(0xFFfed75b);
   static Color textColor = const Color(0xFF6C6C6F);
   static Color headerTextColor = const Color.fromARGB(255, 19, 19, 20);
   static Color bgColor = const Color(0xFFFFFFFF);
   static Color black = const Color(0xFF000000);
-  static Color darkBgColor = Color(0xFF0D1F29);
+  static Color darkBgColor = Color(0xFF1c1c1e);
   static Color white = const Color(0xFFFFFFFF);
   static Color fadedWhite = const Color.fromARGB(255, 213, 211, 219);
   static Color virtualCardBG = const Color(0xFFFFFFFF);
@@ -107,26 +105,6 @@ final numberFormatter = NumberFormat.decimalPattern('en_NG')
   ..minimumFractionDigits = 2
   ..maximumFractionDigits = 2;
 
-// Data formatter
-String formatFirebaseTimestamp(Timestamp? timestamp) {
-  if (timestamp == null) return '';
-  final dateTime = timestamp.toDate();
-
-  final formatter = DateFormat("MMMM d, y 'at' h:mm:ss a");
-
-  return formatter.format(dateTime);
-}
-
-// Date only formatter
-String formatFirebaseTimestampDate(Timestamp? timestamp) {
-  if (timestamp == null) return '';
-  final dateTime = timestamp.toDate();
-
-  final formatter = DateFormat("MMMM d, y");
-
-  return formatter.format(dateTime);
-}
-
 // Title case formatter
 String toTitleCase(String text) {
   return text
@@ -139,75 +117,3 @@ String toTitleCase(String text) {
       .join(' ');
 }
 
-// Date formatter
-
-String formatCardTransactionDate(dynamic raw) {
-  if (raw == null || raw.toString().isEmpty) return '';
-
-  try {
-    final date = DateTime.parse(raw.toString()).toLocal();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final txDay = DateTime(date.year, date.month, date.day);
-    final diff = today.difference(txDay).inDays;
-
-    final time = _formatTime(date);
-
-    if (diff == 0) return 'Today, $time';
-    if (diff == 1) return 'Yesterday, $time';
-    if (diff < 7) return '${_weekday(date.weekday)}, $time';
-
-    return '${_month(date.month)} ${date.day}, ${date.year} · $time';
-  } catch (_) {
-    return raw.toString();
-  }
-}
-
-String formatCardTransactionDate2(DateTime date) {
-  // 👈 DateTime, not dynamic
-  final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
-  final txDay = DateTime(date.year, date.month, date.day);
-  final diff = today.difference(txDay).inDays;
-
-  final time = _formatTime(date);
-
-  if (diff == 0) return 'Today, $time';
-  if (diff == 1) return 'Yesterday, $time';
-  if (diff < 7) return '${_weekday(date.weekday)}, $time';
-
-  return '${_month(date.month)} ${date.day}, ${date.year} · $time';
-}
-
-String _formatTime(DateTime date) {
-  final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
-  final minute = date.minute.toString().padLeft(2, '0');
-  final period = date.hour >= 12 ? 'PM' : 'AM';
-  return '$hour:$minute $period';
-}
-
-String _weekday(int day) {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  return days[day - 1];
-}
-
-String _month(int month) {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  return months[month - 1];
-}
-
-// Navigator key for global navigation
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

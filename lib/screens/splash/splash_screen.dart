@@ -1,9 +1,5 @@
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 
@@ -19,56 +15,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fade;
 
-  Future<void> _checkFirstLaunch() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
+  // Future<void> _checkFirstLaunch() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
 
-    if (!hasSeenOnboarding) {
-      await prefs.setBool('hasSeenOnboarding', true);
-      // _navigateTo(const OnboardingScreen());
-      return;
-    }
+  //   if (!hasSeenOnboarding) {
+  //     await prefs.setBool('hasSeenOnboarding', true);
+  //     // _navigateTo(const OnboardingScreen());
+  //     return;
+  //   }
 
-    // Wait for both Firebase auth AND minimum splash duration
-    await Future.wait([
-      FirebaseAuth.instance.authStateChanges().first,
-      Future.delayed(const Duration(seconds: 3)),
-    ]);
+  // }
 
-    if (!mounted) return;
-
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      // _navigateTo(const SignInScreen());
-      return;
-    }
-
-    // Fetch customer doc to check PIN
-    final doc = await FirebaseFirestore.instance
-        .collection('customers')
-        .doc(user.uid)
-        .get();
-
-    if (!mounted) return;
-
-    final pin = doc.data()?['pin'] as String?;
-    final hasPin = pin != null && pin.isNotEmpty;
-
-    // _navigateTo(hasPin ? const WelcomeBack() : const SignInScreen());
-  }
-
-  void _navigateTo(Widget screen) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => screen),
-    );
-  }
+  // void _navigateTo(Widget screen) {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (_) => screen),
+  //   );
+  // }
 
   @override
   void initState() {
     super.initState();
-    _checkFirstLaunch();
+    // _checkFirstLaunch();
     // animation
     _controller = AnimationController(
       vsync: this,
@@ -89,8 +58,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppDefaults.primaryColor,
+      backgroundColor: isDark ? AppDefaults.darkBgColor : AppDefaults.white,
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 15),
@@ -115,8 +86,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(
-                AppMedia.logoWhite, // your logo
-                height: 70,
+                isDark ? AppMedia.logoWhite : AppMedia.logoBlack, 
+                width: MediaQuery.of(context).size.width * 0.80,
               ),
             ],
           ),

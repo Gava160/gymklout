@@ -1,6 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-
 class AppRoutes {
   // Route name constants
   static const String home = '/home';
@@ -20,22 +17,22 @@ class AppRoutes {
   static const String personalDetails = '/personal-details';
   static const String productDetail = '/product-detail';
 
-  static const _protectedRoutes = {
-    bottomNav,
-    home,
-    explore,
-    cart,
-    orders,
-    orderDetail,
-    shop,
-    wishlist,
-    account,
-    addresses,
-    personalDetails,
-    productDetail,
-  };
+  // static const _protectedRoutes = {
+  //   bottomNav,
+  //   home,
+  //   explore,
+  //   cart,
+  //   orders,
+  //   orderDetail,
+  //   shop,
+  //   wishlist,
+  //   account,
+  //   addresses,
+  //   personalDetails,
+  //   productDetail,
+  // };
 
-  static bool get _isLoggedIn => FirebaseAuth.instance.currentUser != null;
+  // static bool get _isLoggedIn => FirebaseAuth.instance.currentUser != null;
 
   // static Route<dynamic> onGenerateRoute(RouteSettings settings) {
   //   // Guard: redirect to signin if route is protected and user is not logged in
@@ -93,6 +90,6 @@ class AppRoutes {
   //   }
   // }
 
-  static MaterialPageRoute _route(Widget screen) =>
-      MaterialPageRoute(builder: (_) => screen);
+  // static MaterialPageRoute _route(Widget screen) =>
+  //     MaterialPageRoute(builder: (_) => screen);
 }
