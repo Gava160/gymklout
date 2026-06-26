@@ -23,12 +23,10 @@ class Header extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final customer = ref.watch(authStateProvider).asData?.value;
 
-    return Padding(
-      padding: AppDefaults.defaultPadding,
-      child: SafeArea(
+    return SafeArea(
         child: SizedBox(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Row(
@@ -74,13 +72,13 @@ class Header extends ConsumerWidget {
                 style: AppDefaults.textStyle(context).copyWith(
                   color: AppDefaults.textStyle(context).color,
                   fontWeight: FontWeight.w100,
-                  fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) - 5,
+                  fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 3,
                 ),
               ),
             ],
           ),
         ),
-      ),
+      
     );
   }
 }
