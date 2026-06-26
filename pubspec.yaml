@@ -36,6 +36,7 @@ dependencies:
   app_links: ^7.1.1
   flutter_cache_manager: ^3.4.1
   google_sign_in: ^6.2.1
+  google_nav_bar: ^5.0.7
 
 flutter_launcher_icons:
   android: true

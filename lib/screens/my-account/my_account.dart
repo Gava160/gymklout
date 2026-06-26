@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/screens/home/widgets/header.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MyAccountScreen extends StatefulWidget {
+  const MyAccountScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MyAccountScreen> createState() => _MyAccountScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _MyAccountScreenState extends State<MyAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: AppDefaults.defaultPadding,
         child: SingleChildScrollView(child: Column(children: [
-          Header(),
+  
         ])),
       ),
     );
