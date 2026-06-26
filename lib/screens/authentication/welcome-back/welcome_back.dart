@@ -252,6 +252,51 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                       ),
                     ),
                   ),
+                  SafeArea(
+                    child: Padding(
+                      padding: AppDefaults.defaultPadding,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Stack(
+                            clipBehavior: Clip.hardEdge,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(AppMedia.avatar),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4,
+                                    color: AppDefaults.textColor.withAlpha(150),
+                                  ),
+                                ),
+                              ),
+                              Positioned.fill(
+                                child: ClipPath(
+                                  child: Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppDefaults.darkBgColor.withAlpha(
+                                        40,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
 
@@ -308,20 +353,22 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                               child: IconCustomButtonAuth(
                                 noPadding: true,
                                 fontAwesomeIcon: FontAwesomeIcons.google,
-                                backgroundColor: AppDefaults.textColor.withAlpha(40),
-                                foregroundColor:AppDefaults.textColor,
+                                backgroundColor: AppDefaults.textColor
+                                    .withAlpha(40),
+                                foregroundColor: AppDefaults.textColor,
                                 onSubmit: () {},
                               ),
                             ),
-                            SizedBox(width: 7,),
-                             SizedBox(
+                            SizedBox(width: 7),
+                            SizedBox(
                               width: 60,
                               height: 60,
                               child: IconCustomButtonAuth(
                                 noPadding: true,
                                 fontAwesomeIcon: FontAwesomeIcons.apple,
-                                backgroundColor: AppDefaults.textColor.withAlpha(40),
-                                foregroundColor:AppDefaults.textColor,
+                                backgroundColor: AppDefaults.textColor
+                                    .withAlpha(40),
+                                foregroundColor: AppDefaults.textColor,
                                 onSubmit: () {},
                               ),
                             ),

@@ -76,7 +76,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           keyboardType: widget.keyboardType,
           style: AppDefaults.textStyle(context).copyWith(
             fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 4,
-              fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w600,
           ),
           obscureText: widget.passField == true || widget.pinField == true
               ? hidePass
@@ -123,8 +123,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
             suffixIcon: widget.passField == true
                 ? Padding(
                     padding: EdgeInsets.only(right: 18),
-                    child: InkWell(
+                    child: GestureDetector(
                       onTap: () {
+                        HapticFeedback.selectionClick();
                         setState(() {
                           if (hidePass == true) {
                             hidePass = false;
@@ -134,8 +135,22 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         });
                       },
                       child: hidePass
-                          ? Icon(Iconsax.eye, size: 20)
-                          : Icon(Iconsax.eye_slash, size: 20),
+                          ? Icon(
+                              Iconsax.eye4,
+                              size: 20,
+                              color: getDefaultTextColor(
+                                context,
+                                lightAlpha: 100,
+                              ),
+                            )
+                          : Icon(
+                              Iconsax.eye_slash5,
+                              size: 20,
+                              color: getDefaultTextColor(
+                                context,
+                                lightAlpha: 100,
+                              ),
+                            ),
                     ),
                   )
                 : null,

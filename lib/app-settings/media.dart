@@ -14,6 +14,8 @@ class AppMedia {
   static const onboarding5 = "$_baseImage/onboarding-5.png";
   static const onboarding6 = "$_baseImage/onboarding-6.png";
 
+  static const avatar = "$_baseImage/avatar.png";
+
   
 
 }

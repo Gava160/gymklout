@@ -1,11 +1,14 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
+import 'package:gymklout/screens/authentication/signup/signup.dart';
+import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -252,6 +255,97 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                     ),
                   ),
+
+                  SafeArea(
+                    child: Padding(
+                      padding: AppDefaults.defaultPadding,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SignInScreen(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Login",
+                                  style:
+                                      AppDefaults.headLiner1(
+                                        context,
+                                        fontWeight: FontWeight.w200,
+                                      ).copyWith(
+                                        color: getDefaultHeaderColor(
+                                          context,
+                                          lightAlpha: 200,
+                                        ),
+                                        fontSize:
+                                            (AppDefaults.headLiner1(
+                                                  context,
+                                                ).fontSize ??
+                                                21) -
+                                            2,
+                                      ),
+                                ),
+                                SizedBox(height: 5),
+                                Container(
+                                  width: 60,
+                                  height: 3,
+                                  color: AppDefaults.primaryColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 15),
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SignUpScreen(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Create Account",
+                                  style:
+                                      AppDefaults.headLiner1(
+                                        context,
+                                        fontWeight: FontWeight.w200,
+                                      ).copyWith(
+                                        color: getDefaultHeaderColor(
+                                          context,
+                                          lightAlpha: 200,
+                                        ),
+                                        fontSize:
+                                            (AppDefaults.headLiner1(
+                                                  context,
+                                                ).fontSize ??
+                                                21) -
+                                            2,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
 
@@ -308,20 +402,22 @@ class _SignInScreenState extends State<SignInScreen> {
                               child: IconCustomButtonAuth(
                                 noPadding: true,
                                 fontAwesomeIcon: FontAwesomeIcons.google,
-                                backgroundColor: AppDefaults.textColor.withAlpha(40),
-                                foregroundColor:AppDefaults.textColor,
+                                backgroundColor: AppDefaults.textColor
+                                    .withAlpha(40),
+                                foregroundColor: AppDefaults.textColor,
                                 onSubmit: () {},
                               ),
                             ),
-                            SizedBox(width: 7,),
-                             SizedBox(
+                            SizedBox(width: 7),
+                            SizedBox(
                               width: 60,
                               height: 60,
                               child: IconCustomButtonAuth(
                                 noPadding: true,
                                 fontAwesomeIcon: FontAwesomeIcons.apple,
-                                backgroundColor: AppDefaults.textColor.withAlpha(40),
-                                foregroundColor:AppDefaults.textColor,
+                                backgroundColor: AppDefaults.textColor
+                                    .withAlpha(40),
+                                foregroundColor: AppDefaults.textColor,
                                 onSubmit: () {},
                               ),
                             ),
@@ -351,7 +447,13 @@ class _SignInScreenState extends State<SignInScreen> {
                                   FluentIcons.arrow_right_12_regular,
                                   size: 20,
                                 ),
-                                onSubmit: () {},
+                                onSubmit: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => WelcomeBackScreen(),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],

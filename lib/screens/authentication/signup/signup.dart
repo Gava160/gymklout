@@ -1,11 +1,13 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
+import 'package:gymklout/screens/authentication/signin/signin.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -16,6 +18,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+   final TextEditingController confirmPasswordController = TextEditingController();
 
   bool isSubmitting = false;
   bool buttonIsEnabled = false;
@@ -30,6 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
+    
     super.dispose();
   }
 
@@ -37,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void initState() {
     emailController.addListener(_validate);
     passwordController.addListener(_validate);
-
+    confirmPasswordController.addListener(_validate);
     super.initState();
   }
 
@@ -47,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         email.isNotEmpty &&
         email.contains('@') &&
         email.contains('.') &&
-        passwordController.text.trim().isNotEmpty;
+        passwordController.text.trim().isNotEmpty && confirmPasswordController.text.trim().isNotEmpty;
 
     if (enable != buttonIsEnabled) {
       setState(() => buttonIsEnabled = enable);
@@ -192,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     clipper: SlantedBottomClipper(),
                     child: Container(
                       width: double.infinity,
-                      height: size.height * 0.60,
+                      height: size.height * 0.55,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(AppMedia.onboarding3),
@@ -206,36 +211,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Expanded(child: SizedBox()),
-                            Text(
-                              "Welcome back,",
-                              style:
-                                  AppDefaults.headLiner1(
-                                    context,
-                                    fontWeight: FontWeight.w200,
-                                  ).copyWith(
-                                    color: getDefaultHeaderColor(context),
-                                    fontSize:
-                                        (AppDefaults.headLiner1(
-                                              context,
-                                            ).fontSize ??
-                                            21) +
-                                        20,
-                                  ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Hello, ",
+                                  style:
+                                      AppDefaults.headLiner1(
+                                        context,
+                                        fontWeight: FontWeight.w200,
+                                      ).copyWith(
+                                        color: getDefaultHeaderColor(context),
+                                        fontSize:
+                                            (AppDefaults.headLiner1(
+                                                  context,
+                                                ).fontSize ??
+                                                21) +
+                                            20,
+                                      ),
+                                ),
+                                Text(
+                                  "Gymrat",
+                                  style:
+                                      AppDefaults.headLiner1(
+                                        context,
+                                        fontWeight: FontWeight.w800,
+                                      ).copyWith(
+                                        color: getDefaultHeaderColor(context),
+                                        fontSize:
+                                            (AppDefaults.headLiner1(
+                                                  context,
+                                                ).fontSize ??
+                                                21) +
+                                            26,
+                                      ),
+                                ),
+                              ],
                             ),
+
                             Text(
-                              "Juietta",
+                              "Enter your informations below to create an account \nor continue with Apple or Google",
                               style:
-                                  AppDefaults.headLiner1(
+                                  AppDefaults.textStyle(
                                     context,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w400,
                                   ).copyWith(
                                     color: getDefaultHeaderColor(context),
                                     fontSize:
-                                        (AppDefaults.headLiner1(
-                                              context,
-                                            ).fontSize ??
-                                            21) +
-                                        26,
+                                        (AppDefaults.textStyle(
+                                          context,
+                                        ).fontSize ??
+                                        21),
                                   ),
                             ),
                             SizedBox(height: 50),
@@ -249,6 +274,97 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       clipper: SlantedBottomClipper(),
                       child: Container(
                         color: AppDefaults.darkBgColor.withAlpha(170),
+                      ),
+                    ),
+                  ),
+
+                  SafeArea(
+                    child: Padding(
+                      padding: AppDefaults.defaultPadding,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SignInScreen(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Login",
+                                  style:
+                                      AppDefaults.headLiner1(
+                                        context,
+                                        fontWeight: FontWeight.w200,
+                                      ).copyWith(
+                                        color: getDefaultHeaderColor(
+                                          context,
+                                          lightAlpha: 200,
+                                        ),
+                                        fontSize:
+                                            (AppDefaults.headLiner1(
+                                                  context,
+                                                ).fontSize ??
+                                                21) -
+                                            2,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 15),
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SignUpScreen(),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Create Account",
+                                  style:
+                                      AppDefaults.headLiner1(
+                                        context,
+                                        fontWeight: FontWeight.w200,
+                                      ).copyWith(
+                                        color: getDefaultHeaderColor(
+                                          context,
+                                          lightAlpha: 200,
+                                        ),
+                                        fontSize:
+                                            (AppDefaults.headLiner1(
+                                                  context,
+                                                ).fontSize ??
+                                                21) -
+                                            2,
+                                      ),
+                                ),
+                                SizedBox(height: 7),
+                                Container(
+                                  width: 150,
+                                  height: 3,
+                                  color: AppDefaults.primaryColor,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -277,24 +393,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: passwordController,
                       keyboardType: TextInputType.text,
                     ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        "Forget Password?",
-                        style:
-                            AppDefaults.textStyle(
-                              context,
-                              fontWeight: FontWeight.w400,
-                            ).copyWith(
-                              color: AppDefaults.primaryColor,
-                              fontSize:
-                                  (AppDefaults.textStyle(context).fontSize ??
-                                  21),
-                            ),
-                        textAlign: TextAlign.right,
-                      ),
+                    SizedBox(height: 5),
+                     CustomTextField(
+                      label: "Confirm Password",
+                      hintText: "Confirm Password",
+                      prefixIcon: null,
+                      passField: true,
+                      controller: confirmPasswordController,
+                      keyboardType: TextInputType.text,
                     ),
+                    
                     SafeArea(
                       child: SizedBox(
                         width: double.infinity,
@@ -308,20 +416,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               child: IconCustomButtonAuth(
                                 noPadding: true,
                                 fontAwesomeIcon: FontAwesomeIcons.google,
-                                backgroundColor: AppDefaults.textColor.withAlpha(40),
-                                foregroundColor:AppDefaults.textColor,
+                                backgroundColor: AppDefaults.textColor
+                                    .withAlpha(40),
+                                foregroundColor: AppDefaults.textColor,
                                 onSubmit: () {},
                               ),
                             ),
-                            SizedBox(width: 7,),
-                             SizedBox(
+                            SizedBox(width: 7),
+                            SizedBox(
                               width: 60,
                               height: 60,
                               child: IconCustomButtonAuth(
                                 noPadding: true,
                                 fontAwesomeIcon: FontAwesomeIcons.apple,
-                                backgroundColor: AppDefaults.textColor.withAlpha(40),
-                                foregroundColor:AppDefaults.textColor,
+                                backgroundColor: AppDefaults.textColor
+                                    .withAlpha(40),
+                                foregroundColor: AppDefaults.textColor,
                                 onSubmit: () {},
                               ),
                             ),
@@ -332,7 +442,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               child: AppCustomButton(
                                 noPadding: true,
                                 label: Text(
-                                  "Login",
+                                  "Create Account",
                                   style:
                                       AppDefaults.textStyle(
                                         context,
