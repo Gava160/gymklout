@@ -19,12 +19,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int currentIndex = 0;
   late Timer timer;
-  late List<Widget> _pages; 
+  late List<Widget> _pages;
 
   void finishOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('hasSeenOnboarding', true);
 
+    if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => SignInScreen()),
@@ -32,45 +33,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  
+  void _startAutoSlide() {
+    timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      if (currentIndex < _pages.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0; // loop back to first page
+      }
 
-  // void _startAutoSlide() {
-  //   timer = Timer.periodic(Duration(seconds: 3), (timer) {
-  //     if (currentIndex < _pages.length - 1) {
-  //       currentIndex++;
-  //     } else {
-  //       currentIndex = 0; // loop back to first page
-  //     }
-
-  //     _controller.animateToPage(
-  //       currentIndex,
-  //       duration: Duration(milliseconds: 500),
-  //       curve: Curves.easeInOut,
-  //     );
-  //   });
-  // }
-
-  // void _nextSlide() {
-  //   // continue
-  //   if (currentIndex < _pages.length - 1) {
-  //     currentIndex++;
-  //   } else {
-  //     // currentIndex = 0; // loop back to first page
-
-  //     finishOnboarding();
-  //     // Navigator.pushAndRemoveUntil(
-  //     //   context,
-  //     //   MaterialPageRoute(builder: (_) => ChooseSigninScreen()),
-  //     //   (Route<dynamic> route) => false, // remove all previous routes
-  //     // );
-  //   }
-
-  //   _controller.animateToPage(
-  //     currentIndex,
-  //     duration: Duration(milliseconds: 500),
-  //     curve: Curves.easeInOut,
-  //   );
-  // }
+      _controller.animateToPage(
+        currentIndex,
+        duration: Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
 
   @override
   void dispose() {
@@ -82,30 +59,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    // _startAutoSlide();
-     _pages = [
-    OnboardPage(
-      image: AppMedia.onboarding1,
-      lighterText: "Buy Grocery",
-      thickerText: "Easily order groceries ",
-      finishOnboarding: () {},
-    ),
-    OnboardPage(
-      image: AppMedia.onboarding2,
-      lighterText: "Fast & Reliable Delivery",
-      thickerText: "Get your orders delivered",
-      finishOnboarding: () {},
-    ),
-    OnboardPage(
-      image: AppMedia.onboarding3,
-      lighterText: "Enjoy Quality Food",
-      thickerText: "Discover a wide range",
-      endOnboarding: true,
-      finishOnboarding: () async {
-        finishOnboarding();
-      },
-    ),
-  ];
+    _startAutoSlide();
+    _pages = [
+      OnboardPage(
+        image: AppMedia.onboarding2,
+        lighterText: "Meet your coach,",
+        thickerText: "Start your journey",
+        finishOnboarding: () {},
+      ),
+      OnboardPage(
+        image: AppMedia.onboarding1,
+        lighterText: "Create a workout plan",
+        thickerText: "to stay fit",
+        finishOnboarding: () {},
+      ),
+
+      OnboardPage(
+        image: AppMedia.onboarding3,
+        lighterText: "Action is the",
+        thickerText: "key to all success",
+        endOnboarding: true,
+        finishOnboarding: () async {
+          finishOnboarding();
+        },
+      ),
+    ];
   }
 
   @override
@@ -119,9 +97,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           Expanded(
             child: GestureDetector(
-              // onPanDown: (_) => timer.cancel(),
-              // onPanCancel: () => _startAutoSlide(),
-              // onPanEnd: (_) => _startAutoSlide(),
+              onPanDown: (_) => timer.cancel(),
+              onPanCancel: () => _startAutoSlide(),
+              onPanEnd: (_) => _startAutoSlide(),
               child: PageView.builder(
                 controller: _controller,
                 itemCount: _pages.length,
@@ -138,7 +116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          margin: EdgeInsets.only(bottom: 30),
+          margin: EdgeInsets.only(bottom: 60),
           child: SizedBox(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                   margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: currentIndex == index ? 35 : 10,
+                  width: currentIndex == index ? 45 : 15,
                   height: 2,
                   decoration: BoxDecoration(
                     color: currentIndex == index
@@ -244,7 +222,7 @@ class OnboardPage extends StatelessWidget {
         ),
         Text(
           thickerText,
-          style: AppDefaults.headLiner1(context, fontWeight: FontWeight.w600)
+          style: AppDefaults.headLiner1(context, fontWeight: FontWeight.w800)
               .copyWith(
                 color: getDefaultHeaderColor(context, lightAlpha: 230),
                 fontSize: (AppDefaults.headLiner1(context).fontSize ?? 21) + 6,
