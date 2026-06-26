@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/app-settings/media.dart';
+import 'package:gymklout/common/text_fields/text_field.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -14,11 +16,11 @@ class _SignInScreenState extends State<SignInScreen> {
   bool isSubmitting = false;
   bool buttonIsEnabled = false;
 
-  int _loginAttempts = 0;
-  bool _isLockedOut = false;
-  DateTime? _lockoutEnd;
-  static const int _maxAttempts = 2;
-  static const int _lockoutMinutes = 5;
+  // int _loginAttempts = 0;
+  // bool _isLockedOut = false;
+  // DateTime? _lockoutEnd;
+  // static const int _maxAttempts = 2;
+  // static const int _lockoutMinutes = 5;
 
   @override
   void dispose() {
@@ -47,7 +49,6 @@ class _SignInScreenState extends State<SignInScreen> {
       setState(() => buttonIsEnabled = enable);
     }
   }
-
 
   // // On sign-out
   // Future<void> unlinkOneSignal() async {
@@ -166,9 +167,119 @@ class _SignInScreenState extends State<SignInScreen> {
   //   }
   // }
 
-
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final size = MediaQuery.of(context).size;
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: getDefaultBgColor(context),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              ClipPath(
+                clipper: SlantedBottomClipper(),
+                child: Container(
+                  width: double.infinity,
+                  height: size.height * 0.60,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(AppMedia.onboarding3),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: AppDefaults.defaultPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(child: SizedBox()),
+                        Text(
+                          "Welcome back,",
+                          style:
+                              AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w200,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(context),
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) +
+                                    20,
+                              ),
+                        ),
+                        Text(
+                          "Juietta",
+                          style:
+                              AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w800,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(context),
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) +
+                                    26,
+                              ),
+                        ),
+                        SizedBox(height: 50),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: ClipPath(
+                  clipper: SlantedBottomClipper(),
+                  child: Container(
+                    color: AppDefaults.darkBgColor.withAlpha(170),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          Padding(
+            padding: AppDefaults.defaultPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                CustomTextField(
+                  label: "Email address",
+                  hintText: "Email",
+                  prefixIcon: null,
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
+}
+
+class SlantedBottomClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.lineTo(0, size.height); // bottom-left point (pulled up)
+    path.lineTo(
+      size.width,
+      size.height - 70,
+    ); // bottom-right point (full height)
+    path.lineTo(size.width, 0); // top-right
+    path.close(); // back to top-left
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

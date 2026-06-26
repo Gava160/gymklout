@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/screens/authentication/signin/signin.dart';
 import 'package:gymklout/screens/onboarding/onboarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,9 +22,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final prefs = await SharedPreferences.getInstance();
     final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
 
-    if (hasSeenOnboarding) {
+    if (!hasSeenOnboarding) {
       await prefs.setBool('hasSeenOnboarding', true);
       _navigateTo(const OnboardingScreen());
+      return;
+    }else {
+       _navigateTo(const SignInScreen());
       return;
     }
 
@@ -45,9 +49,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       vsync: this,
       duration: const Duration(seconds: 3),
     );
-
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-
     _controller.forward();
   }
 

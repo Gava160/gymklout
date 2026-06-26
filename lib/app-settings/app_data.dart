@@ -150,3 +150,8 @@ Color getDefaultHeaderColor(BuildContext context, {int lightAlpha = 250, int dar
   final isDark = Theme.of(context).brightness == Brightness.dark;
   return  isDark ? AppDefaults.white.withAlpha(lightAlpha) : AppDefaults.headerTextColor.withAlpha(darkAlpha);
 }
+
+Color getDefaultTextColor(BuildContext context, {int lightAlpha = 250, int darkAlpha = 250}) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  return  isDark ? AppDefaults.white.withAlpha(lightAlpha) : AppDefaults.textColor.withAlpha(darkAlpha);
+}

@@ -65,9 +65,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           keyboardType: widget.keyboardType,
           style: AppDefaults.textStyle(context).copyWith(
             fontSize: AppDefaults.textStyle(context).fontSize,
-            color: isDark
-                ? AppDefaults.white
-                : AppDefaults.textStyle(context).color,
+            color: getDefaultTextColor(context),
           ),
           obscureText: widget.passField == true || widget.pinField == true
               ? hidePass
