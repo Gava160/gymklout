@@ -1,21 +1,9 @@
 class AppRoutes {
   // Route name constants
   static const String home = '/home';
-  static const String explore = '/explore';
-  static const String bottomNav = '/';
   static const String signin = '/signin';
   static const String signup = '/signup';
-  static const String welcomeBack = '/welcome-back';
-  static const String onboarding = '/onboarding';
-  static const String cart = '/cart';
-  static const String orders = '/orders';
-  static const String orderDetail = '/order-detail';
-  static const String shop = '/shop';
-  static const String wishlist = '/wishlist';
-  static const String account = '/account';
-  static const String addresses = '/addresses';
-  static const String personalDetails = '/personal-details';
-  static const String productDetail = '/product-detail';
+
 
   // static const _protectedRoutes = {
   //   bottomNav,
