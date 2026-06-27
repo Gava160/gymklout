@@ -18,7 +18,8 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-   final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool isSubmitting = false;
   bool buttonIsEnabled = false;
@@ -34,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
-    
+
     super.dispose();
   }
 
@@ -52,7 +53,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         email.isNotEmpty &&
         email.contains('@') &&
         email.contains('.') &&
-        passwordController.text.trim().isNotEmpty && confirmPasswordController.text.trim().isNotEmpty;
+        passwordController.text.trim().isNotEmpty &&
+        confirmPasswordController.text.trim().isNotEmpty;
 
     if (enable != buttonIsEnabled) {
       setState(() => buttonIsEnabled = enable);
@@ -288,10 +290,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           GestureDetector(
                             onTap: () {
                               HapticFeedback.selectionClick();
-                              Navigator.of(context).push(
+                              Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
-                                  builder: (_) => SignInScreen(),
+                                  builder: (_) => const SignInScreen(),
                                 ),
+                                (route) => false,
                               );
                             },
                             child: Column(
@@ -323,14 +326,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           SizedBox(width: 15),
                           GestureDetector(
-                            onTap: () {
-                              HapticFeedback.selectionClick();
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => SignUpScreen(),
-                                ),
-                              );
-                            },
+                            onTap: null,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -394,7 +390,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       keyboardType: TextInputType.text,
                     ),
                     SizedBox(height: 5),
-                     CustomTextField(
+                    CustomTextField(
                       label: "Confirm Password",
                       hintText: "Confirm Password",
                       prefixIcon: null,
@@ -402,7 +398,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: confirmPasswordController,
                       keyboardType: TextInputType.text,
                     ),
-                    
+
                     SafeArea(
                       child: SizedBox(
                         width: double.infinity,

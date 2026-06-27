@@ -227,7 +227,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                             ),
                             Text(
-                              "Juietta",
+                              "Champion",
                               style:
                                   AppDefaults.headLiner1(
                                     context,
@@ -265,14 +265,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              HapticFeedback.selectionClick();
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => SignInScreen(),
-                                ),
-                              );
-                            },
+                            onTap: null,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
