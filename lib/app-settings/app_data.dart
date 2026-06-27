@@ -24,30 +24,30 @@ class AppDefaults {
   static Color errorColor = const Color(0xFFDC2626);
   static Color successColor = const Color(0XFF28A745);
 
-  static TextStyle headLiner1(BuildContext context, {FontWeight fontWeight = FontWeight.w600}) => GoogleFonts.inter(
+  static TextStyle headLiner1(BuildContext context, {FontWeight fontWeight = FontWeight.w600}) => GoogleFonts.plusJakartaSans(
     fontSize: isSmallScreen(context) ? 22 : 26,
     color: headerTextColor,
     fontWeight: fontWeight,
   );
 
-  static TextStyle defaultButtonStyle(BuildContext context) => GoogleFonts.inter(
+  static TextStyle defaultButtonStyle(BuildContext context) => GoogleFonts.plusJakartaSans(
     color: white,
     fontSize: isSmallScreen(context) ? 14 : 16,
     fontWeight: FontWeight.bold,
   );
-  static TextStyle defaultOutlineButtonStyle(BuildContext context) => GoogleFonts.inter(
+  static TextStyle defaultOutlineButtonStyle(BuildContext context) => GoogleFonts.plusJakartaSans(
     color: primaryColor.withAlpha(140),
     fontSize: isSmallScreen(context) ? 15 : 18,
     fontWeight: FontWeight.bold,
   );
 
-  static TextStyle headLine3(BuildContext context) => GoogleFonts.inter(
+  static TextStyle headLine3(BuildContext context) => GoogleFonts.plusJakartaSans(
     fontSize: isSmallScreen(context) ? 15 : 18,
     color: headerTextColor,
     fontWeight: FontWeight.w300,
   );
 
-  static TextStyle textStyle(BuildContext context, {FontWeight fontWeight = FontWeight.w300}) => GoogleFonts.inter(
+  static TextStyle textStyle(BuildContext context, {FontWeight fontWeight = FontWeight.w300}) => GoogleFonts.plusJakartaSans(
     fontSize: isSmallScreen(context) ? 14 : 16,
     color: textColor,
     fontWeight: fontWeight,

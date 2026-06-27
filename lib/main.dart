@@ -60,16 +60,16 @@ class _MyAppState extends ConsumerState<MyApp> {
       themeMode: themeMode ?? ThemeMode.system,
       theme: ThemeData(
         brightness: Brightness.light,
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
-        primaryTextTheme: GoogleFonts.interTextTheme(
+        textTheme: GoogleFonts.plusJakartaSansTextTheme(Theme.of(context).textTheme),
+        primaryTextTheme: GoogleFonts.plusJakartaSansTextTheme(
           Theme.of(context).primaryTextTheme,
         ),
         scaffoldBackgroundColor: AppDefaults.bgColor,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
-        primaryTextTheme: GoogleFonts.interTextTheme(
+        textTheme: GoogleFonts.plusJakartaSansTextTheme(Theme.of(context).textTheme),
+        primaryTextTheme: GoogleFonts.plusJakartaSansTextTheme(
           Theme.of(context).primaryTextTheme,
         ),
         scaffoldBackgroundColor: AppDefaults.darkBgColor,

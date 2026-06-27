@@ -213,10 +213,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Expanded(child: SizedBox()),
-                            Row(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Hello, ",
+                                  "Ready to",
                                   style:
                                       AppDefaults.headLiner1(
                                         context,
@@ -232,7 +234,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ),
                                 ),
                                 Text(
-                                  "Gymrat",
+                                  "Transform?",
                                   style:
                                       AppDefaults.headLiner1(
                                         context,
@@ -249,9 +251,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ],
                             ),
-
+                            SizedBox(height: 5),
                             Text(
-                              "Enter your informations below to create an account \nor continue with Apple or Google",
+                              "Create your ${AppDefaults.appName} account and start your fitness journey.",
                               style:
                                   AppDefaults.textStyle(
                                     context,
@@ -290,12 +292,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           GestureDetector(
                             onTap: () {
                               HapticFeedback.selectionClick();
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (_) => const SignInScreen(),
-                                ),
-                                (route) => false,
-                              );
+                              Navigator.of(context).pop();
                             },
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

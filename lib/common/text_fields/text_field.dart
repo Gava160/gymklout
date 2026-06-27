@@ -99,12 +99,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               : TextAlign.left,
           decoration: InputDecoration(
             labelText: widget.hintText,
-            labelStyle: GoogleFonts.inter(
+            labelStyle: GoogleFonts.plusJakartaSans(
               color: getDefaultTextColor(context, lightAlpha: 100),
               fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 4,
               fontWeight: FontWeight.w500,
             ),
-            floatingLabelStyle: GoogleFonts.inter(
+            floatingLabelStyle: GoogleFonts.plusJakartaSans(
               color: _isFocused
                   ? AppDefaults.primaryColor
                   : getDefaultTextColor(context, lightAlpha: 200),
