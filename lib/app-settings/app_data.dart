@@ -11,7 +11,7 @@ class AppDefaults {
   static String appName = "GymKlout";
 
   static Color primaryColor = const Color(0xFFbf5af2);
-  static Color secondaryColor = const Color(0xFFfed75b);
+  static Color secondaryColor = const Color(0xFFecaa3b);
   static Color textColor = const Color(0xFF6C6C6F);
   static Color headerTextColor = const Color.fromARGB(255, 19, 19, 20);
   static Color bgColor = const Color(0xFFFFFFFF);

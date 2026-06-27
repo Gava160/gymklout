@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/screens/my-account/widgets/get_membership_alert.dart';
 import 'package:gymklout/screens/my-account/widgets/link_wrapper.dart';
 import 'package:gymklout/screens/my-account/widgets/profile_header.dart';
 
@@ -74,10 +76,16 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   borderTop: false,
                   onClick: () {},
                 ),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                  },
+                  child: GetMembershipAlertWidget(),
+                ),
                 AccountLinkWrapper(
                   label: "Sign Out",
                   borderBottom: true,
-                  borderTop: false,
+                  borderTop: true,
                   labelColor: AppDefaults.errorColor,
                   hideRightIcon: true,
                   onClick: () {},

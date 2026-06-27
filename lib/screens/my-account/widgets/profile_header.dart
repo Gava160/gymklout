@@ -36,10 +36,42 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                   ),
                 ),
               ),
-              child: GradientCircularAvatar(
-                imagePath: AppMedia.avatar,
-                progress: 0.75, // 75% of the ring filled
-                size: 130,
+              child: Stack(
+                children: [
+                  GradientCircularAvatar(
+                    imagePath: AppMedia.avatar,
+                    progress: 0.75, // 75% of the ring filled
+                    size: 130,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: darken(AppDefaults.secondaryColor, 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "GymRat",
+                        style:
+                            AppDefaults.headLiner1(
+                              context,
+                              fontWeight: FontWeight.w700,
+                            ).copyWith(
+                              color: getDefaultHeaderColor(context),
+                              fontSize:
+                                  (AppDefaults.headLiner1(context).fontSize ??
+                                      21) -
+                                  12,
+                            ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -118,7 +150,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                           ),
                     ),
                     Text(
-                      "12 Months SubScription",
+                      "12 months subscription",
                       style:
                           AppDefaults.headLiner1(
                             context,
