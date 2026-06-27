@@ -23,7 +23,8 @@ class Header extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final customer = ref.watch(authStateProvider).asData?.value;
 
-    return  SizedBox(
+    return  Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,

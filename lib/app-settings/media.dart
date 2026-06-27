@@ -16,6 +16,6 @@ class AppMedia {
 
   static const avatar = "$_baseImage/avatar.png";
 
-  
-
+  static const gymDumbellColoredIcon = "$_baseImage/vectors/gym_dumbell_icon_colored.png";
+  static const gymDumbellIcon = "$_baseImage/vectors/gym_dumbell_icon.png";
 }

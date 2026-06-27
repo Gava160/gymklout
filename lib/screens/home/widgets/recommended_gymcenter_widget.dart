@@ -17,7 +17,7 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
   final List<Map<String, String>> _items = [
     {
       'image': AppMedia.onboarding3, // replace with your images
-      'tag': 'NEW',
+      'tag': 'CLOSEST TO YOU',
       'category': 'AERIAL WORKOUTS',
       'title': 'Lift it again',
       'subtitle': 'Upper Body • Weights',
@@ -26,7 +26,7 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
       'trainerRole': 'Aerial Workouts Trainer',
     },
     {
-      'image': AppMedia.onboarding3,
+      'image': AppMedia.onboarding2,
       'tag': 'HOT',
       'category': 'STRENGTH',
       'title': 'Power Up',
@@ -36,7 +36,7 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
       'trainerRole': 'Strength Coach',
     },
     {
-      'image': AppMedia.onboarding3,
+      'image': AppMedia.onboarding1,
       'tag': 'NEW',
       'category': 'CARDIO',
       'title': 'Burn Zone',
@@ -67,7 +67,6 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-
     return SizedBox(
       height: screenHeight * 0.50,
       child: PageView.builder(

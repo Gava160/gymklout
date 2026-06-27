@@ -17,6 +17,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kTextTabBarHeight + 45),
+        child: SafeArea(child: Header()),
+      ),
       body: Padding(
         padding: AppDefaults.defaultPadding,
         child: SingleChildScrollView(
@@ -25,12 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Header(),
-                SizedBox(height: 20),
-                NoGymMembershipWidget(),
+                NoGymMembershipWidget(
+                  title: "Find Gym Membership",
+                  desc: "You need a gym membership to unlock all the features of ${AppDefaults.appName}",
+                  onClick: () {
+
+                  },
+                ),
                 SizedBox(height: 20),
                 ReuseableBlockHeader(
-                  title: "Recommended clubs for you",
+                  title: "Recommended for you",
                   actionText: "",
                 ),
                 RecommendedGymCenters(),

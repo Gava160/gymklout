@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -38,50 +40,51 @@ class _BottomNavBarControllerState extends State<BottomNavBarController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       extendBody: true,
       body: activePages[_selectedScreen],
-      bottomNavigationBar: Container(
-        color: Colors.transparent,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-          child: GNav(
-            gap: 8,
-            backgroundColor: Colors.transparent,
-            color: AppDefaults.white,
-            activeColor: AppDefaults.white,
-            tabBackgroundColor: AppDefaults.primaryColor.withAlpha(150),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            onTabChange: (index) => _selectNavBar(index),
-            tabs: [
-              GButton(icon: Iconsax.home, text: "Home"),
-              GButton(
-                icon: Icons.abc,
-                text: "Search",
-                leading: FaIcon(
-                  FontAwesomeIcons.dumbbell,
-                  size: 20,
-                  color: Colors.white, // active color
-                ),
-              ),
-              GButton(icon: Iconsax.map, text: "Map"),
-              GButton(
-                icon: Iconsax.user,
-                text: "Settings",
-                leading: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(AppMedia.avatar),
-                      fit: BoxFit.cover,
-                    ),
-                    shape: BoxShape.circle,
-                    
+      bottomNavigationBar: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            color: Colors.transparent,
+            child: Padding(
+              padding: EdgeInsets.only(right: 25, bottom: 25, left: 25, top: 5),
+              child: GNav(
+                gap: 8,
+                backgroundColor: Colors.transparent,
+                color: isDark ? AppDefaults.white : AppDefaults.black,
+                activeColor: AppDefaults.white,
+                tabBackgroundColor: AppDefaults.primaryColor.withAlpha(150),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                onTabChange: (index) => _selectNavBar(index),
+                tabs: [
+                  GButton(icon: Iconsax.home, text: "Home"),
+                  GButton(
+                    icon: Icons.abc,
+                    text: "Search",
+                    leading: FaIcon(FontAwesomeIcons.dumbbell, size: 20),
                   ),
-                ),
+                  GButton(icon: Iconsax.map, text: "Map"),
+                  GButton(
+                    icon: Iconsax.user,
+                    text: "My Account",
+                    leading: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(AppMedia.avatar),
+                          fit: BoxFit.cover,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
