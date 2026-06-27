@@ -7,7 +7,6 @@ import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
-import 'package:gymklout/screens/authentication/signin/signin.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
