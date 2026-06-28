@@ -11,6 +11,7 @@ class AppCustomButton extends StatelessWidget {
   final double? height;
   final EdgeInsets? setPadding;
   final bool isLoading;
+  final bool isDisabled;
 
   const AppCustomButton({
     super.key,
@@ -23,6 +24,7 @@ class AppCustomButton extends StatelessWidget {
     this.bgColor,
     this.foregroundColor,
     this.isLoading = false,
+    this.isDisabled = false,
   });
 
   @override
@@ -35,10 +37,10 @@ class AppCustomButton extends StatelessWidget {
           onPressed: isLoading ? null : onSubmit,
           style: ElevatedButton.styleFrom(
             foregroundColor: foregroundColor ?? AppDefaults.white,
-            backgroundColor: isLoading
+            backgroundColor: isDisabled == true
                 ? bgColor != null
-                      ? lighten(bgColor!, 0.1)
-                      : lighten(AppDefaults.primaryColor, 0.1)
+                      ? lighten(bgColor!, 0.05)
+                      : lighten(AppDefaults.primaryColor, 0.05)
                 : bgColor ?? AppDefaults.primaryColor,
             disabledBackgroundColor: lighten(
               bgColor ?? AppDefaults.primaryColor,

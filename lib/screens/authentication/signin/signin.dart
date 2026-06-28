@@ -326,6 +326,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             child: AppCustomButton(
                               noPadding: true,
                               isLoading: isSubmitting,
+                              isDisabled: buttonIsEnabled,
                               label: Text(
                                 "Login",
                                 style: AppDefaults.textStyle(
