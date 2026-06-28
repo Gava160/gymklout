@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/signin/signin.dart';
-import 'package:gymklout/screens/my-account/widgets/get_membership_alert.dart';
+import 'package:gymklout/screens/complete-profile-registration/start_process.dart';
+import 'package:gymklout/screens/my-account/widgets/account_todo_widget.dart';
 import 'package:gymklout/screens/my-account/widgets/link_wrapper.dart';
 import 'package:gymklout/screens/my-account/widgets/profile_header.dart';
 
-class MyAccountScreen extends StatefulWidget {
+class MyAccountScreen extends ConsumerStatefulWidget {
   const MyAccountScreen({super.key});
 
   @override
-  State<MyAccountScreen> createState() => _MyAccountScreenState();
+  ConsumerState<MyAccountScreen> createState() => _MyAccountScreenState();
 }
 
-class _MyAccountScreenState extends State<MyAccountScreen> {
+class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
+  bool _isLoadingCompleteRegState = false;
   @override
   Widget build(BuildContext context) {
+    final profile = ref.watch(currentProfileProvider);
+    
+
     return Scaffold(
       extendBody: true,
       body: Padding(
@@ -77,12 +84,25 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   borderTop: false,
                   onClick: () {},
                 ),
-                GestureDetector(
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                  },
-                  child: GetMembershipAlertWidget(),
-                ),
+                if (profile?.completedProfileRegistration == false) ...[
+                  AccountTODOWidget(
+                    tagText: "Not done",
+                    showTag: true,
+                    labelHeader: "Complete Your Profile",
+                    isLoading: _isLoadingCompleteRegState,
+                    desc:
+                        "Submit your personal information, we collect these information once, so signup with gym centers becomes easier.",
+                    onClick: () async {
+                      HapticFeedback.selectionClick();
+                      setState(() => _isLoadingCompleteRegState = true);
+                      await Future.delayed(const Duration(seconds: 2));
+                      setState(() => _isLoadingCompleteRegState = false);
+                      if (!context.mounted) return;
+                      startCompleteRegistration(context);
+                    },
+                  ),
+                ],
+
                 AccountLinkWrapper(
                   label: "Sign Out",
                   borderBottom: true,
