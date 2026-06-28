@@ -88,7 +88,7 @@ class _CollectAgeScreenState extends State<CollectAgeScreen> {
                         backgroundColor: AppDefaults.textColor.withAlpha(40),
                         foregroundColor: AppDefaults.textColor,
                         onSubmit: () {
-                          HapticFeedback.selectionClick();
+                           HapticFeedback.lightImpact();
                           Navigator.of(context).pop();
                         },
                       ),

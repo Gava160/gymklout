@@ -23,7 +23,7 @@ class _NumberPickerDrumState extends State<NumberPickerDrum> {
   late FixedExtentScrollController _controller;
   late int _selectedValue;
 
-  static const double itemExtent = 60.0;
+  static const double itemExtent = 70.0;
 
   @override
   void initState() {
@@ -75,18 +75,25 @@ class _NumberPickerDrumState extends State<NumberPickerDrum> {
                 final value = widget.minValue + index;
                 final isSelected = value == _selectedValue;
                 return Center(
-                  child: Text(
-                    '$value',
-                    style: TextStyle(
-                      fontSize: isSelected ? 42 : 28,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-                      color: isSelected
-                          ? Colors.white
-                          : Colors.grey.withOpacity(
-                              (1 - ((value - _selectedValue).abs() * 0.25))
-                                  .clamp(0.3, 0.7),
-                            ),
-                    ),
+                  child: AnimatedDefaultTextStyle(
+                    duration: Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                    style:
+                        AppDefaults.headLiner1(
+                          context,
+                          fontWeight: isSelected
+                              ? FontWeight.w800
+                              : FontWeight.w400,
+                        ).copyWith(
+                          fontSize: isSelected ? 52 : 28,
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.grey.withOpacity(
+                                  (1 - ((value - _selectedValue).abs() * 0.25))
+                                      .clamp(0.3, 0.7),
+                                ),
+                        ),
+                    child: Text('$value'),
                   ),
                 );
               },

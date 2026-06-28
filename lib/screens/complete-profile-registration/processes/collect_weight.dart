@@ -5,11 +5,15 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/weight_selector.dart';
 
 class CollectWeightScreen extends StatefulWidget {
-  const CollectWeightScreen({super.key, required this.gender, required this.age});
+  const CollectWeightScreen({
+    super.key,
+    required this.gender,
+    required this.age,
+  });
   final String gender;
   final int age;
 
@@ -18,7 +22,7 @@ class CollectWeightScreen extends StatefulWidget {
 }
 
 class _CollectWeightScreenState extends State<CollectWeightScreen> {
-  int selectedAge = 25;
+  double selectedWeight = 25;
 
   @override
   Widget build(BuildContext context) {
@@ -46,21 +50,33 @@ class _CollectWeightScreenState extends State<CollectWeightScreen> {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
-                  child: Padding(
-                    padding: AppDefaults.defaultPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ProcessheaderWidget(
-                          header: "What's your weight?",
-                          subHeader:
-                              "You can always change this later.",
-                        ),
-                        SizedBox(height: 30),
-
-                        
-                      ],
+                  child: SizedBox(
+                    height: size.height * 0.60,
+                    child: Padding(
+                      padding: AppDefaults.defaultPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ProcessheaderWidget(
+                            header: "What's your weight?",
+                            subHeader: "You can always change this later.",
+                          ),
+                          SizedBox(height: 30),
+                          Spacer(),
+                          RulerWeightPicker(
+                            minValue: 30,
+                            maxValue: 200,
+                            initialValue: selectedWeight,
+                            unit: 'kg',
+                            onChanged: (value) {
+                              HapticFeedback.lightImpact();
+                              setState(() => selectedWeight = value);
+                            },
+                          ),
+                          Spacer(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
