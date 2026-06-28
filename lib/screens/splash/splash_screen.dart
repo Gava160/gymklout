@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/signin/signin.dart';
+import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
 import 'package:gymklout/screens/onboarding/onboarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,11 +28,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       await prefs.setBool('hasSeenOnboarding', true);
       _navigateTo(const OnboardingScreen());
       return;
-    }else {
-       _navigateTo(const SignInScreen());
+    } else {
+      // Wait for authProvider to finish initializing
+      final authState = await ref.read(authProvider.future);
+
+      if (authState is AuthAuthenticated) {
+        _navigateTo(const BottomNavBarController());
+      } else {
+        _navigateTo(const SignInScreen());
+      }
+
       return;
     }
-
   }
 
   void _navigateTo(Widget screen) {

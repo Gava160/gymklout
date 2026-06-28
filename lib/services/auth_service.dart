@@ -82,6 +82,20 @@ class AuthService {
     final response = await _api.post('/auth/forgot-password', {'email': email});
     return response['message'] as String;
   }
+  // ─── Restore Session ─────────────────────────────────────────────────────────
+Future<LoginResponseModel> restoreSession({
+  required String accessToken,
+  required String refreshToken,
+}) async {
+  return _api.restoreSession(
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+  );
+}
+
+
+
+
 }
 
 // ─── Provider ────────────────────────────────────────────────────────────────

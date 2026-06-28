@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gymklout/models/auth_model.dart';
+import 'package:gymklout/models/profile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -147,6 +149,33 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('refresh_token');
   }
+
+  Future<LoginResponseModel> restoreSession({
+  required String accessToken,
+  required String refreshToken,
+}) async {
+  final response = await post('/auth/refresh', {
+    'refreshToken': refreshToken,
+  });
+
+  await ApiService.saveTokens(
+    accessToken: response['accessToken'] as String,
+    refreshToken: response['refreshToken'] as String,
+  );
+
+  final profileResponse = await get('/auth/me', requiresAuth: true);
+
+  return LoginResponseModel(
+    accessToken: response['accessToken'] as String,
+    refreshToken: response['refreshToken'] as String,
+    expiresAt: response['expiresAt'] as int?,
+    user: AuthUserModel(
+      id: profileResponse['id'] as String,
+      email: profileResponse['email'] as String,
+      profile: ProfileModel.fromJson(profileResponse),
+    ),
+  );
+}
 }
 
 // ─── ApiException ────────────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/models/auth_model.dart';
 import 'package:gymklout/models/profile_model.dart';
+import 'package:gymklout/services/api_service.dart';
 import 'package:gymklout/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,19 +34,28 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   }
 
   // Check if a token already exists on app launch
-  Future<AuthState> _checkExistingSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('access_token');
-    if (token != null && token.isNotEmpty) {
-      // Token exists but we don't have the full model in memory.
-      // The splash screen / app router will call getMe if needed.
-      // For now, treat as unauthenticated so login is required.
-      // You can expand this later to restore session silently.
-      return const AuthUnauthenticated();
-    }
+Future<AuthState> _checkExistingSession() async {
+  final prefs = await SharedPreferences.getInstance();
+  final accessToken = prefs.getString('access_token');
+  final refreshToken = prefs.getString('refresh_token');
+
+  if (accessToken == null || accessToken.isEmpty) {
     return const AuthUnauthenticated();
   }
 
+  try {
+    // Restore session using saved tokens
+    final result = await _authService.restoreSession(
+      accessToken: accessToken,
+      refreshToken: refreshToken ?? '',
+    );
+    return AuthAuthenticated(result);
+  } catch (_) {
+    // Token expired or invalid — clear and send to signin
+    await ApiService.clearTokens();
+    return const AuthUnauthenticated();
+  }
+}
   // ─── Login ──────────────────────────────────────────────────────────────────
   Future<void> login({required String email, required String password}) async {
     state = const AsyncLoading();
