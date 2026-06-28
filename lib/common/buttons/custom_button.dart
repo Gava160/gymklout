@@ -10,6 +10,7 @@ class AppCustomButton extends StatelessWidget {
   final Color? foregroundColor;
   final double? height;
   final EdgeInsets? setPadding;
+  final bool isLoading;
 
   const AppCustomButton({
     super.key,
@@ -21,6 +22,7 @@ class AppCustomButton extends StatelessWidget {
     this.setPadding,
     this.bgColor,
     this.foregroundColor,
+    this.isLoading = false,
   });
 
   @override
@@ -29,12 +31,15 @@ class AppCustomButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 0),
       child: SizedBox(
         width: double.infinity,
-        // height: height ?? 55,
         child: ElevatedButton(
-          onPressed: onSubmit,
+          onPressed: isLoading ? null : onSubmit,
           style: ElevatedButton.styleFrom(
             foregroundColor: foregroundColor ?? AppDefaults.white,
-            backgroundColor: bgColor ?? AppDefaults.primaryColor,
+            backgroundColor: isLoading
+                ? bgColor != null
+                      ? lighten(bgColor!, 0.1)
+                      : lighten(AppDefaults.primaryColor, 0.1)
+                : bgColor ?? AppDefaults.primaryColor,
             disabledBackgroundColor: lighten(
               bgColor ?? AppDefaults.primaryColor,
               0.2,
@@ -43,19 +48,23 @@ class AppCustomButton extends StatelessWidget {
             elevation: 0,
             padding:
                 setPadding ??
-                EdgeInsets.symmetric(vertical: 17, horizontal: 25),
+                const EdgeInsets.symmetric(vertical: 17, horizontal: 25),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(130),
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              label,
-              icon != null ? SizedBox(width: 10) : SizedBox.shrink(),
-              icon ?? SizedBox.shrink(),
-            ],
-          ),
+          child: isLoading
+              ? showSpinner()
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    label,
+                    icon != null
+                        ? const SizedBox(width: 10)
+                        : const SizedBox.shrink(),
+                    icon ?? const SizedBox.shrink(),
+                  ],
+                ),
         ),
       ),
     );
