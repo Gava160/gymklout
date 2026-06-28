@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
+import 'package:gymklout/common/buttons/custom_button.dart';
 
 Future<void> startCompleteRegistration(BuildContext context) {
+  final topPadding = MediaQuery.of(context).padding.top;
+  final screenHeight = MediaQuery.of(context).size.height;
+  final maxSize = (screenHeight - topPadding) / screenHeight;
+
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
+    isDismissible: false,
+    enableDrag: false,
     backgroundColor: Colors.transparent,
+    barrierColor: Colors.transparent, // 👈 this
     builder: (_) => DraggableScrollableSheet(
-      initialChildSize: 1,
-      minChildSize: 1,
-      maxChildSize: 1,
-      builder: (_, scrollController) => ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(34)),
-        child: _ForgotPasswordContainer(),
-      ),
+      initialChildSize: maxSize,
+      minChildSize: maxSize,
+      maxChildSize: maxSize,
+      builder: (_, scrollController) =>
+          ClipRRect(child: _CompleteProfileStarterContainer()),
     ),
   );
 }
 
-class _ForgotPasswordContainer extends StatefulWidget {
-  const _ForgotPasswordContainer();
+class _CompleteProfileStarterContainer extends StatefulWidget {
+  const _CompleteProfileStarterContainer();
 
   @override
-  State<_ForgotPasswordContainer> createState() =>
-      _ForgotPasswordContainerState();
+  State<_CompleteProfileStarterContainer> createState() =>
+      __CompleteProfileStarterContainerState();
 }
 
-class _ForgotPasswordContainerState extends State<_ForgotPasswordContainer> {
+class __CompleteProfileStarterContainerState
+    extends State<_CompleteProfileStarterContainer> {
   final TextEditingController emailController = TextEditingController();
   bool isSubmitting = false;
   bool buttonIsEnabled = false;
@@ -39,24 +44,21 @@ class _ForgotPasswordContainerState extends State<_ForgotPasswordContainer> {
     super.initState();
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       extendBodyBehindAppBar: false,
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kTextTabBarHeight + 35),
-          child: SafeArea(
-            child: Padding(
-              padding: AppDefaults.defaultPadding,
-              child: CustomAppBar(title: "", actions: []),
-            ),
+        preferredSize: Size.fromHeight(kTextTabBarHeight + 35),
+        child: SafeArea(
+          child: Padding(
+            padding: AppDefaults.defaultPadding,
+            child: CustomAppBar(title: "", actions: []),
           ),
         ),
+      ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
@@ -74,34 +76,76 @@ class _ForgotPasswordContainerState extends State<_ForgotPasswordContainer> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        
-                       
+                        Text(
+                          "Tell us about yourself",
+                          style:
+                              AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w700,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(
+                                  context,
+                                  lightAlpha: 230,
+                                ),
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) -
+                                    5,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "To give you better experiences, we need to know your gender",
+                          style:
+                              AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w400,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(
+                                  context,
+                                  lightAlpha: 150,
+                                ),
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) -
+                                    12,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-              // Padding(
-              //   padding: AppDefaults.defaultPadding,
-              //   child: CustomButtonAuth(
-              //     noPadding: true,
-              //     onSubmit: isSubmitting
-              //         ? null
-              //         : buttonIsEnabled == false
-              //         ? null
-              //         : () async {
-              //             HapticFeedback.selectionClick();
-              //             FocusScope.of(context).unfocus();
-              //             // await loginAccount();
-              //           },
-              //     label: isSubmitting
-              //         ? AppDefaults.myButtonLoading
-              //         : Text(
-              //             "Send OTP",
-              //             style: AppDefaults.defaultButtonStyle(context),
-              //           ),
-              //   ),
-              // ),
+              Padding(
+                padding: AppDefaults.defaultPadding,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: size.width * 0.70,
+                      child: AppCustomButton(
+                        noPadding: true,
+                        label: Text(
+                          "Send",
+                          style:
+                              AppDefaults.textStyle(
+                                context,
+                                fontWeight: FontWeight.w800,
+                              ).copyWith(
+                                color: AppDefaults.white,
+                                fontSize:
+                                    (AppDefaults.textStyle(context).fontSize ??
+                                        16) +
+                                    4,
+                              ),
+                        ),
+                        onSubmit: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -110,5 +154,4 @@ class _ForgotPasswordContainerState extends State<_ForgotPasswordContainer> {
   }
 }
 
-class CustomButtonAuth {
-}
+class CustomButtonAuth {}
