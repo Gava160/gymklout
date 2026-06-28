@@ -4,51 +4,21 @@ import 'package:flutter/services.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
-import 'package:gymklout/screens/complete-profile-registration/processes/collect_age.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/gender_selector.dart';
+import 'package:gymklout/common/buttons/icon_custom_button.dart';
+import 'package:gymklout/screens/complete-profile-registration/processes/collect_weight.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
-Future<void> startCompleteRegistration(BuildContext context) {
-  final topPadding = MediaQuery.of(context).padding.top;
-  final screenHeight = MediaQuery.of(context).size.height;
-  final maxSize = (screenHeight - topPadding) / screenHeight;
-
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    isDismissible: false,
-    enableDrag: false,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.transparent, // 👈 this
-    builder: (_) => DraggableScrollableSheet(
-      initialChildSize: maxSize,
-      minChildSize: maxSize,
-      maxChildSize: maxSize,
-      builder: (_, scrollController) =>
-          ClipRRect(child: _CompleteProfileStarterContainer()),
-    ),
-  );
-}
-
-class _CompleteProfileStarterContainer extends StatefulWidget {
-  const _CompleteProfileStarterContainer();
+class CollectAgeScreen extends StatefulWidget {
+  const CollectAgeScreen({super.key, required this.gender});
+  final String gender;
 
   @override
-  State<_CompleteProfileStarterContainer> createState() =>
-      __CompleteProfileStarterContainerState();
+  State<CollectAgeScreen> createState() => _CollectAgeScreenState();
 }
 
-class __CompleteProfileStarterContainerState
-    extends State<_CompleteProfileStarterContainer> {
-  final TextEditingController emailController = TextEditingController();
-  bool isSubmitting = false;
-  bool buttonIsEnabled = false;
-  String selectedGender = "";
-
-  @override
-  void initState() {
-    super.initState();
-  }
+class _CollectAgeScreenState extends State<CollectAgeScreen> {
+  int selectedAge = 25;
 
   @override
   Widget build(BuildContext context) {
@@ -83,28 +53,19 @@ class __CompleteProfileStarterContainerState
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ProcessheaderWidget(
-                          header: "Tell us about yourself",
-                          subHeader: "To give you better experiences, we need to know your gender",
+                          header: "How old are you?",
+                          subHeader:
+                              "This helps us create your personalized plan",
                         ),
-
                         SizedBox(height: 30),
-                        GenderSelectorWidget(
-                          label: "Male",
-                          value: "male",
-                          isSelected: selectedGender == "male" ? true : false,
-                          onSelect: () {
+
+                        NumberPickerDrum(
+                          minValue: 16,
+                          maxValue: 90,
+                          initialValue: selectedAge,
+                          onChanged: (value) {
                             HapticFeedback.selectionClick();
-                            setState(() => selectedGender = "male");
-                          },
-                        ),
-                        SizedBox(height: 25),
-                        GenderSelectorWidget(
-                          label: "Female",
-                          value: "female",
-                          isSelected: selectedGender == "female" ? true : false,
-                          onSelect: () {
-                            HapticFeedback.selectionClick();
-                            setState(() => selectedGender = "female");
+                            setState(() => selectedAge = value);
                           },
                         ),
                       ],
@@ -118,7 +79,20 @@ class __CompleteProfileStarterContainerState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(),
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: IconCustomButtonAuth(
+                        noPadding: true,
+                        icon: FluentIcons.arrow_left_12_regular,
+                        backgroundColor: AppDefaults.textColor.withAlpha(40),
+                        foregroundColor: AppDefaults.textColor,
+                        onSubmit: () {
+                          HapticFeedback.selectionClick();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
                     SizedBox(
                       width: size.width * 0.40,
                       child: AppCustomButton(
@@ -145,17 +119,17 @@ class __CompleteProfileStarterContainerState
                           FluentIcons.arrow_right_12_regular,
                           size: 20,
                         ),
-                        onSubmit: selectedGender == ""
-                            ? null
-                            : ()  {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => CollectAgeScreen(
-                                      gender: selectedGender,
-                                    ),
-                                  ),
-                                );
-                              },
+                        onSubmit: () {
+                          HapticFeedback.selectionClick();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => CollectWeightScreen(
+                                gender: widget.gender,
+                                age: selectedAge,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
