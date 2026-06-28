@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/models/auth_model.dart';
+import 'package:gymklout/models/profile_model.dart';
 import 'package:gymklout/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -105,3 +106,9 @@ Future<void> resendVerification({required String email}) async {
 final authProvider = AsyncNotifierProvider<AuthNotifier, AuthState>(
   AuthNotifier.new,
 );
+
+ final currentProfileProvider = Provider<ProfileModel?>((ref) {
+      final state = ref.watch(authProvider).asData?.value;
+      if (state is AuthAuthenticated) return state.data.user.profile;
+      return null;
+    });

@@ -10,7 +10,9 @@ import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
 import 'package:gymklout/providers/auth_provider.dart';
+import 'package:gymklout/screens/authentication/verify-email/verify_email.dart';
 import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
+import 'package:gymklout/services/api_service.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -62,54 +64,61 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   Future<void> _register() async {
-    if (!buttonIsEnabled) return;
-    HapticFeedback.lightImpact();
+  if (!buttonIsEnabled) return;
+  HapticFeedback.lightImpact();
 
-    final password = passwordController.text.trim();
-    final confirmPassword = confirmPasswordController.text.trim();
+  final password = passwordController.text.trim();
+  final confirmPassword = confirmPasswordController.text.trim();
 
-    // Client-side password match check before hitting the network
-    if (password != confirmPassword) {
-      showTopAlert(
-        context,
-        message: 'Passwords do not match.',
-        type: AlertType.error,
+  if (password != confirmPassword) {
+    showTopAlert(
+      context,
+      message: 'Passwords do not match.',
+      type: AlertType.error,
+    );
+    return;
+  }
+
+  try {
+    await ref.read(authProvider.notifier).register(
+      email: emailController.text.trim(),
+      password: password,
+      fullName: fullNameController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    // Success — push to verify screen
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => VerifyEmailScreen(
+          email: emailController.text.trim(),
+        ),
+      ),
+    );
+  } catch (e) {
+    if (!mounted) return;
+    HapticFeedback.heavyImpact();
+
+    // Account exists but unverified — send them to verify instead
+    if (e is ApiException && e.statusCode == 409) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => VerifyEmailScreen(
+            email: emailController.text.trim(),
+          ),
+        ),
       );
       return;
     }
 
-    try {
-      await ref.read(authProvider.notifier).register(
-        email: emailController.text.trim(),
-        password: password,
-        fullName: fullNameController.text.trim(),
-      );
-
-      if (!mounted) return;
-
-      showTopAlert(
-        context,
-        message: 'Account created! Check your email to verify your account.',
-        type: AlertType.success,
-        duration: const Duration(seconds: 5),
-      );
-
-      // Go back to signin after short delay so alert is visible
-      await Future.delayed(const Duration(seconds: 1));
-      if (!mounted) return;
-      Navigator.of(context).pop();
-
-      
-    } catch (e) {
-      if (!mounted) return;
-      HapticFeedback.heavyImpact();
-      showTopAlert(
-        context,
-        message: e.toString(),
-        type: AlertType.error,
-      );
-    }
+    showTopAlert(
+      context,
+      message: e.toString(),
+      type: AlertType.error,
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -150,27 +159,35 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             const Expanded(child: SizedBox()),
                             Text(
                               "Ready to",
-                              style: AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w200,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) + 20,
-                              ),
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w200,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(context),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) +
+                                        20,
+                                  ),
                             ),
                             Text(
                               "Transform?",
-                              style: AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w800,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) + 26,
-                              ),
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w800,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(context),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) +
+                                        26,
+                                  ),
                             ),
                             const SizedBox(height: 5),
                             Text(
@@ -178,9 +195,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               style: AppDefaults.textStyle(
                                 context,
                                 fontWeight: FontWeight.w400,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                              ),
+                              ).copyWith(color: getDefaultHeaderColor(context)),
                             ),
                             const SizedBox(height: 50),
                           ],
@@ -210,18 +225,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             },
                             child: Text(
                               "Login",
-                              style: AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w200,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(
-                                  context,
-                                  lightAlpha: 200,
-                                ),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) - 2,
-                              ),
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w200,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(
+                                      context,
+                                      lightAlpha: 200,
+                                    ),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) -
+                                        2,
+                                  ),
                             ),
                           ),
                           const SizedBox(width: 15),
@@ -232,18 +251,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             children: [
                               Text(
                                 "Create Account",
-                                style: AppDefaults.headLiner1(
-                                  context,
-                                  fontWeight: FontWeight.w200,
-                                ).copyWith(
-                                  color: getDefaultHeaderColor(
-                                    context,
-                                    lightAlpha: 200,
-                                  ),
-                                  fontSize:
-                                      (AppDefaults.headLiner1(context).fontSize ??
-                                          21) - 2,
-                                ),
+                                style:
+                                    AppDefaults.headLiner1(
+                                      context,
+                                      fontWeight: FontWeight.w200,
+                                    ).copyWith(
+                                      color: getDefaultHeaderColor(
+                                        context,
+                                        lightAlpha: 200,
+                                      ),
+                                      fontSize:
+                                          (AppDefaults.headLiner1(
+                                                context,
+                                              ).fontSize ??
+                                              21) -
+                                          2,
+                                    ),
                               ),
                               const SizedBox(height: 5),
                               Container(
@@ -309,8 +332,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             child: IconCustomButtonAuth(
                               noPadding: true,
                               fontAwesomeIcon: FontAwesomeIcons.google,
-                              backgroundColor:
-                                  AppDefaults.textColor.withAlpha(40),
+                              backgroundColor: AppDefaults.textColor.withAlpha(
+                                40,
+                              ),
                               foregroundColor: AppDefaults.textColor,
                               onSubmit: () {},
                             ),
@@ -322,8 +346,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             child: IconCustomButtonAuth(
                               noPadding: true,
                               fontAwesomeIcon: FontAwesomeIcons.apple,
-                              backgroundColor:
-                                  AppDefaults.textColor.withAlpha(40),
+                              backgroundColor: AppDefaults.textColor.withAlpha(
+                                40,
+                              ),
                               foregroundColor: AppDefaults.textColor,
                               onSubmit: () {},
                             ),
@@ -337,15 +362,19 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               isDisabled: buttonIsEnabled,
                               label: Text(
                                 "Create Account",
-                                style: AppDefaults.textStyle(
-                                  context,
-                                  fontWeight: FontWeight.w800,
-                                ).copyWith(
-                                  color: AppDefaults.white,
-                                  fontSize:
-                                      (AppDefaults.textStyle(context).fontSize ??
-                                          16) + 2,
-                                ),
+                                style:
+                                    AppDefaults.textStyle(
+                                      context,
+                                      fontWeight: FontWeight.w800,
+                                    ).copyWith(
+                                      color: AppDefaults.white,
+                                      fontSize:
+                                          (AppDefaults.textStyle(
+                                                context,
+                                              ).fontSize ??
+                                              16) +
+                                          2,
+                                    ),
                               ),
                               icon: const Icon(
                                 FluentIcons.arrow_right_12_regular,

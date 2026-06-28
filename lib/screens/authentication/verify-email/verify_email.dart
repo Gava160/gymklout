@@ -167,7 +167,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                               ).copyWith(
                                 color: getDefaultHeaderColor(
                                   context,
-                                  lightAlpha: 180,
+                                  lightAlpha: 250,
                                 ),
                                 fontSize:
                                     (AppDefaults.headLiner1(context).fontSize ??

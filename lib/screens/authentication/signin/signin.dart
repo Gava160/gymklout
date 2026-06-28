@@ -75,7 +75,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       if (state is AuthAuthenticated) {
         final profile = state.data.user.profile;
         if (profile != null && !profile.completedProfileRegistration) {
-          // TODO: Navigate to complete profile screen (step 2)
+          // Navigate to complete profile screen (step 2)
+
+           Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const BottomNavBarController()),
+            (route) => false,
+          );
+
+          
         } else {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const BottomNavBarController()),
