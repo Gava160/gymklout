@@ -5,25 +5,27 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
-import 'package:gymklout/screens/complete-profile-registration/processes/collect_height.dart';
+import 'package:gymklout/screens/complete-profile-registration/processes/collect_goal.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/weight_selector.dart';
 
-class CollectWeightScreen extends StatefulWidget {
-  const CollectWeightScreen({
+class CollectHeightScreen extends StatefulWidget {
+  const CollectHeightScreen({
     super.key,
     required this.gender,
     required this.age,
+    required this.weight,
   });
   final String gender;
   final int age;
+  final double weight;
 
   @override
-  State<CollectWeightScreen> createState() => _CollectWeightScreenState();
+  State<CollectHeightScreen> createState() => _CollectHeightScreenState();
 }
 
-class _CollectWeightScreenState extends State<CollectWeightScreen> {
-  double selectedWeight = 45;
+class _CollectHeightScreenState extends State<CollectHeightScreen> {
+  int selectedHeight = 100;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class _CollectWeightScreenState extends State<CollectWeightScreen> {
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
                   child: SizedBox(
-                    height: size.height * 0.60,
+                    height: size.height * 0.70,
                     child: Padding(
                       padding: AppDefaults.defaultPadding,
                       child: Column(
@@ -60,22 +62,22 @@ class _CollectWeightScreenState extends State<CollectWeightScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ProcessheaderWidget(
-                            header: "What's your weight?",
+                            header: "What's your height?",
                             subHeader: "You can always change this later.",
                           ),
                           SizedBox(height: 30),
-                          Spacer(),
-                          RulerWeightPicker(
-                            minValue: 30,
-                            maxValue: 200,
-                            initialValue: selectedWeight,
-                            unit: 'kg',
-                            onChanged: (value) {
-                              HapticFeedback.lightImpact();
-                              setState(() => selectedWeight = value);
-                            },
-                          ),
-                          Spacer(),
+                         
+                         NumberPickerDrum(
+                          minValue: 50,
+                          maxValue: 350,
+                          label: "cm",
+                          initialValue: selectedHeight,
+                          onChanged: (value) {
+                            HapticFeedback.lightImpact();
+                            setState(() => selectedHeight = value);
+                          },
+                        ),
+                          
                         ],
                       ),
                     ),
@@ -129,13 +131,14 @@ class _CollectWeightScreenState extends State<CollectWeightScreen> {
                           size: 20,
                         ),
                         onSubmit: () {
-                          HapticFeedback.selectionClick();
+                           HapticFeedback.selectionClick();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => CollectHeightScreen(
+                              builder: (_) => CollectGoalScreen(
                                 gender: widget.gender,
                                 age: widget.age,
-                                weight: selectedWeight,
+                                weight: widget.weight,
+                                height: selectedHeight,
                               ),
                             ),
                           );

@@ -64,7 +64,7 @@ class _CollectAgeScreenState extends State<CollectAgeScreen> {
                           maxValue: 90,
                           initialValue: selectedAge,
                           onChanged: (value) {
-                            HapticFeedback.selectionClick();
+                            HapticFeedback.lightImpact();
                             setState(() => selectedAge = value);
                           },
                         ),

@@ -15,7 +15,7 @@ class ProcessheaderWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: size.width * 0.90,
+          width: size.width * 0.80,
           child: Text(
             header,
             style: AppDefaults.headLiner1(context, fontWeight: FontWeight.w700)

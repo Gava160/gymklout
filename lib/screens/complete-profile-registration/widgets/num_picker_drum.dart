@@ -5,6 +5,7 @@ class NumberPickerDrum extends StatefulWidget {
   final int minValue;
   final int maxValue;
   final int initialValue;
+  final String? label;
   final ValueChanged<int> onChanged;
 
   const NumberPickerDrum({
@@ -13,6 +14,7 @@ class NumberPickerDrum extends StatefulWidget {
     required this.maxValue,
     required this.initialValue,
     required this.onChanged,
+    this.label
   });
 
   @override
@@ -75,25 +77,54 @@ class _NumberPickerDrumState extends State<NumberPickerDrum> {
                 final value = widget.minValue + index;
                 final isSelected = value == _selectedValue;
                 return Center(
-                  child: AnimatedDefaultTextStyle(
-                    duration: Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                    style:
-                        AppDefaults.headLiner1(
-                          context,
-                          fontWeight: isSelected
-                              ? FontWeight.w800
-                              : FontWeight.w400,
-                        ).copyWith(
-                          fontSize: isSelected ? 52 : 28,
-                          color: isSelected
-                              ? Colors.white
-                              : Colors.grey.withOpacity(
-                                  (1 - ((value - _selectedValue).abs() * 0.25))
-                                      .clamp(0.3, 0.7),
-                                ),
-                        ),
-                    child: Text('$value'),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AnimatedDefaultTextStyle(
+                        duration: Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                        style:
+                            AppDefaults.headLiner1(
+                              context,
+                              fontWeight: isSelected
+                                  ? FontWeight.w800
+                                  : FontWeight.w400,
+                            ).copyWith(
+                              fontSize: isSelected ? 52 : 28,
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.grey.withOpacity(
+                                      (1 - ((value - _selectedValue).abs() * 0.25))
+                                          .clamp(0.3, 0.7),
+                                    ),
+                            ),
+                        child: Text('$value'),
+                      ),
+                      if(widget.label != "") ...[
+                        SizedBox(width: 6,),
+                        AnimatedDefaultTextStyle(
+                        duration: Duration(milliseconds: 10),
+                        curve: Curves.easeInOut,
+                        style:
+                            AppDefaults.headLiner1(
+                              context,
+                              fontWeight: isSelected
+                                  ? FontWeight.w800
+                                  : FontWeight.w400,
+                            ).copyWith(
+                              fontSize: 18,
+                              color: isSelected
+                                  ? Colors.white.withAlpha(210)
+                                  : Colors.grey.withOpacity(
+                                      (1 - ((value - _selectedValue).abs() * 0.25))
+                                          .clamp(0.3, 0.7),
+                                    ),
+                            ),
+                        child: Text(widget.label??""),
+                      ),
+                      ]
+                    ],
                   ),
                 );
               },

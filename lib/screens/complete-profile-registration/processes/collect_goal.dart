@@ -5,25 +5,29 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
-import 'package:gymklout/screens/complete-profile-registration/processes/collect_height.dart';
+import 'package:gymklout/screens/complete-profile-registration/processes/collect_gym_experience.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/weight_selector.dart';
 
-class CollectWeightScreen extends StatefulWidget {
-  const CollectWeightScreen({
+class CollectGoalScreen extends StatefulWidget {
+  const CollectGoalScreen({
     super.key,
     required this.gender,
     required this.age,
+    required this.weight,
+    required this.height,
   });
   final String gender;
+  final int height;
   final int age;
+  final double weight;
 
   @override
-  State<CollectWeightScreen> createState() => _CollectWeightScreenState();
+  State<CollectGoalScreen> createState() => _CollectGoalScreenState();
 }
 
-class _CollectWeightScreenState extends State<CollectWeightScreen> {
-  double selectedWeight = 45;
+class _CollectGoalScreenState extends State<CollectGoalScreen> {
+  String selectedGoal = 'Lose Weight';
 
   @override
   Widget build(BuildContext context) {
@@ -60,20 +64,31 @@ class _CollectWeightScreenState extends State<CollectWeightScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ProcessheaderWidget(
-                            header: "What's your weight?",
-                            subHeader: "You can always change this later.",
+                            header: "What's your gym goal?",
+                            subHeader: "This helps personalize your plan.",
                           ),
                           SizedBox(height: 30),
                           Spacer(),
-                          RulerWeightPicker(
-                            minValue: 30,
-                            maxValue: 200,
-                            initialValue: selectedWeight,
-                            unit: 'kg',
-                            onChanged: (value) {
-                              HapticFeedback.lightImpact();
-                              setState(() => selectedWeight = value);
-                            },
+                          SizedBox(
+                            width: size.width * 0.80,
+                            child: Center(
+                              child: CustomTextSelectorWidget(
+                                goals: const [
+                                  'Lose Weight',
+                                  'Build Muscle',
+                                  'Improve Endurance',
+                                  'Stay Active',
+                                  'Increase Flexibility',
+                                  'Reduce Stress',
+                                  'Eat Healthier',
+                                ],
+                                initialIndex: 0,
+                                onChanged: (goal) {
+                                  HapticFeedback.lightImpact();
+                                  setState(() => selectedGoal = goal);
+                                },
+                              ),
+                            ),
                           ),
                           Spacer(),
                         ],
@@ -132,10 +147,12 @@ class _CollectWeightScreenState extends State<CollectWeightScreen> {
                           HapticFeedback.selectionClick();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => CollectHeightScreen(
+                              builder: (_) => CollectGymExperienceScreen(
                                 gender: widget.gender,
                                 age: widget.age,
-                                weight: selectedWeight,
+                                weight: widget.weight,
+                                height: widget.height,
+                                gymGoal: selectedGoal,
                               ),
                             ),
                           );
