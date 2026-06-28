@@ -98,6 +98,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       await Future.delayed(const Duration(seconds: 1));
       if (!mounted) return;
       Navigator.of(context).pop();
+
+      
     } catch (e) {
       if (!mounted) return;
       HapticFeedback.heavyImpact();
@@ -133,7 +135,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     clipper: SlantedBottomClipper(),
                     child: Container(
                       width: double.infinity,
-                      height: size.height * 0.50,
+                      height: size.height * 0.45,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(AppMedia.onboarding5),
@@ -332,6 +334,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             child: AppCustomButton(
                               noPadding: true,
                               isLoading: isSubmitting,
+                              isDisabled: buttonIsEnabled,
                               label: Text(
                                 "Create Account",
                                 style: AppDefaults.textStyle(

@@ -58,3 +58,26 @@ class RegisterResponseModel {
     );
   }
 }
+
+class VerifyOtpResponseModel {
+  final String message;
+  final String accessToken;
+  final String refreshToken;
+  final int? expiresAt;
+
+  const VerifyOtpResponseModel({
+    required this.message,
+    required this.accessToken,
+    required this.refreshToken,
+    this.expiresAt,
+  });
+
+  factory VerifyOtpResponseModel.fromJson(Map<String, dynamic> json) {
+    return VerifyOtpResponseModel(
+      message: json['message'] as String,
+      accessToken: json['accessToken'] as String,
+      refreshToken: json['refreshToken'] as String,
+      expiresAt: json['expiresAt'] as int?,
+    );
+  }
+}

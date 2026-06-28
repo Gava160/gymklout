@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 
 enum AlertType { success, error, info, warning }

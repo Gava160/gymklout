@@ -12,8 +12,10 @@ import 'package:gymklout/common/text_fields/text_field.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/forgot-password/forgot_password.dart';
 import 'package:gymklout/screens/authentication/signup/signup.dart';
+import 'package:gymklout/screens/authentication/verify-email/verify_email.dart';
 import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
 import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
+import 'package:gymklout/services/api_service.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
@@ -55,47 +57,57 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
-  Future<void> _login() async {
-    if (!buttonIsEnabled) return;
-    HapticFeedback.lightImpact();
+ Future<void> _login() async {
+  if (!buttonIsEnabled) return;
+  HapticFeedback.lightImpact();
 
-    await ref.read(authProvider.notifier).login(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    );
+  await ref.read(authProvider.notifier).login(
+    email: emailController.text.trim(),
+    password: passwordController.text.trim(),
+  );
 
-    if (!mounted) return;
+  if (!mounted) return;
 
-    final authState = ref.read(authProvider);
+  final authState = ref.read(authProvider);
 
-    authState.when(
-      data: (state) {
-        if (state is AuthAuthenticated) {
-          final profile = state.data.user.profile;
-          if (profile != null && !profile.completedProfileRegistration) {
-            // Navigate to complete profile screen (step 2)
-            // Navigator.of(context).pushReplacement(
-            //   MaterialPageRoute(builder: (_) => CompleteProfileScreen()),
-            // );
-          } else {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const BottomNavBarController()),
-              (route) => false,
-            );
-          }
+  authState.when(
+    data: (state) {
+      if (state is AuthAuthenticated) {
+        final profile = state.data.user.profile;
+        if (profile != null && !profile.completedProfileRegistration) {
+          // TODO: Navigate to complete profile screen (step 2)
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const BottomNavBarController()),
+            (route) => false,
+          );
         }
-      },
-      error: (e, _) {
-        HapticFeedback.heavyImpact();
-        showTopAlert(
-          context,
-          message: e.toString(),
-          type: AlertType.error
+      }
+    },
+    error: (e, _) {
+      HapticFeedback.heavyImpact();
+
+      // Unverified email — push to verify screen
+      if (e is ApiException && e.statusCode == 403) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => VerifyEmailScreen(
+              email: emailController.text.trim(),
+            ),
+          ),
         );
-      },
-      loading: () {},
-    );
-  }
+        return;
+      }
+
+      showTopAlert(
+        context,
+        message: e.toString(),
+        type: AlertType.error,
+      );
+    },
+    loading: () {},
+  );
+}
 
   @override
   Widget build(BuildContext context) {

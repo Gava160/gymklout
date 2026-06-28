@@ -84,6 +84,21 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<String> forgotPassword(String email) async {
     return _authService.forgotPassword(email);
   }
+
+  // ─── Verify OTP ──────────────────────────────────────────────────────────────
+Future<VerifyOtpResponseModel> verifyOtp({
+  required String email,
+  required String token,
+}) async {
+  return _authService.verifyOtp(email: email, token: token);
+}
+
+// ─── Resend Verification ─────────────────────────────────────────────────────
+Future<void> resendVerification({required String email}) async {
+  await _authService.resendVerification(email: email);
+}
+
+
 }
 
 // ─── Provider ────────────────────────────────────────────────────────────────

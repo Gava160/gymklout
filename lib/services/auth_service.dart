@@ -46,16 +46,33 @@ class AuthService {
     return RegisterResponseModel.fromJson(response);
   }
 
+  // ─── Verify OTP ──────────────────────────────────────────────────────────────
+  Future<VerifyOtpResponseModel> verifyOtp({
+    required String email,
+    required String token,
+  }) async {
+    final response = await _api.post('/auth/verify-otp', {
+      'email': email,
+      'token': token,
+    });
+    final model = VerifyOtpResponseModel.fromJson(response);
+    await ApiService.saveTokens(
+      accessToken: model.accessToken,
+      refreshToken: model.refreshToken,
+    );
+    return model;
+  }
+
+  // ─── Resend Verification ─────────────────────────────────────────────────────
+  Future<void> resendVerification({required String email}) async {
+    await _api.post('/auth/resend-verification', {'email': email});
+  }
+
   // ─── Logout ─────────────────────────────────────────────────────────────────
   Future<void> logout(String accessToken) async {
     try {
-      await _api.post(
-        '/auth/logout',
-        {},
-        requiresAuth: true,
-      );
+      await _api.post('/auth/logout', {}, requiresAuth: true);
     } finally {
-      // Always clear local tokens even if server call fails
       await ApiService.clearTokens();
     }
   }

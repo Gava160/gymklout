@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +11,6 @@ class ApiService {
 
   static const Duration _timeout = Duration(seconds: 15);
 
-  // ─── Core request method ────────────────────────────────────────────────────
   Future<Map<String, dynamic>> request({
     required String method,
     required String path,
@@ -65,14 +65,31 @@ class ApiService {
 
       final response = await request.close().timeout(_timeout);
       final responseBody = await response.transform(utf8.decoder).join();
+      debugPrint(responseBody);
       final decoded = jsonDecode(responseBody) as Map<String, dynamic>;
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (decoded.containsKey('data') &&
+            decoded['data'] is Map<String, dynamic>) {
+          return decoded['data'] as Map<String, dynamic>;
+        }
         return decoded;
       }
 
-      // Structured error from backend
-      final message = decoded['message'] ?? 'Something went wrong';
+      final message =
+          decoded['message'] ?? decoded['error'] ?? 'Something went wrong';
+
+      final details = decoded['details'];
+      if (details is Map<String, dynamic>) {
+        final firstField = details.values.firstOrNull;
+        if (firstField is List && firstField.isNotEmpty) {
+          throw ApiException(
+            message: firstField.first.toString(),
+            statusCode: response.statusCode,
+          );
+        }
+      }
+
       throw ApiException(message: message, statusCode: response.statusCode);
     } on SocketException {
       throw ApiException(
@@ -97,23 +114,13 @@ class ApiService {
     String path,
     Map<String, dynamic> body, {
     bool requiresAuth = false,
-  }) => request(
-    method: 'POST',
-    path: path,
-    body: body,
-    requiresAuth: requiresAuth,
-  );
+  }) => request(method: 'POST', path: path, body: body, requiresAuth: requiresAuth);
 
   Future<Map<String, dynamic>> patch(
     String path,
     Map<String, dynamic> body, {
     bool requiresAuth = false,
-  }) => request(
-    method: 'PATCH',
-    path: path,
-    body: body,
-    requiresAuth: requiresAuth,
-  );
+  }) => request(method: 'PATCH', path: path, body: body, requiresAuth: requiresAuth);
 
   // ─── Token helpers ──────────────────────────────────────────────────────────
   static Future<void> saveTokens({
