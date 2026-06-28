@@ -169,7 +169,7 @@ class _TopAlertWidgetState extends State<_TopAlertWidget>
                                 fontWeight: FontWeight.w700,
                               ).copyWith(
                                 color: config.color,
-                                fontSize: 13,
+                                fontSize: 15,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -180,7 +180,7 @@ class _TopAlertWidgetState extends State<_TopAlertWidget>
                                 fontWeight: FontWeight.w400,
                               ).copyWith(
                                 color: AppDefaults.white.withAlpha(200),
-                                fontSize: 13,
+                                fontSize: 15,
                               ),
                             ),
                           ],

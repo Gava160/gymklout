@@ -12,6 +12,7 @@ import 'package:gymklout/common/text_fields/text_field.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/forgot-password/forgot_password.dart';
 import 'package:gymklout/screens/authentication/signup/signup.dart';
+import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
 import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
@@ -360,19 +361,4 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       ),
     );
   }
-}
-
-class SlantedBottomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height);
-    path.lineTo(size.width, size.height - 70);
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

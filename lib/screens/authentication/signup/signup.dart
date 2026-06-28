@@ -1,54 +1,55 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/app-settings/custom_notification.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/common/text_fields/text_field.dart';
+import 'package:gymklout/providers/auth_provider.dart';
+import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
+
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+  final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  bool isSubmitting = false;
   bool buttonIsEnabled = false;
-
-  // int _loginAttempts = 0;
-  // bool _isLockedOut = false;
-  // DateTime? _lockoutEnd;
-  // static const int _maxAttempts = 2;
-  // static const int _lockoutMinutes = 5;
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-
-    super.dispose();
-  }
 
   @override
   void initState() {
+    super.initState();
+    fullNameController.addListener(_validate);
     emailController.addListener(_validate);
     passwordController.addListener(_validate);
     confirmPasswordController.addListener(_validate);
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
   }
 
   void _validate() {
     final email = emailController.text.trim();
     final enable =
+        fullNameController.text.trim().length >= 2 &&
         email.isNotEmpty &&
         email.contains('@') &&
         email.contains('.') &&
@@ -60,126 +61,60 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  // // On sign-out
-  // Future<void> unlinkOneSignal() async {
-  //   await OneSignal.logout();
-  // }
+  Future<void> _register() async {
+    if (!buttonIsEnabled) return;
+    HapticFeedback.lightImpact();
 
-  // ───────────────────────────────────────────────────────────────────────────────
-  // Future<void> loginAccount() async {
-  //   // Check lockout
-  //   if (_isLockedOut && _lockoutEnd != null) {
-  //     final remaining = _lockoutEnd!.difference(DateTime.now()).inMinutes + 1;
-  //     showTopAlert(
-  //       context,
-  //       message:
-  //           "Too many attempts. Try again in $remaining minute${remaining == 1 ? '' : 's'}.",
-  //       color: AppDefaults.errorColor,
-  //       icon: Iconsax.danger,
-  //     );
-  //     return;
-  //   }
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
-  //   setState(() => isSubmitting = true);
+    // Client-side password match check before hitting the network
+    if (password != confirmPassword) {
+      showTopAlert(
+        context,
+        message: 'Passwords do not match.',
+        type: AlertType.error,
+      );
+      return;
+    }
 
-  //   try {
-  //     await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //       email: emailController.text.trim(),
-  //       password: passwordController.text.trim(),
-  //     );
+    try {
+      await ref.read(authProvider.notifier).register(
+        email: emailController.text.trim(),
+        password: password,
+        fullName: fullNameController.text.trim(),
+      );
 
-  //     // Reset attempts on success
-  //     setState(() {
-  //       _loginAttempts = 0;
-  //       _isLockedOut = false;
-  //       _lockoutEnd = null;
-  //     });
+      if (!mounted) return;
 
-  //     final user = FirebaseAuth.instance.currentUser;
-  //     await linkOneSignalToUser(user?.uid ?? "");
-  //     await InAppMessageService.onUserLoggedIn();
+      showTopAlert(
+        context,
+        message: 'Account created! Check your email to verify your account.',
+        type: AlertType.success,
+        duration: const Duration(seconds: 5),
+      );
 
-  //     if (!mounted) return;
-  //     Navigator.pushNamedAndRemoveUntil(
-  //       context,
-  //       AppRoutes.home,
-  //       (route) => false,
-  //     );
-
-  //     showTopAlert(
-  //       context,
-  //       message: "Login successful",
-  //       color: AppDefaults.successColor,
-  //     );
-  //   } on FirebaseAuthException catch (e) {
-  //     HapticFeedback.lightImpact();
-
-  //     // Increment attempts for credential errors
-  //     final isCredentialError = [
-  //       'wrong-password',
-  //       'user-not-found',
-  //       'invalid-credential',
-  //       'invalid-email',
-  //     ].contains(e.code);
-
-  //     if (isCredentialError) {
-  //       _loginAttempts++;
-  //       if (_loginAttempts >= _maxAttempts) {
-  //         _lockoutEnd = DateTime.now().add(Duration(minutes: _lockoutMinutes));
-  //         setState(() {
-  //           _isLockedOut = true;
-  //           isSubmitting = false;
-  //         });
-
-  //         // Auto-unlock after lockout period
-  //         Future.delayed(Duration(minutes: _lockoutMinutes), () {
-  //           if (mounted) {
-  //             setState(() {
-  //               _isLockedOut = false;
-  //               _loginAttempts = 0;
-  //               _lockoutEnd = null;
-  //             });
-  //           }
-  //         });
-
-  //         showTopAlert(
-  //           context,
-  //           message:
-  //               "Too many failed attempts. Please wait $_lockoutMinutes minutes before trying again.",
-  //           color: AppDefaults.errorColor,
-  //           icon: Iconsax.danger,
-  //         );
-  //         return;
-  //       }
-
-  //       final attemptsLeft = _maxAttempts - _loginAttempts;
-  //       showTopAlert(
-  //         context,
-  //         message:
-  //             "Incorrect email or password. $attemptsLeft attempt${attemptsLeft == 1 ? '' : 's'} remaining.",
-  //         color: AppDefaults.errorColor,
-  //         icon: Iconsax.danger,
-  //       );
-  //       setState(() => isSubmitting = false);
-  //       return;
-  //     }
-
-  //     setState(() => isSubmitting = false);
-
-  //     // Map all Firebase error codes to professional messages
-  //     final message = _mapFirebaseError(e.code, e.message);
-  //     showTopAlert(
-  //       context,
-  //       message: message,
-  //       color: AppDefaults.errorColor,
-  //       icon: Iconsax.danger,
-  //     );
-  //   }
-  // }
+      // Go back to signin after short delay so alert is visible
+      await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      HapticFeedback.heavyImpact();
+      showTopAlert(
+        context,
+        message: e.toString(),
+        type: AlertType.error,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final authState = ref.watch(authProvider);
+    final isSubmitting = authState.isLoading;
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusScope.of(context).unfocus(),
@@ -198,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     clipper: SlantedBottomClipper(),
                     child: Container(
                       width: double.infinity,
-                      height: size.height * 0.55,
+                      height: size.height * 0.50,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(AppMedia.onboarding5),
@@ -209,64 +144,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         padding: AppDefaults.defaultPadding,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Expanded(child: SizedBox()),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Ready to",
-                                  style:
-                                      AppDefaults.headLiner1(
-                                        context,
-                                        fontWeight: FontWeight.w200,
-                                      ).copyWith(
-                                        color: getDefaultHeaderColor(context),
-                                        fontSize:
-                                            (AppDefaults.headLiner1(
-                                                  context,
-                                                ).fontSize ??
-                                                21) +
-                                            20,
-                                      ),
-                                ),
-                                Text(
-                                  "Transform?",
-                                  style:
-                                      AppDefaults.headLiner1(
-                                        context,
-                                        fontWeight: FontWeight.w800,
-                                      ).copyWith(
-                                        color: getDefaultHeaderColor(context),
-                                        fontSize:
-                                            (AppDefaults.headLiner1(
-                                                  context,
-                                                ).fontSize ??
-                                                21) +
-                                            26,
-                                      ),
-                                ),
-                              ],
+                            const Expanded(child: SizedBox()),
+                            Text(
+                              "Ready to",
+                              style: AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w200,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(context),
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) + 20,
+                              ),
                             ),
-                            SizedBox(height: 5),
+                            Text(
+                              "Transform?",
+                              style: AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w800,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(context),
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) + 26,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
                             Text(
                               "Create your ${AppDefaults.appName} account and start your fitness journey.",
-                              style:
-                                  AppDefaults.textStyle(
-                                    context,
-                                    fontWeight: FontWeight.w400,
-                                  ).copyWith(
-                                    color: getDefaultHeaderColor(context),
-                                    fontSize:
-                                        (AppDefaults.textStyle(
-                                          context,
-                                        ).fontSize ??
-                                        21),
-                                  ),
+                              style: AppDefaults.textStyle(
+                                context,
+                                fontWeight: FontWeight.w400,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(context),
+                              ),
                             ),
-                            SizedBox(height: 50),
+                            const SizedBox(height: 50),
                           ],
                         ),
                       ),
@@ -280,81 +194,62 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                   ),
-
                   SafeArea(
                     child: Padding(
                       padding: AppDefaults.defaultPadding,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          // ── Login tab ──
                           GestureDetector(
                             onTap: () {
                               HapticFeedback.selectionClick();
                               Navigator.of(context).pop();
                             },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Login",
-                                  style:
-                                      AppDefaults.headLiner1(
-                                        context,
-                                        fontWeight: FontWeight.w200,
-                                      ).copyWith(
-                                        color: getDefaultHeaderColor(
-                                          context,
-                                          lightAlpha: 200,
-                                        ),
-                                        fontSize:
-                                            (AppDefaults.headLiner1(
-                                                  context,
-                                                ).fontSize ??
-                                                21) -
-                                            2,
-                                      ),
+                            child: Text(
+                              "Login",
+                              style: AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w200,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(
+                                  context,
+                                  lightAlpha: 200,
                                 ),
-                              ],
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) - 2,
+                              ),
                             ),
                           ),
-                          SizedBox(width: 15),
-                          GestureDetector(
-                            onTap: null,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Create Account",
-                                  style:
-                                      AppDefaults.headLiner1(
-                                        context,
-                                        fontWeight: FontWeight.w200,
-                                      ).copyWith(
-                                        color: getDefaultHeaderColor(
-                                          context,
-                                          lightAlpha: 200,
-                                        ),
-                                        fontSize:
-                                            (AppDefaults.headLiner1(
-                                                  context,
-                                                ).fontSize ??
-                                                21) -
-                                            2,
-                                      ),
+                          const SizedBox(width: 15),
+                          // ── Create Account tab (active) ──
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Create Account",
+                                style: AppDefaults.headLiner1(
+                                  context,
+                                  fontWeight: FontWeight.w200,
+                                ).copyWith(
+                                  color: getDefaultHeaderColor(
+                                    context,
+                                    lightAlpha: 200,
+                                  ),
+                                  fontSize:
+                                      (AppDefaults.headLiner1(context).fontSize ??
+                                          21) - 2,
                                 ),
-                                SizedBox(height: 7),
-                                Container(
-                                  width: 150,
-                                  height: 3,
-                                  color: AppDefaults.primaryColor,
-                                ),
-                              ],
-                            ),
+                              ),
+                              const SizedBox(height: 5),
+                              Container(
+                                width: 150,
+                                height: 3,
+                                color: AppDefaults.primaryColor,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -367,8 +262,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: AppDefaults.defaultPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    CustomTextField(
+                      label: "Full Name",
+                      hintText: "Your full name",
+                      prefixIcon: null,
+                      controller: fullNameController,
+                      keyboardType: TextInputType.name,
+                    ),
+                    const SizedBox(height: 5),
                     CustomTextField(
                       label: "Email address",
                       hintText: "Email",
@@ -376,7 +278,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     CustomTextField(
                       label: "Password",
                       hintText: "Password",
@@ -385,7 +287,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: passwordController,
                       keyboardType: TextInputType.text,
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     CustomTextField(
                       label: "Confirm Password",
                       hintText: "Confirm Password",
@@ -394,70 +296,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: confirmPasswordController,
                       keyboardType: TextInputType.text,
                     ),
-
+                    const SizedBox(height: 16),
                     SafeArea(
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 60,
-                              height: 60,
-                              child: IconCustomButtonAuth(
-                                noPadding: true,
-                                fontAwesomeIcon: FontAwesomeIcons.google,
-                                backgroundColor: AppDefaults.textColor
-                                    .withAlpha(40),
-                                foregroundColor: AppDefaults.textColor,
-                                onSubmit: () {},
-                              ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: IconCustomButtonAuth(
+                              noPadding: true,
+                              fontAwesomeIcon: FontAwesomeIcons.google,
+                              backgroundColor:
+                                  AppDefaults.textColor.withAlpha(40),
+                              foregroundColor: AppDefaults.textColor,
+                              onSubmit: () {},
                             ),
-                            SizedBox(width: 7),
-                            SizedBox(
-                              width: 60,
-                              height: 60,
-                              child: IconCustomButtonAuth(
-                                noPadding: true,
-                                fontAwesomeIcon: FontAwesomeIcons.apple,
-                                backgroundColor: AppDefaults.textColor
-                                    .withAlpha(40),
-                                foregroundColor: AppDefaults.textColor,
-                                onSubmit: () {},
-                              ),
+                          ),
+                          const SizedBox(width: 7),
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: IconCustomButtonAuth(
+                              noPadding: true,
+                              fontAwesomeIcon: FontAwesomeIcons.apple,
+                              backgroundColor:
+                                  AppDefaults.textColor.withAlpha(40),
+                              foregroundColor: AppDefaults.textColor,
+                              onSubmit: () {},
                             ),
-                            Spacer(),
-
-                            SizedBox(
-                              width: size.width * 0.50,
-                              child: AppCustomButton(
-                                noPadding: true,
-                                label: Text(
-                                  "Create Account",
-                                  style:
-                                      AppDefaults.textStyle(
-                                        context,
-                                        fontWeight: FontWeight.w800,
-                                      ).copyWith(
-                                        color: AppDefaults.white,
-                                        fontSize:
-                                            (AppDefaults.textStyle(
-                                                  context,
-                                                ).fontSize ??
-                                                16) +
-                                            4,
-                                      ),
+                          ),
+                          const Spacer(),
+                          SizedBox(
+                            width: size.width * 0.50,
+                            child: AppCustomButton(
+                              noPadding: true,
+                              isLoading: isSubmitting,
+                              label: Text(
+                                "Create Account",
+                                style: AppDefaults.textStyle(
+                                  context,
+                                  fontWeight: FontWeight.w800,
+                                ).copyWith(
+                                  color: AppDefaults.white,
+                                  fontSize:
+                                      (AppDefaults.textStyle(context).fontSize ??
+                                          16) + 2,
                                 ),
-                                icon: Icon(
-                                  FluentIcons.arrow_right_12_regular,
-                                  size: 20,
-                                ),
-                                onSubmit: () {},
                               ),
+                              icon: const Icon(
+                                FluentIcons.arrow_right_12_regular,
+                                size: 20,
+                              ),
+                              onSubmit: buttonIsEnabled && !isSubmitting
+                                  ? _register
+                                  : null,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -469,24 +365,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-}
-
-class SlantedBottomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-
-    path.lineTo(0, size.height); // bottom-left point (pulled up)
-    path.lineTo(
-      size.width,
-      size.height - 70,
-    ); // bottom-right point (full height)
-    path.lineTo(size.width, 0); // top-right
-    path.close(); // back to top-left
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
