@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
-import 'package:gymklout/common/text_fields/text_field.dart';
 
 Future<void> startCompleteRegistration(BuildContext context) {
   return showModalBottomSheet(
