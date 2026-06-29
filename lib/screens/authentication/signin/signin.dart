@@ -15,6 +15,7 @@ import 'package:gymklout/screens/authentication/signup/signup.dart';
 import 'package:gymklout/screens/authentication/verify-email/verify_email.dart';
 import 'package:gymklout/screens/authentication/welcome-back/welcome_back.dart';
 import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
+import 'package:gymklout/screens/my-account/update-profile-avatar/profile_avatar.dart';
 import 'package:gymklout/services/api_service.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
@@ -57,64 +58,75 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
- Future<void> _login() async {
-  if (!buttonIsEnabled) return;
-  HapticFeedback.lightImpact();
+  Future<void> _login() async {
+    if (!buttonIsEnabled) return;
+    HapticFeedback.lightImpact();
 
-  await ref.read(authProvider.notifier).login(
-    email: emailController.text.trim(),
-    password: passwordController.text.trim(),
-  );
-
-  if (!mounted) return;
-
-  final authState = ref.read(authProvider);
-
-  authState.when(
-    data: (state) {
-      if (state is AuthAuthenticated) {
-        final profile = state.data.user.profile;
-        if (profile != null && !profile.completedProfileRegistration) {
-          // Navigate to complete profile screen (step 2)
-
-           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const BottomNavBarController()),
-            (route) => false,
-          );
-
-          
-        } else {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const BottomNavBarController()),
-            (route) => false,
-          );
-        }
-      }
-    },
-    error: (e, _) {
-      HapticFeedback.heavyImpact();
-
-      // Unverified email — push to verify screen
-      if (e is ApiException && e.statusCode == 403) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => VerifyEmailScreen(
-              email: emailController.text.trim(),
-            ),
-          ),
+    await ref
+        .read(authProvider.notifier)
+        .login(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
         );
-        return;
-      }
 
-      showTopAlert(
-        context,
-        message: e.toString(),
-        type: AlertType.error,
-      );
-    },
-    loading: () {},
-  );
-}
+    if (!mounted) return;
+
+    final authState = ref.read(authProvider);
+
+    authState.when(
+      data: (state) {
+        if (state is AuthAuthenticated) {
+          final profile = state.data.user.profile;
+          if (profile != null) {
+            HapticFeedback.lightImpact();
+            // Navigate to complete profile screen (step 2) - head home
+
+            // if(!profile.completedProfileRegistration == false) {
+
+            // }
+
+            if (profile.avatarUrl != null || profile.avatarUrl != "") {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) => const BottomNavBarController(),
+                ),
+                (route) => false,
+              );
+            } else {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) => const ProfileAvatarSetScreen(),
+                ),
+                (route) => false,
+              );
+            }
+          } else {
+            showTopAlert(
+              context,
+              message: "Login failed: unknown error",
+              type: AlertType.error,
+            );
+          }
+        }
+      },
+      error: (e, _) {
+        HapticFeedback.heavyImpact();
+        // Unverified email — push to verify screen
+        if (e is ApiException && e.statusCode == 403) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) =>
+                  VerifyEmailScreen(email: emailController.text.trim()),
+            ),
+          );
+          return;
+        }
+
+        showTopAlert(context, message: e.toString(), type: AlertType.error);
+      },
+      loading: () {},
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,27 +170,35 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             const Expanded(child: SizedBox()),
                             Text(
                               "Welcome back,",
-                              style: AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w200,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) + 20,
-                              ),
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w200,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(context),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) +
+                                        20,
+                                  ),
                             ),
                             Text(
                               "Juietta",
-                              style: AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w800,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) + 26,
-                              ),
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w800,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(context),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) +
+                                        26,
+                                  ),
                             ),
                             const SizedBox(height: 50),
                           ],
@@ -208,18 +228,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             children: [
                               Text(
                                 "Login",
-                                style: AppDefaults.headLiner1(
-                                  context,
-                                  fontWeight: FontWeight.w200,
-                                ).copyWith(
-                                  color: getDefaultHeaderColor(
-                                    context,
-                                    lightAlpha: 200,
-                                  ),
-                                  fontSize:
-                                      (AppDefaults.headLiner1(context).fontSize ??
-                                          21) - 2,
-                                ),
+                                style:
+                                    AppDefaults.headLiner1(
+                                      context,
+                                      fontWeight: FontWeight.w200,
+                                    ).copyWith(
+                                      color: getDefaultHeaderColor(
+                                        context,
+                                        lightAlpha: 200,
+                                      ),
+                                      fontSize:
+                                          (AppDefaults.headLiner1(
+                                                context,
+                                              ).fontSize ??
+                                              21) -
+                                          2,
+                                    ),
                               ),
                               const SizedBox(height: 5),
                               Container(
@@ -242,18 +266,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             },
                             child: Text(
                               "Create Account",
-                              style: AppDefaults.headLiner1(
-                                context,
-                                fontWeight: FontWeight.w200,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(
-                                  context,
-                                  lightAlpha: 200,
-                                ),
-                                fontSize:
-                                    (AppDefaults.headLiner1(context).fontSize ??
-                                        21) - 2,
-                              ),
+                              style:
+                                  AppDefaults.headLiner1(
+                                    context,
+                                    fontWeight: FontWeight.w200,
+                                  ).copyWith(
+                                    color: getDefaultHeaderColor(
+                                      context,
+                                      lightAlpha: 200,
+                                    ),
+                                    fontSize:
+                                        (AppDefaults.headLiner1(
+                                              context,
+                                            ).fontSize ??
+                                            21) -
+                                        2,
+                                  ),
                             ),
                           ),
                         ],
@@ -298,14 +326,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         },
                         child: Text(
                           "Forgot Password?",
-                          style: AppDefaults.textStyle(
-                            context,
-                            fontWeight: FontWeight.w400,
-                          ).copyWith(
-                            color: AppDefaults.primaryColor,
-                            fontSize:
-                                AppDefaults.textStyle(context).fontSize ?? 16,
-                          ),
+                          style:
+                              AppDefaults.textStyle(
+                                context,
+                                fontWeight: FontWeight.w400,
+                              ).copyWith(
+                                color: AppDefaults.primaryColor,
+                                fontSize:
+                                    AppDefaults.textStyle(context).fontSize ??
+                                    16,
+                              ),
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -321,8 +351,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             child: IconCustomButtonAuth(
                               noPadding: true,
                               fontAwesomeIcon: FontAwesomeIcons.google,
-                              backgroundColor:
-                                  AppDefaults.textColor.withAlpha(40),
+                              backgroundColor: AppDefaults.textColor.withAlpha(
+                                40,
+                              ),
                               foregroundColor: AppDefaults.textColor,
                               onSubmit: () {},
                             ),
@@ -334,8 +365,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             child: IconCustomButtonAuth(
                               noPadding: true,
                               fontAwesomeIcon: FontAwesomeIcons.apple,
-                              backgroundColor:
-                                  AppDefaults.textColor.withAlpha(40),
+                              backgroundColor: AppDefaults.textColor.withAlpha(
+                                40,
+                              ),
                               foregroundColor: AppDefaults.textColor,
                               onSubmit: () {},
                             ),
@@ -349,15 +381,19 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                               isDisabled: buttonIsEnabled,
                               label: Text(
                                 "Login",
-                                style: AppDefaults.textStyle(
-                                  context,
-                                  fontWeight: FontWeight.w800,
-                                ).copyWith(
-                                  color: AppDefaults.white,
-                                  fontSize:
-                                      (AppDefaults.textStyle(context).fontSize ??
-                                          16) + 4,
-                                ),
+                                style:
+                                    AppDefaults.textStyle(
+                                      context,
+                                      fontWeight: FontWeight.w800,
+                                    ).copyWith(
+                                      color: AppDefaults.white,
+                                      fontSize:
+                                          (AppDefaults.textStyle(
+                                                context,
+                                              ).fontSize ??
+                                              16) +
+                                          4,
+                                    ),
                               ),
                               icon: const Icon(
                                 FluentIcons.arrow_right_12_regular,

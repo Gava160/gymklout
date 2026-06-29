@@ -18,10 +18,11 @@ class MyAccountScreen extends ConsumerStatefulWidget {
 
 class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
   bool _isLoadingCompleteRegState = false;
+  bool isLoggingOut = false;
+
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(currentProfileProvider);
-    
 
     return Scaffold(
       extendBody: true,
@@ -108,13 +109,18 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                   borderBottom: true,
                   borderTop: true,
                   labelColor: AppDefaults.errorColor,
-                  hideRightIcon: true,
-                  onClick: () {
+                  hideRightIcon: isLoggingOut? false : true,
+                  rightIcon: isLoggingOut ? showSpinner() : null,
+                  onClick: () async {
+                    setState(() => isLoggingOut = true);
                     HapticFeedback.selectionClick();
+                    await ref.read(authProvider.notifier).logout();
+                    if (!context.mounted) return;
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (_) => const SignInScreen()),
                       (route) => false,
                     );
+                    setState(() => isLoggingOut = false);
                   },
                 ),
               ],

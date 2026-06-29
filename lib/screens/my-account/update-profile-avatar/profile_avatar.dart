@@ -9,9 +9,7 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
 class ProfileAvatarSetScreen extends ConsumerStatefulWidget {
-  const ProfileAvatarSetScreen({super.key, required this.gender});
-  final String gender;
-
+  const ProfileAvatarSetScreen({super.key});
   @override
   ConsumerState<ProfileAvatarSetScreen> createState() => _ProfileAvatarSetScreenState();
 }

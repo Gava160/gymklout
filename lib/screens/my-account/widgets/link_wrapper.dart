@@ -10,16 +10,16 @@ class AccountLinkWrapper extends StatelessWidget {
     required this.label,
     this.hideRightIcon = false,
     this.labelColor,
+    this.rightIcon,
     required this.onClick,
-    
   });
   final String label;
   final bool borderTop;
   final bool borderBottom;
   final bool hideRightIcon;
   final Color? labelColor;
+  final Widget? rightIcon;
   final VoidCallback onClick;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +63,12 @@ class AccountLinkWrapper extends StatelessWidget {
             ),
             hideRightIcon
                 ? SizedBox.shrink()
-                : Icon(
-                    Icons.chevron_right,
-                    size: 20,
-                    color: getDefaultTextColor(context, lightAlpha: 150),
-                  ),
+                : rightIcon ??
+                      Icon(
+                        Icons.chevron_right,
+                        size: 20,
+                        color: getDefaultTextColor(context, lightAlpha: 150),
+                      ),
           ],
         ),
       ),

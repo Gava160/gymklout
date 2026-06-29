@@ -85,13 +85,14 @@ Future<AuthState> _checkExistingSession() async {
   }
 
   // ─── Logout ─────────────────────────────────────────────────────────────────
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('access_token') ?? '';
-
-    await _authService.logout(token);
+ Future<void> logout() async {
+  try {
+    await _authService.logout('');
+  } finally {
+    ApiService.clearTokens(); 
     state = const AsyncData(AuthUnauthenticated());
   }
+}
 
   // ─── Forgot Password ─────────────────────────────────────────────────────────
   Future<String> forgotPassword(String email) async {
