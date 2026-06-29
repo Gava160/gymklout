@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,12 +13,13 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 import 'package:gymklout/services/api_service.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileAvatarSetScreen extends ConsumerStatefulWidget {
   const ProfileAvatarSetScreen({super.key});
+
   @override
   ConsumerState<ProfileAvatarSetScreen> createState() =>
       _ProfileAvatarSetScreenState();
@@ -25,11 +28,17 @@ class ProfileAvatarSetScreen extends ConsumerStatefulWidget {
 class _ProfileAvatarSetScreenState
     extends ConsumerState<ProfileAvatarSetScreen> {
   bool isSubmitting = false;
-  File? _selectedImage;
+
+  // ─── Crop state ──────────────────────────────────────────────────────────────
+  final CropController _cropController = CropController();
+  Uint8List? _imageBytes; // raw bytes loaded into crop widget
+  Uint8List? _croppedBytes; // result after cropping
+  bool _isCropping = false; // shows crop UI
+  bool _cropInProgress = false; // spinner while crop processes
 
   final ImagePicker _picker = ImagePicker();
 
-  // ─── Pick image from gallery or camera ──────────────────────────────────────
+  // ─── Pick image ──────────────────────────────────────────────────────────────
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? picked = await _picker.pickImage(
@@ -39,38 +48,12 @@ class _ProfileAvatarSetScreenState
 
       if (picked == null) return;
 
-      // ─── Crop to square ────────────────────────────────────────────────────
-      final CroppedFile? cropped = await ImageCropper().cropImage(
-        sourcePath: picked.path,
-        compressQuality: 90,
-        compressFormat: ImageCompressFormat.jpg,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Crop Photo',
-            toolbarColor: AppDefaults.primaryColor,
-            toolbarWidgetColor: AppDefaults.white,
-            lockAspectRatio: true,
-            hideBottomControls: false,
-            showCropGrid: true,
-            initAspectRatio: CropAspectRatioPreset.square,
-            aspectRatioPresets: [CropAspectRatioPreset.square],
-          ),
-          IOSUiSettings(
-            title: 'Crop Photo',
-            aspectRatioLockEnabled: true,
-            resetAspectRatioEnabled: false,
-            // hidesNavigationBar: false,
-            // doneButtonTitle: 'Done',
-            // cancelButtonTitle: 'Cancel',
-            // aspectRatioPresets: [CropAspectRatioPreset.square],
-          ),
-        ],
-      );
-
-      if (cropped == null) return;
+      final bytes = await picked.readAsBytes();
 
       setState(() {
-        _selectedImage = File(cropped.path);
+        _imageBytes = bytes;
+        _croppedBytes = null;
+        _isCropping = true; // show crop UI immediately
       });
     } catch (e) {
       if (mounted) {
@@ -83,7 +66,13 @@ class _ProfileAvatarSetScreenState
     }
   }
 
-  // ─── Show bottom sheet to choose source ─────────────────────────────────────
+  // ─── Trigger crop ────────────────────────────────────────────────────────────
+  void _doCrop() {
+    setState(() => _cropInProgress = true);
+    _cropController.crop(); // calls onCropped callback below
+  }
+
+  // ─── Show source picker sheet ─────────────────────────────────────────────────
   void _showImageSourceSheet() {
     HapticFeedback.selectionClick();
     showModalBottomSheet(
@@ -115,15 +104,10 @@ class _ProfileAvatarSetScreenState
                 leading: const Icon(FluentIcons.camera_24_regular),
                 title: Text(
                   'Take a Photo',
-                  style:
-                      AppDefaults.textStyle(
-                        context,
-                        fontWeight: FontWeight.w500,
-                      ).copyWith(
-                        color: getDefaultHeaderColor(context),
-                        fontSize:
-                            (AppDefaults.textStyle(context).fontSize ?? 16),
-                      ),
+                  style: AppDefaults.textStyle(
+                    context,
+                    fontWeight: FontWeight.w500,
+                  ).copyWith(color: getDefaultHeaderColor(context)),
                 ),
                 onTap: () {
                   HapticFeedback.selectionClick();
@@ -134,16 +118,11 @@ class _ProfileAvatarSetScreenState
               ListTile(
                 leading: const Icon(FluentIcons.image_24_regular),
                 title: Text(
-                  'Choose from ${Platform.isIOS ? 'Photos' : 'Gallery'}',
-                  style:
-                      AppDefaults.textStyle(
-                        context,
-                        fontWeight: FontWeight.w500,
-                      ).copyWith(
-                        color: getDefaultHeaderColor(context),
-                        fontSize:
-                            (AppDefaults.textStyle(context).fontSize ?? 16),
-                      ),
+                  Platform.isIOS ? 'Choose from Photos' : 'Choose from Gallery',
+                  style: AppDefaults.textStyle(
+                    context,
+                    fontWeight: FontWeight.w500,
+                  ).copyWith(color: getDefaultHeaderColor(context)),
                 ),
                 onTap: () {
                   HapticFeedback.selectionClick();
@@ -158,12 +137,12 @@ class _ProfileAvatarSetScreenState
     );
   }
 
-  // ─── Upload to backend ───────────────────────────────────────────────────────
+  // ─── Upload to backend ────────────────────────────────────────────────────────
   Future<void> _uploadAvatar() async {
-    if (_selectedImage == null) {
+    if (_croppedBytes == null) {
       showTopAlert(
         context,
-        message: 'Please select a photo first.',
+        message: 'Please select and crop a photo first.',
         type: AlertType.warning,
       );
       return;
@@ -172,6 +151,11 @@ class _ProfileAvatarSetScreenState
     setState(() => isSubmitting = true);
 
     try {
+      // Write bytes to a temp file for multipart upload
+      final tempDir = await getTemporaryDirectory();
+      final tempFile = File('${tempDir.path}/avatar_upload.jpg');
+      await tempFile.writeAsBytes(_croppedBytes!);
+
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('access_token') ?? '';
 
@@ -181,7 +165,7 @@ class _ProfileAvatarSetScreenState
         ..files.add(
           await http.MultipartFile.fromPath(
             'avatar',
-            _selectedImage!.path,
+            tempFile.path,
             contentType: http.MediaType('image', 'jpeg'),
           ),
         );
@@ -196,7 +180,6 @@ class _ProfileAvatarSetScreenState
             message: 'Profile photo updated successfully!',
             type: AlertType.success,
           );
-          // Navigate forward — adjust route to your next screen
           Navigator.of(context).pop();
         }
       } else {
@@ -248,150 +231,257 @@ class _ProfileAvatarSetScreenState
           child: Column(
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                  ),
-                  child: Padding(
-                    padding: AppDefaults.defaultPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ProcessheaderWidget(
-                          header: "Upload Profile Photo",
-                          subHeader:
-                              "This is required by gym centers we work with.",
-                        ),
-                        const SizedBox(height: 40),
-
-                        // ─── Avatar preview / picker ───────────────────────
-                        GestureDetector(
-                          onTap: _showImageSourceSheet,
-                          child: Container(
-                            width: 160,
-                            height: 160,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppDefaults.textColor.withAlpha(20),
-                              border: Border.all(
-                                color: AppDefaults.primaryColor,
-                                width: 2,
-                              ),
-                              image: _selectedImage != null
-                                  ? DecorationImage(
-                                      image: FileImage(_selectedImage!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
+                child: _isCropping && _imageBytes != null
+                    // ─── Crop UI ───────────────────────────────────────────
+                    ? Column(
+                        children: [
+                          Expanded(
+                            child: Crop(
+                              controller: _cropController,
+                              image: _imageBytes!,
+                              aspectRatio: 1,
+                              withCircleUi: true,
+                              onCropped: (result) {
+                                switch (result) {
+                                  case CropSuccess(:final croppedImage):
+                                    setState(() {
+                                      _croppedBytes = croppedImage;
+                                      _isCropping = false;
+                                      _cropInProgress = false;
+                                    });
+                                  case CropFailure():
+                                    setState(() => _cropInProgress = false);
+                                    if (mounted) {
+                                      showTopAlert(
+                                        context,
+                                        message:
+                                            'Crop failed. Please try again.',
+                                        type: AlertType.error,
+                                      );
+                                    }
+                                }
+                              },
                             ),
-                            child: _selectedImage == null
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        FluentIcons.camera_add_24_regular,
-                                        size: 36,
-                                        color: AppDefaults.primaryColor,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'Tap to add photo',
-                                        style:
-                                            AppDefaults.textStyle(
-                                              context,
-                                              fontWeight: FontWeight.w500,
-                                            ).copyWith(
-                                              fontSize: 12,
-                                              color: AppDefaults.textColor
-                                                  .withAlpha(150),
+                          ),
+                          // ─── Crop action buttons ───────────────────────
+                          Padding(
+                            padding: AppDefaults.defaultPadding,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Cancel crop
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: IconCustomButtonAuth(
+                                    noPadding: true,
+                                    icon: FluentIcons.dismiss_12_regular,
+                                    backgroundColor: AppDefaults.textColor
+                                        .withAlpha(40),
+                                    foregroundColor: AppDefaults.textColor,
+                                    onSubmit: () {
+                                      HapticFeedback.lightImpact();
+                                      setState(() {
+                                        _isCropping = false;
+                                        _imageBytes = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                // Confirm crop
+                                SizedBox(
+                                  width: size.width * 0.40,
+                                  child: AppCustomButton(
+                                    noPadding: true,
+                                    setPadding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 15,
+                                    ),
+                                    label: Text(
+                                      'Crop',
+                                      style:
+                                          AppDefaults.textStyle(
+                                            context,
+                                            fontWeight: FontWeight.w800,
+                                          ).copyWith(
+                                            color: AppDefaults.white,
+                                            fontSize:
+                                                (AppDefaults.textStyle(
+                                                      context,
+                                                    ).fontSize ??
+                                                    16) +
+                                                4,
+                                          ),
+                                    ),
+                                    icon: const Icon(
+                                      FluentIcons.crop_24_regular,
+                                      size: 20,
+                                    ),
+                                    isLoading: _cropInProgress,
+                                    onSubmit: () {
+                                      HapticFeedback.selectionClick();
+                                      _doCrop();
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    // ─── Preview UI ────────────────────────────────────────
+                    : SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                        ),
+                        child: Padding(
+                          padding: AppDefaults.defaultPadding,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ProcessheaderWidget(
+                                header: "Upload Profile Photo",
+                                subHeader:
+                                    "This is required by gym centers we work with.",
+                              ),
+                              const SizedBox(height: 40),
+
+                              // ─── Avatar circle ─────────────────────────
+                              GestureDetector(
+                                onTap: _showImageSourceSheet,
+                                child: Container(
+                                  width: 160,
+                                  height: 160,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppDefaults.textColor.withAlpha(20),
+                                    border: Border.all(
+                                      color: AppDefaults.primaryColor,
+                                      width: 2,
+                                    ),
+                                    image: _croppedBytes != null
+                                        ? DecorationImage(
+                                            image: MemoryImage(_croppedBytes!),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
+                                  ),
+                                  child: _croppedBytes == null
+                                      ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              FluentIcons.camera_add_24_regular,
+                                              size: 36,
+                                              color: AppDefaults.primaryColor,
                                             ),
-                                      ),
-                                    ],
-                                  )
-                                : null,
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Tap to add photo',
+                                              style:
+                                                  AppDefaults.textStyle(
+                                                    context,
+                                                    fontWeight: FontWeight.w500,
+                                                  ).copyWith(
+                                                    fontSize: 12,
+                                                    color: AppDefaults.textColor
+                                                        .withAlpha(150),
+                                                  ),
+                                            ),
+                                          ],
+                                        )
+                                      : null,
+                                ),
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // ─── Change photo ──────────────────────────
+                              if (_croppedBytes != null)
+                                TextButton.icon(
+                                  onPressed: _showImageSourceSheet,
+                                  icon: Icon(
+                                    FluentIcons.arrow_sync_16_regular,
+                                    size: 14,
+                                    color: AppDefaults.primaryColor,
+                                  ),
+                                  label: Text(
+                                    'Change photo',
+                                    style: AppDefaults.textStyle(context)
+                                        .copyWith(
+                                          fontSize: 13,
+                                          color: AppDefaults.primaryColor,
+                                        ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
+                      ),
+              ),
 
-                        const SizedBox(height: 16),
-
-                        // ─── Retake hint ───────────────────────────────────
-                        if (_selectedImage != null)
-                          TextButton.icon(
-                            onPressed: _showImageSourceSheet,
-                            icon: Icon(
-                              FluentIcons.arrow_sync_16_regular,
-                              size: 14,
-                              color: AppDefaults.primaryColor,
-                            ),
-                            label: Text(
-                              'Change photo',
-                              style: AppDefaults.textStyle(context).copyWith(
-                                fontSize: 13,
-                                color: AppDefaults.primaryColor,
-                              ),
-                            ),
+              // ─── Bottom actions (only shown on preview screen) ───────────
+              if (!_isCropping)
+                Padding(
+                  padding: AppDefaults.defaultPadding,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: IconCustomButtonAuth(
+                          noPadding: true,
+                          icon: FluentIcons.arrow_left_12_regular,
+                          backgroundColor: AppDefaults.textColor.withAlpha(40),
+                          foregroundColor: AppDefaults.textColor,
+                          onSubmit: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: size.width * 0.40,
+                        child: AppCustomButton(
+                          noPadding: true,
+                          setPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 15,
                           ),
-                      ],
-                    ),
+                          label: Text(
+                            "Upload",
+                            style:
+                                AppDefaults.textStyle(
+                                  context,
+                                  fontWeight: FontWeight.w800,
+                                ).copyWith(
+                                  color: AppDefaults.white,
+                                  fontSize:
+                                      (AppDefaults.textStyle(
+                                            context,
+                                          ).fontSize ??
+                                          16) +
+                                      4,
+                                ),
+                          ),
+                          icon: const Icon(
+                            FluentIcons.save_16_regular,
+                            size: 20,
+                          ),
+                          isLoading: isSubmitting,
+                          onSubmit: () {
+                            HapticFeedback.selectionClick();
+                            _uploadAvatar();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-
-              // ─── Bottom actions ──────────────────────────────────────────
-              Padding(
-                padding: AppDefaults.defaultPadding,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: IconCustomButtonAuth(
-                        noPadding: true,
-                        icon: FluentIcons.arrow_left_12_regular,
-                        backgroundColor: AppDefaults.textColor.withAlpha(40),
-                        foregroundColor: AppDefaults.textColor,
-                        onSubmit: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.40,
-                      child: AppCustomButton(
-                        noPadding: true,
-                        setPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 15,
-                        ),
-                        label: Text(
-                          "Upload",
-                          style:
-                              AppDefaults.textStyle(
-                                context,
-                                fontWeight: FontWeight.w800,
-                              ).copyWith(
-                                color: AppDefaults.white,
-                                fontSize:
-                                    (AppDefaults.textStyle(context).fontSize ??
-                                        16) +
-                                    4,
-                              ),
-                        ),
-                        icon: const Icon(FluentIcons.save_16_regular, size: 20),
-                        isLoading: isSubmitting,
-                        onSubmit: () {
-                          HapticFeedback.selectionClick();
-                          _uploadAvatar();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
