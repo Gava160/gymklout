@@ -175,7 +175,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                     context,
                                     fontWeight: FontWeight.w200,
                                   ).copyWith(
-                                    color: getDefaultHeaderColor(context),
+                                    color: Colors.white,
                                     fontSize:
                                         (AppDefaults.headLiner1(
                                               context,
@@ -185,13 +185,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                   ),
                             ),
                             Text(
-                              "Juietta",
+                              "GymRat",
                               style:
                                   AppDefaults.headLiner1(
                                     context,
                                     fontWeight: FontWeight.w800,
                                   ).copyWith(
-                                    color: getDefaultHeaderColor(context),
+                                    color: Colors.white,
                                     fontSize:
                                         (AppDefaults.headLiner1(
                                               context,
@@ -233,10 +233,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                       context,
                                       fontWeight: FontWeight.w200,
                                     ).copyWith(
-                                      color: getDefaultHeaderColor(
-                                        context,
-                                        lightAlpha: 200,
-                                      ),
+                                      color: Colors.white.withAlpha(210),
                                       fontSize:
                                           (AppDefaults.headLiner1(
                                                 context,
@@ -271,10 +268,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                     context,
                                     fontWeight: FontWeight.w200,
                                   ).copyWith(
-                                    color: getDefaultHeaderColor(
-                                      context,
-                                      lightAlpha: 200,
-                                    ),
+                                    color: Colors.white.withAlpha(210),
                                     fontSize:
                                         (AppDefaults.headLiner1(
                                               context,

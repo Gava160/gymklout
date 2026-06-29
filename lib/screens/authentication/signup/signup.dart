@@ -64,61 +64,56 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   Future<void> _register() async {
-  if (!buttonIsEnabled) return;
-  HapticFeedback.lightImpact();
+    if (!buttonIsEnabled) return;
+    HapticFeedback.lightImpact();
 
-  final password = passwordController.text.trim();
-  final confirmPassword = confirmPasswordController.text.trim();
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
-  if (password != confirmPassword) {
-    showTopAlert(
-      context,
-      message: 'Passwords do not match.',
-      type: AlertType.error,
-    );
-    return;
-  }
-
-  try {
-    await ref.read(authProvider.notifier).register(
-      email: emailController.text.trim(),
-      password: password,
-      fullName: fullNameController.text.trim(),
-    );
-
-    if (!mounted) return;
-
-    // Success — push to verify screen
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => VerifyEmailScreen(
-          email: emailController.text.trim(),
-        ),
-      ),
-    );
-  } catch (e) {
-    if (!mounted) return;
-    HapticFeedback.heavyImpact();
-
-    // Account exists but unverified — send them to verify instead
-    if (e is ApiException && e.statusCode == 409) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => VerifyEmailScreen(
-            email: emailController.text.trim(),
-          ),
-        ),
+    if (password != confirmPassword) {
+      showTopAlert(
+        context,
+        message: 'Passwords do not match.',
+        type: AlertType.error,
       );
       return;
     }
 
-    showTopAlert(
-      context,
-      message: e.toString(),
-      type: AlertType.error,
-    );
+    try {
+      await ref
+          .read(authProvider.notifier)
+          .register(
+            email: emailController.text.trim(),
+            password: password,
+            fullName: fullNameController.text.trim(),
+          );
+
+      if (!mounted) return;
+
+      // Success — push to verify screen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => VerifyEmailScreen(email: emailController.text.trim()),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      HapticFeedback.heavyImpact();
+
+      // Account exists but unverified — send them to verify instead
+      if (e is ApiException && e.statusCode == 409) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) =>
+                VerifyEmailScreen(email: emailController.text.trim()),
+          ),
+        );
+        return;
+      }
+
+      showTopAlert(context, message: e.toString(), type: AlertType.error);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +159,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                     context,
                                     fontWeight: FontWeight.w200,
                                   ).copyWith(
-                                    color: getDefaultHeaderColor(context),
+                                    color: Colors.white.withAlpha(210),
                                     fontSize:
                                         (AppDefaults.headLiner1(
                                               context,
@@ -180,7 +175,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                     context,
                                     fontWeight: FontWeight.w800,
                                   ).copyWith(
-                                    color: getDefaultHeaderColor(context),
+                                    color: Colors.white.withAlpha(210),
                                     fontSize:
                                         (AppDefaults.headLiner1(
                                               context,
@@ -195,7 +190,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               style: AppDefaults.textStyle(
                                 context,
                                 fontWeight: FontWeight.w400,
-                              ).copyWith(color: getDefaultHeaderColor(context)),
+                              ).copyWith(color: Colors.white.withAlpha(210)),
                             ),
                             const SizedBox(height: 50),
                           ],
@@ -230,10 +225,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                     context,
                                     fontWeight: FontWeight.w200,
                                   ).copyWith(
-                                    color: getDefaultHeaderColor(
-                                      context,
-                                      lightAlpha: 200,
-                                    ),
+                                    color: Colors.white.withAlpha(210),
                                     fontSize:
                                         (AppDefaults.headLiner1(
                                               context,
@@ -256,10 +248,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                       context,
                                       fontWeight: FontWeight.w200,
                                     ).copyWith(
-                                      color: getDefaultHeaderColor(
-                                        context,
-                                        lightAlpha: 200,
-                                      ),
+                                      color: Colors.white.withAlpha(210),
                                       fontSize:
                                           (AppDefaults.headLiner1(
                                                 context,
