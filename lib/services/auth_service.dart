@@ -60,7 +60,6 @@ Future<void> completeProfile({
   bool? completedProfileRegistration,
 }) async {
   final body = <String, dynamic>{};
-
   if (gender != null)                       body['gender']                       = gender;
   if (age != null)                          body['age']                          = age;
   if (weightKg != null)                     body['weightKg']                     = weightKg;
