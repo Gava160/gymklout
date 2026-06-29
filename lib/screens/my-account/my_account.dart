@@ -36,6 +36,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ProfileHeaderWidget(
+                  profileAvatar: profile?.avatarUrl??"",
                   joined: "3 months ago",
                   anyMembership: true,
                 ),

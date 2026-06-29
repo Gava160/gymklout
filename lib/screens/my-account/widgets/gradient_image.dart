@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 
@@ -28,16 +29,30 @@ class GradientCircularAvatar extends StatelessWidget {
           ),
 
           // 👇 profile image inside
-          CircleAvatar(
-            radius: size * 0.35,
-            backgroundImage: AssetImage(imagePath),
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: imagePath,
+              cacheKey: '$imagePath?v=${DateTime.now().millisecondsSinceEpoch}',
+              width: size * 0.7,
+              height: size * 0.7,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => CircleAvatar(
+                radius: size * 0.35,
+                backgroundColor: AppDefaults.textColor.withAlpha(20),
+                child: const Icon(Icons.person, size: 24),
+              ),
+              errorWidget: (context, url, error) => CircleAvatar(
+                radius: size * 0.35,
+                backgroundColor: AppDefaults.textColor.withAlpha(20),
+                child: const Icon(Icons.person, size: 24),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 }
-
 
 class _GradientRingPainter extends CustomPainter {
   final double progress;
@@ -65,9 +80,9 @@ class _GradientRingPainter extends CustomPainter {
       startAngle: -1.5708, // start from top (-90 degrees in radians)
       endAngle: -1.5708 + (3.1416 * 2), // full circle
       colors: [
-        Color(0xFF3B82F6), // 
-        AppDefaults.primaryColor, 
-        AppDefaults.primaryColor, 
+        Color(0xFF3B82F6), //
+        AppDefaults.primaryColor,
+        AppDefaults.primaryColor,
       ],
     );
 

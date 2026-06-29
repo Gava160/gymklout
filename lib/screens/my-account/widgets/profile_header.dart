@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/screens/my-account/widgets/gradient_image.dart';
 
-class ProfileHeaderWidget extends StatefulWidget {
+class ProfileHeaderWidget extends ConsumerStatefulWidget {
   const ProfileHeaderWidget({
     super.key,
     required this.joined,
     this.anyMembership = false,
+    required this.profileAvatar
   });
   final String joined;
   final bool anyMembership;
+  final String profileAvatar;
 
   @override
-  State<ProfileHeaderWidget> createState() => _ProfileHeaderWidgetState();
+  ConsumerState<ProfileHeaderWidget> createState() =>
+      _ProfileHeaderWidgetState();
 }
 
-class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
+class _ProfileHeaderWidgetState extends ConsumerState<ProfileHeaderWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -39,7 +43,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               child: Stack(
                 children: [
                   GradientCircularAvatar(
-                    imagePath: AppMedia.avatar,
+                    imagePath: widget.profileAvatar,
                     progress: 0.75, // 75% of the ring filled
                     size: 130,
                   ),

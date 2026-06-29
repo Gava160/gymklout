@@ -184,7 +184,7 @@ class _ProfileAvatarSetScreenState
           );
 
           // --------
-
+          ref.invalidate(currentProfileProvider);
           if (widget.popAfterSuccess == true) {
             Navigator.of(context).pop();
           } else {
@@ -233,7 +233,7 @@ class _ProfileAvatarSetScreenState
         child: SafeArea(
           child: Column(
             children: [
-              SizedBox(height: kTextTabBarHeight + 50,),
+              SizedBox(height: kTextTabBarHeight + 50),
               Expanded(
                 child: _isCropping && _imageBytes != null
                     // ─── Crop UI ───────────────────────────────────────────
@@ -439,7 +439,9 @@ class _ProfileAvatarSetScreenState
                         height: 50,
                         child: IconCustomButtonAuth(
                           noPadding: true,
-                          icon: widget.popAfterSuccess == true ? FluentIcons.arrow_left_12_regular : Iconsax.logout,
+                          icon: widget.popAfterSuccess == true
+                              ? FluentIcons.arrow_left_12_regular
+                              : Iconsax.logout,
                           backgroundColor: AppDefaults.textColor.withAlpha(40),
                           foregroundColor: AppDefaults.textColor,
                           onSubmit: () async {

@@ -90,28 +90,28 @@ class _BottomNavBarControllerState
                         shape: BoxShape.circle,
                       ),
                       child: profile?.avatarUrl != null
-                          ? CachedNetworkImage(
-                              imageUrl: profile?.avatarUrl ?? "",
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  Center(child: showSpinner()),
-                              errorWidget: (_, _, _) {
-                                // print(profile?.avatarUrl);
-                                return Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: AppDefaults.textColor.withAlpha(40),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.person,
-                                    color: AppDefaults.textColor.withAlpha(40),
-                                  ),
-                                );
-                              },
+                          ? ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: profile?.avatarUrl ?? "",
+                                cacheKey:
+                                    '${profile?.avatarUrl}?v=${DateTime.now().millisecondsSinceEpoch}',
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: AppDefaults.textColor
+                                      .withAlpha(20),
+                                  child: const Icon(Icons.person, size: 24),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor: AppDefaults.textColor
+                                          .withAlpha(20),
+                                      child: const Icon(Icons.person, size: 24),
+                                    ),
+                              ),
                             )
                           : SizedBox.shrink(),
                     ),
