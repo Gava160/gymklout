@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/custom_notification.dart';
-import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/providers/auth_provider.dart';
@@ -14,6 +13,7 @@ import 'package:gymklout/screens/authentication/signin/signin.dart';
 import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 import 'package:gymklout/services/api_service.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -227,21 +227,13 @@ class _ProfileAvatarSetScreenState
       extendBodyBehindAppBar: false,
       resizeToAvoidBottomInset: false,
       backgroundColor: getDefaultBgColor(context),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kTextTabBarHeight + 35),
-        child: SafeArea(
-          child: Padding(
-            padding: AppDefaults.defaultPadding,
-            child: CustomAppBar(title: "", actions: []),
-          ),
-        ),
-      ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
           child: Column(
             children: [
+              SizedBox(height: kTextTabBarHeight + 50,),
               Expanded(
                 child: _isCropping && _imageBytes != null
                     // ─── Crop UI ───────────────────────────────────────────
@@ -447,19 +439,23 @@ class _ProfileAvatarSetScreenState
                         height: 50,
                         child: IconCustomButtonAuth(
                           noPadding: true,
-                          icon: FluentIcons.arrow_left_12_regular,
+                          icon: widget.popAfterSuccess == true ? FluentIcons.arrow_left_12_regular : Iconsax.logout,
                           backgroundColor: AppDefaults.textColor.withAlpha(40),
                           foregroundColor: AppDefaults.textColor,
                           onSubmit: () async {
                             HapticFeedback.lightImpact();
-                            await ref.read(authProvider.notifier).logout();
-                            if (!context.mounted) return;
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (_) => const SignInScreen(),
-                              ),
-                              (route) => false,
-                            );
+                            if (widget.popAfterSuccess == true) {
+                              Navigator.pop(context);
+                            } else {
+                              await ref.read(authProvider.notifier).logout();
+                              if (!context.mounted) return;
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (_) => const SignInScreen(),
+                                ),
+                                (route) => false,
+                              );
+                            }
                           },
                         ),
                       ),

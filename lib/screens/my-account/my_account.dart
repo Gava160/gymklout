@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/common/bottom-sheets/open_update_avatar.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/signin/signin.dart';
 import 'package:gymklout/screens/complete-profile-registration/start_process.dart';
@@ -71,7 +72,9 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                   label: "Edit Profile",
                   borderBottom: true,
                   borderTop: true,
-                  onClick: () {},
+                  onClick: () {
+                    openUpdateAvatarSheet(context, popAfterSuccess: true);
+                  },
                 ),
                 AccountLinkWrapper(
                   label: "Privacy Policy",
@@ -109,7 +112,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                   borderBottom: true,
                   borderTop: true,
                   labelColor: AppDefaults.errorColor,
-                  hideRightIcon: isLoggingOut? false : true,
+                  hideRightIcon: isLoggingOut ? false : true,
                   rightIcon: isLoggingOut ? showSpinner() : null,
                   onClick: () async {
                     setState(() => isLoggingOut = true);
