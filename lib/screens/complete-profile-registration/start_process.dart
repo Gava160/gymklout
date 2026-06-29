@@ -1,9 +1,13 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/app-settings/custom_notification.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
+import 'package:gymklout/providers/auth_provider.dart';
+import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_age.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/gender_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
@@ -30,20 +34,79 @@ Future<void> startCompleteRegistration(BuildContext context) {
   );
 }
 
-class _CompleteProfileStarterContainer extends StatefulWidget {
+class _CompleteProfileStarterContainer extends ConsumerStatefulWidget {
   const _CompleteProfileStarterContainer();
 
   @override
-  State<_CompleteProfileStarterContainer> createState() =>
+  ConsumerState<_CompleteProfileStarterContainer> createState() =>
       __CompleteProfileStarterContainerState();
 }
 
 class __CompleteProfileStarterContainerState
-    extends State<_CompleteProfileStarterContainer> {
+    extends ConsumerState<_CompleteProfileStarterContainer> {
   final TextEditingController emailController = TextEditingController();
   bool isSubmitting = false;
   bool buttonIsEnabled = false;
   String selectedGender = "";
+
+  // ------
+  Future<void> _saveProfile({
+    String? selectedGender,
+    int? selectedAge,
+    double? selectedWeight,
+    double? selectedHeight,
+    String? selectedGoal,
+    String? selectedActivityLevel,
+    String? selectedFitnessLevel,
+    double? selectedTargetWeight,
+    int? selectedWorkoutFrequency,
+    VoidCallback? nextScreen,
+  }) async {
+    HapticFeedback.lightImpact();
+
+    final isCompleted =
+        selectedGender != null &&
+        selectedAge != null &&
+        selectedWeight != null &&
+        selectedHeight != null &&
+        selectedGoal != null &&
+        selectedActivityLevel != null &&
+        selectedFitnessLevel != null &&
+        selectedTargetWeight != null &&
+        selectedWorkoutFrequency != null;
+
+    try {
+      await ref
+          .read(authProvider.notifier)
+          .completeProfile(
+            gender: selectedGender,
+            age: selectedAge,
+            weightKg: selectedWeight,
+            heightCm: selectedHeight,
+            goal: selectedGoal,
+            activityLevel: selectedActivityLevel,
+            fitnessLevel: selectedFitnessLevel,
+            targetWeightKg: selectedTargetWeight,
+            workoutFrequency: selectedWorkoutFrequency,
+            completedProfileRegistration: isCompleted,
+          );
+
+      if (!mounted) return;
+
+      if (isCompleted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const BottomNavBarController()),
+          (route) => false,
+        );
+      } else {
+        nextScreen;
+      }
+    } catch (e) {
+      if (!mounted) return;
+      HapticFeedback.heavyImpact();
+      showTopAlert(context, message: e.toString(), type: AlertType.error);
+    }
+  }
 
   @override
   void initState() {
@@ -84,7 +147,8 @@ class __CompleteProfileStarterContainerState
                       children: [
                         ProcessheaderWidget(
                           header: "Tell us about yourself",
-                          subHeader: "To give you better experiences, we need to know your gender",
+                          subHeader:
+                              "To give you better experiences, we need to know your gender",
                         ),
 
                         SizedBox(height: 30),
@@ -147,13 +211,18 @@ class __CompleteProfileStarterContainerState
                         ),
                         onSubmit: selectedGender == ""
                             ? null
-                            : ()  {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => CollectAgeScreen(
-                                      gender: selectedGender,
-                                    ),
-                                  ),
+                            : () {
+                                _saveProfile(
+                                  selectedGender: selectedGender,
+                                  nextScreen: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => CollectAgeScreen(
+                                          gender: selectedGender,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                       ),

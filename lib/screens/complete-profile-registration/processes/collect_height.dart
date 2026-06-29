@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
@@ -9,22 +10,24 @@ import 'package:gymklout/screens/complete-profile-registration/processes/collect
 import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
-class CollectHeightScreen extends StatefulWidget {
+class CollectHeightScreen extends ConsumerStatefulWidget {
   const CollectHeightScreen({
     super.key,
     required this.gender,
     required this.age,
     required this.weight,
+    required this.targetWeight,
   });
   final String gender;
   final int age;
   final double weight;
+  final double targetWeight;
 
   @override
-  State<CollectHeightScreen> createState() => _CollectHeightScreenState();
+  ConsumerState<CollectHeightScreen> createState() => _CollectHeightScreenState();
 }
 
-class _CollectHeightScreenState extends State<CollectHeightScreen> {
+class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
   int selectedHeight = 100;
 
   @override
@@ -138,6 +141,7 @@ class _CollectHeightScreenState extends State<CollectHeightScreen> {
                                 gender: widget.gender,
                                 age: widget.age,
                                 weight: widget.weight,
+                                targetWeight: widget.targetWeight,
                                 height: selectedHeight,
                               ),
                             ),

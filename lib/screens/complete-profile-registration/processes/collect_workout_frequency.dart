@@ -6,20 +6,42 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
-import 'package:gymklout/screens/complete-profile-registration/processes/collect_weight.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
-class CollectAgeScreen extends ConsumerStatefulWidget {
-  const CollectAgeScreen({super.key, required this.gender});
+class CollectWorkoutFrequencyScreen extends ConsumerStatefulWidget {
+  const CollectWorkoutFrequencyScreen({
+    super.key,
+    required this.gender,
+    required this.age,
+    required this.weight,
+    required this.gymGoal,
+    required this.height,
+    required this.targetWeight,
+    required this.activityLevel,
+  });
   final String gender;
+  final String gymGoal;
+  final int height;
+  final int age;
+  final double weight;
+  final double targetWeight;
+  final String activityLevel;
 
   @override
-  ConsumerState<CollectAgeScreen> createState() => _CollectAgeScreenState();
+  ConsumerState<CollectWorkoutFrequencyScreen> createState() =>
+      _CollectWorkoutFrequencyScreenState();
 }
 
-class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
-  int selectedAge = 25;
+class _CollectWorkoutFrequencyScreenState
+    extends ConsumerState<CollectWorkoutFrequencyScreen> {
+  late String selectedFrequency;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedFrequency = '3 days a week';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,29 +69,45 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
-                  child: Padding(
-                    padding: AppDefaults.defaultPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ProcessheaderWidget(
-                          header: "How old are you?",
-                          subHeader:
-                              "This helps us create your personalized plan",
-                        ),
-                        SizedBox(height: 30),
-
-                        NumberPickerDrum(
-                          minValue: 16,
-                          maxValue: 90,
-                          initialValue: selectedAge,
-                          onChanged: (value) {
-                            HapticFeedback.lightImpact();
-                            setState(() => selectedAge = value);
-                          },
-                        ),
-                      ],
+                  child: SizedBox(
+                    height: size.height * 0.60,
+                    child: Padding(
+                      padding: AppDefaults.defaultPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ProcessheaderWidget(
+                            header: "How many days a week do you train?",
+                            subHeader:
+                                "Whether it's your first week or your fifth year, \nwe'll build around your schedule.",
+                          ),
+                          SizedBox(height: 30),
+                          Spacer(),
+                          SizedBox(
+                            width: size.width * 0.80,
+                            child: Center(
+                              child: CustomTextSelectorWidget(
+                                goals: const [
+                                  '1 day a week',
+                                  '2 days a week',
+                                  '3 days a week',
+                                  '4 days a week',
+                                  '5 days a week',
+                                  '6 days a week',
+                                  'Every day',
+                                ],
+                                initialIndex: 0,
+                                onChanged: (goal) {
+                                  HapticFeedback.lightImpact();
+                                  setState(() => selectedFrequency = goal);
+                                },
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -89,7 +127,7 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                         backgroundColor: AppDefaults.textColor.withAlpha(40),
                         foregroundColor: AppDefaults.textColor,
                         onSubmit: () {
-                           HapticFeedback.lightImpact();
+                          HapticFeedback.selectionClick();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -124,9 +162,14 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                           HapticFeedback.selectionClick();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => CollectWeightScreen(
+                              builder: (_) => CollectWorkoutFrequencyScreen(
                                 gender: widget.gender,
-                                age: selectedAge,
+                                age: widget.age,
+                                weight: widget.weight,
+                                height: widget.height,
+                                gymGoal: widget.gymGoal,
+                                targetWeight: widget.targetWeight,
+                                activityLevel: widget.activityLevel,
                               ),
                             ),
                           );

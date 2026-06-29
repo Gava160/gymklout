@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
@@ -9,25 +10,27 @@ import 'package:gymklout/screens/complete-profile-registration/processes/collect
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
-class CollectGoalScreen extends StatefulWidget {
+class CollectGoalScreen extends ConsumerStatefulWidget {
   const CollectGoalScreen({
     super.key,
     required this.gender,
     required this.age,
     required this.weight,
     required this.height,
+    required this.targetWeight
   });
   final String gender;
   final int height;
   final int age;
   final double weight;
+  final double targetWeight;
 
   @override
-  State<CollectGoalScreen> createState() => _CollectGoalScreenState();
+  ConsumerState<CollectGoalScreen> createState() => _CollectGoalScreenState();
 }
 
-class _CollectGoalScreenState extends State<CollectGoalScreen> {
-  String selectedGoal = 'Lose Weight';
+class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
+  String selectedGoal = 'Build Muscle';
 
   @override
   Widget build(BuildContext context) {
@@ -153,6 +156,7 @@ class _CollectGoalScreenState extends State<CollectGoalScreen> {
                                 weight: widget.weight,
                                 height: widget.height,
                                 gymGoal: selectedGoal,
+                                targetWeight: widget.targetWeight,
                               ),
                             ),
                           );

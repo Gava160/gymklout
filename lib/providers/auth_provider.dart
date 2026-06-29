@@ -109,6 +109,46 @@ Future<void> resendVerification({required String email}) async {
   await _authService.resendVerification(email: email);
 }
 
+// ─── Complete Profile ─────────────────────────────────────────────────────────
+Future<void> completeProfile({
+  String? gender,
+  int? age,
+  double? weightKg,
+  double? heightCm,
+  String? goal,
+  String? activityLevel,
+  String? fitnessLevel,
+  double? targetWeightKg,
+  int? workoutFrequency,
+  bool? completedProfileRegistration,
+}) async {
+  await _authService.completeProfile(
+    gender: gender,
+    age: age,
+    weightKg: weightKg,
+    heightCm: heightCm,
+    goal: goal,
+    activityLevel: activityLevel,
+    fitnessLevel: fitnessLevel,
+    targetWeightKg: targetWeightKg,
+    workoutFrequency: workoutFrequency,
+    completedProfileRegistration: completedProfileRegistration,
+  );
+
+  // Refresh auth state so profile changes reflect everywhere
+  final prefs = await SharedPreferences.getInstance();
+  final accessToken = prefs.getString('access_token');
+  final refreshToken = prefs.getString('refresh_token');
+
+  if (accessToken != null) {
+    final result = await _authService.restoreSession(
+      accessToken: accessToken,
+      refreshToken: refreshToken ?? '',
+    );
+    state = AsyncData(AuthAuthenticated(result));
+  }
+}
+
 
 }
 

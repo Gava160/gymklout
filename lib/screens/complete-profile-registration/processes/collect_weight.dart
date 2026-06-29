@@ -1,15 +1,16 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
-import 'package:gymklout/screens/complete-profile-registration/processes/collect_height.dart';
+import 'package:gymklout/screens/complete-profile-registration/processes/collect_target_weight.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/weight_selector.dart';
 
-class CollectWeightScreen extends StatefulWidget {
+class CollectWeightScreen extends ConsumerStatefulWidget {
   const CollectWeightScreen({
     super.key,
     required this.gender,
@@ -19,10 +20,10 @@ class CollectWeightScreen extends StatefulWidget {
   final int age;
 
   @override
-  State<CollectWeightScreen> createState() => _CollectWeightScreenState();
+  ConsumerState<CollectWeightScreen> createState() => _CollectWeightScreenState();
 }
 
-class _CollectWeightScreenState extends State<CollectWeightScreen> {
+class _CollectWeightScreenState extends ConsumerState<CollectWeightScreen> {
   double selectedWeight = 45;
 
   @override
@@ -132,7 +133,7 @@ class _CollectWeightScreenState extends State<CollectWeightScreen> {
                           HapticFeedback.selectionClick();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => CollectHeightScreen(
+                              builder: (_) => CollectTargetWeightScreen(
                                 gender: widget.gender,
                                 age: widget.age,
                                 weight: selectedWeight,

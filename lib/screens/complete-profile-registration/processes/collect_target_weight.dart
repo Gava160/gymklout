@@ -6,20 +6,33 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
-import 'package:gymklout/screens/complete-profile-registration/processes/collect_weight.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
+import 'package:gymklout/screens/complete-profile-registration/processes/collect_height.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/weight_selector.dart';
 
-class CollectAgeScreen extends ConsumerStatefulWidget {
-  const CollectAgeScreen({super.key, required this.gender});
+class CollectTargetWeightScreen extends ConsumerStatefulWidget {
+  const CollectTargetWeightScreen({
+    super.key,
+    required this.gender,
+    required this.age,
+    required this.weight,
+  });
   final String gender;
+  final int age;
+  final double weight;
 
   @override
-  ConsumerState<CollectAgeScreen> createState() => _CollectAgeScreenState();
+  ConsumerState<CollectTargetWeightScreen> createState() => _CollectWeightScreenState();
 }
 
-class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
-  int selectedAge = 25;
+class _CollectWeightScreenState extends ConsumerState<CollectTargetWeightScreen> {
+   late double selectedTargetWeight;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedTargetWeight = widget.weight + 10; 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,29 +60,33 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
-                  child: Padding(
-                    padding: AppDefaults.defaultPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ProcessheaderWidget(
-                          header: "How old are you?",
-                          subHeader:
-                              "This helps us create your personalized plan",
-                        ),
-                        SizedBox(height: 30),
-
-                        NumberPickerDrum(
-                          minValue: 16,
-                          maxValue: 90,
-                          initialValue: selectedAge,
-                          onChanged: (value) {
-                            HapticFeedback.lightImpact();
-                            setState(() => selectedAge = value);
-                          },
-                        ),
-                      ],
+                  child: SizedBox(
+                    height: size.height * 0.60,
+                    child: Padding(
+                      padding: AppDefaults.defaultPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ProcessheaderWidget(
+                            header: "What's your target weight?",
+                            subHeader: "You can always change this later.",
+                          ),
+                          SizedBox(height: 30),
+                          Spacer(),
+                          RulerWeightPicker(
+                            minValue: 30,
+                            maxValue: 200 + widget.weight,
+                            initialValue: selectedTargetWeight,
+                            unit: 'kg',
+                            onChanged: (value) {
+                              HapticFeedback.lightImpact();
+                              setState(() => selectedTargetWeight = value);
+                            },
+                          ),
+                          Spacer(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -89,7 +106,7 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                         backgroundColor: AppDefaults.textColor.withAlpha(40),
                         foregroundColor: AppDefaults.textColor,
                         onSubmit: () {
-                           HapticFeedback.lightImpact();
+                          HapticFeedback.selectionClick();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -124,9 +141,12 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                           HapticFeedback.selectionClick();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => CollectWeightScreen(
+                              builder: (_) => CollectHeightScreen(
                                 gender: widget.gender,
-                                age: selectedAge,
+                                age: widget.age,
+                                weight: widget.weight,
+                                targetWeight: selectedTargetWeight,
+
                               ),
                             ),
                           );

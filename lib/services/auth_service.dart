@@ -46,6 +46,35 @@ class AuthService {
     return RegisterResponseModel.fromJson(response);
   }
 
+  // ─── Complete Profile ─────────────────────────────────────────────────────────
+Future<void> completeProfile({
+  String? gender,
+  int? age,
+  double? weightKg,
+  double? heightCm,
+  String? goal,
+  String? activityLevel,
+  String? fitnessLevel,
+  double? targetWeightKg,
+  int? workoutFrequency,
+  bool? completedProfileRegistration,
+}) async {
+  final body = <String, dynamic>{};
+
+  if (gender != null)                       body['gender']                       = gender;
+  if (age != null)                          body['age']                          = age;
+  if (weightKg != null)                     body['weightKg']                     = weightKg;
+  if (heightCm != null)                     body['heightCm']                     = heightCm;
+  if (goal != null)                         body['goal']                         = goal;
+  if (activityLevel != null)                body['activityLevel']                = activityLevel;
+  if (fitnessLevel != null)                 body['fitnessLevel']                 = fitnessLevel;
+  if (targetWeightKg != null)               body['targetWeightKg']               = targetWeightKg;
+  if (workoutFrequency != null)             body['workoutFrequency']             = workoutFrequency;
+  if (completedProfileRegistration != null) body['completedProfileRegistration'] = completedProfileRegistration;
+
+  await _api.post('/profiles/complete', body, requiresAuth: true);
+}
+
   // ─── Verify OTP ──────────────────────────────────────────────────────────────
   Future<VerifyOtpResponseModel> verifyOtp({
     required String email,

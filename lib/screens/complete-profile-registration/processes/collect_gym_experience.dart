@@ -1,14 +1,16 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
+import 'package:gymklout/screens/complete-profile-registration/processes/collect_workout_frequency.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
-class CollectGymExperienceScreen extends StatefulWidget {
+class CollectGymExperienceScreen extends ConsumerStatefulWidget {
   const CollectGymExperienceScreen({
     super.key,
     required this.gender,
@@ -16,20 +18,22 @@ class CollectGymExperienceScreen extends StatefulWidget {
     required this.weight,
     required this.gymGoal,
     required this.height,
+    required this.targetWeight
   });
   final String gender;
   final String gymGoal;
   final int height;
   final int age;
   final double weight;
+  final double targetWeight;
 
   @override
-  State<CollectGymExperienceScreen> createState() =>
+  ConsumerState<CollectGymExperienceScreen> createState() =>
       _CollectGymExperienceScreenState();
 }
 
 class _CollectGymExperienceScreenState
-    extends State<CollectGymExperienceScreen> {
+    extends ConsumerState<CollectGymExperienceScreen> {
   String selectedLevel = 'Intermediate';
 
   @override
@@ -149,12 +153,15 @@ class _CollectGymExperienceScreenState
                           HapticFeedback.selectionClick();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => CollectGymExperienceScreen(
+                              builder: (_) => CollectWorkoutFrequencyScreen(
                                 gender: widget.gender,
                                 age: widget.age,
                                 weight: widget.weight,
                                 height: widget.height,
                                 gymGoal: widget.gymGoal,
+                                targetWeight: widget.targetWeight,
+                                activityLevel: selectedLevel
+
                               ),
                             ),
                           );
