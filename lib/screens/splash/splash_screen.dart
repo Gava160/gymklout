@@ -35,7 +35,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       if (authState is AuthAuthenticated) {
         final profile = authState.data.user.profile;
 
-        // No profile at all — shouldn't happen but guard anyway
+        // No profile at all 
         if (profile == null) {
           _navigateTo(const SignInScreen());
           return;

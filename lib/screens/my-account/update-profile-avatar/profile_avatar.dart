@@ -42,7 +42,6 @@ class _ProfileAvatarSetScreenState
       // ─── Crop to square ────────────────────────────────────────────────────
       final CroppedFile? cropped = await ImageCropper().cropImage(
         sourcePath: picked.path,
-        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 90,
         compressFormat: ImageCompressFormat.jpg,
         uiSettings: [
@@ -61,6 +60,8 @@ class _ProfileAvatarSetScreenState
             aspectRatioLockEnabled: true,
             resetAspectRatioEnabled: false,
             hidesNavigationBar: false,
+            doneButtonTitle: 'Done',
+            cancelButtonTitle: 'Cancel',
             aspectRatioPresets: [CropAspectRatioPreset.square],
           ),
         ],
@@ -84,11 +85,13 @@ class _ProfileAvatarSetScreenState
 
   // ─── Show bottom sheet to choose source ─────────────────────────────────────
   void _showImageSourceSheet() {
+    HapticFeedback.selectionClick();
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(34)),
       ),
+      backgroundColor: getDefaultBgColor(context),
       builder: (_) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
@@ -97,24 +100,53 @@ class _ProfileAvatarSetScreenState
             children: [
               Text(
                 'Choose Photo Source',
-                style: AppDefaults.textStyle(
-                  context,
-                  fontWeight: FontWeight.w700,
-                ),
+                style:
+                    AppDefaults.textStyle(
+                      context,
+                      fontWeight: FontWeight.w700,
+                    ).copyWith(
+                      color: getDefaultHeaderColor(context),
+                      fontSize:
+                          (AppDefaults.textStyle(context).fontSize ?? 16) + 4,
+                    ),
               ),
               const SizedBox(height: 20),
               ListTile(
                 leading: const Icon(FluentIcons.camera_24_regular),
-                title: const Text('Take a Photo'),
+                title: Text(
+                  'Take a Photo',
+                  style:
+                      AppDefaults.textStyle(
+                        context,
+                        fontWeight: FontWeight.w500,
+                      ).copyWith(
+                        color: getDefaultHeaderColor(context),
+                        fontSize:
+                            (AppDefaults.textStyle(context).fontSize ?? 16),
+                      ),
+                ),
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   Navigator.pop(context);
                   _pickImage(ImageSource.camera);
                 },
               ),
               ListTile(
                 leading: const Icon(FluentIcons.image_24_regular),
-                title: const Text('Choose from Gallery'),
+                title: Text(
+                  'Choose from ${Platform.isIOS ? 'Photos' : 'Gallery'}',
+                  style:
+                      AppDefaults.textStyle(
+                        context,
+                        fontWeight: FontWeight.w500,
+                      ).copyWith(
+                        color: getDefaultHeaderColor(context),
+                        fontSize:
+                            (AppDefaults.textStyle(context).fontSize ?? 16),
+                      ),
+                ),
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   Navigator.pop(context);
                   _pickImage(ImageSource.gallery);
                 },
@@ -199,6 +231,7 @@ class _ProfileAvatarSetScreenState
     return Scaffold(
       extendBodyBehindAppBar: false,
       resizeToAvoidBottomInset: false,
+      backgroundColor: getDefaultBgColor(context),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kTextTabBarHeight + 35),
         child: SafeArea(
