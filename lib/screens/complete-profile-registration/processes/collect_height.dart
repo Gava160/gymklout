@@ -31,6 +31,7 @@ class CollectHeightScreen extends ConsumerStatefulWidget {
 
 class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
   int selectedHeight = 100;
+  bool isSubmitting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +135,10 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
                           FluentIcons.arrow_right_12_regular,
                           size: 20,
                         ),
+                        isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
+                          setState(() => isSubmitting = true);
                           saveProfile(
                             ref: ref,
                             context: context,
@@ -144,7 +147,8 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
                             selectedWeight: widget.weight,
                             selectedTargetWeight: widget.targetWeight,
                             selectedHeight: selectedHeight.toDouble(),
-                            onDone: () {},
+                            onDone: () =>
+                                      setState(() => isSubmitting = false),
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

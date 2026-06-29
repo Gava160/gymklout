@@ -32,6 +32,7 @@ class CollectGoalScreen extends ConsumerStatefulWidget {
 
 class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
   String selectedGoal = 'Build Muscle';
+  bool isSubmitting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -147,8 +148,10 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
                           FluentIcons.arrow_right_12_regular,
                           size: 20,
                         ),
+                        isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
+                          setState(() => isSubmitting = true);
                           saveProfile(
                             ref: ref,
                             context: context,
@@ -158,7 +161,8 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
                             selectedTargetWeight: widget.targetWeight,
                             selectedHeight: widget.height.toDouble(),
                             selectedGoal: selectedGoal,
-                            onDone: () {},
+                            onDone: () =>
+                                      setState(() => isSubmitting = false),
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

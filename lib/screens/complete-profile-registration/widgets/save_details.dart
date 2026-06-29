@@ -18,7 +18,7 @@ Future<void> saveProfile({
   String? selectedFitnessLevel,
   double? selectedTargetWeight,
   int? selectedWorkoutFrequency,
-  VoidCallback? nextScreen,
+  required VoidCallback nextScreen,
   required VoidCallback onDone,
 }) async {
   final isCompleted =
@@ -56,7 +56,7 @@ Future<void> saveProfile({
       );
     } else {
       onDone();
-      nextScreen;
+      nextScreen();
     }
   } catch (e) {
     onDone();

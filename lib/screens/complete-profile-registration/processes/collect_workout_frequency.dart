@@ -37,6 +37,9 @@ class CollectWorkoutFrequencyScreen extends ConsumerStatefulWidget {
 class _CollectWorkoutFrequencyScreenState
     extends ConsumerState<CollectWorkoutFrequencyScreen> {
   late String selectedFrequency;
+  bool isSubmitting = false;
+
+  
   int workoutFrequencyFromString(String value) {
     const map = {
       '1 day a week': 1,
@@ -171,8 +174,10 @@ class _CollectWorkoutFrequencyScreenState
                           FluentIcons.arrow_right_12_regular,
                           size: 20,
                         ),
+                        isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
+                          setState(() => isSubmitting = true);
                           saveProfile(
                             ref: ref,
                             context: context,
@@ -186,7 +191,8 @@ class _CollectWorkoutFrequencyScreenState
                             selectedWorkoutFrequency:
                                 workoutFrequencyFromString(selectedFrequency),
                             selectedGoal: widget.gymGoal,
-                            onDone: () {},
+                            onDone: () =>
+                                      setState(() => isSubmitting = false),
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

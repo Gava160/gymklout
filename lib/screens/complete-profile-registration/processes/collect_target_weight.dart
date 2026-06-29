@@ -30,6 +30,7 @@ class CollectTargetWeightScreen extends ConsumerStatefulWidget {
 class _CollectWeightScreenState
     extends ConsumerState<CollectTargetWeightScreen> {
   late double selectedTargetWeight;
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -140,8 +141,10 @@ class _CollectWeightScreenState
                           FluentIcons.arrow_right_12_regular,
                           size: 20,
                         ),
+                        isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
+                          setState(() => isSubmitting = true);
                           saveProfile(
                             ref: ref,
                             context: context,
@@ -149,7 +152,8 @@ class _CollectWeightScreenState
                             selectedAge: widget.age,
                             selectedWeight: widget.weight,
                             selectedTargetWeight: selectedTargetWeight,
-                            onDone: () {},
+                            onDone: () =>
+                                      setState(() => isSubmitting = false),
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
