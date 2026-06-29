@@ -95,7 +95,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             } else {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => const ProfileAvatarSetScreen(),
+                  builder: (_) => const ProfileAvatarSetScreen(popAfterSuccess: false,),
                 ),
                 (route) => false,
               );

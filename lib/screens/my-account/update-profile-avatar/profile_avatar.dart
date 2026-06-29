@@ -19,8 +19,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class ProfileAvatarSetScreen extends ConsumerStatefulWidget {
-  const ProfileAvatarSetScreen({super.key, this.popAfterSuccess = false});
-  final bool? popAfterSuccess;
+  const ProfileAvatarSetScreen({super.key, required this.popAfterSuccess});
+  final bool popAfterSuccess;
 
   @override
   ConsumerState<ProfileAvatarSetScreen> createState() =>

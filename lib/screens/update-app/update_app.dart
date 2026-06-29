@@ -33,7 +33,7 @@ class _CollectGenderScreenState extends ConsumerState<UpdateAppScreen> {
 
       // No avatar — must set profile photo first
       if (profile.avatarUrl == null || profile.avatarUrl!.isEmpty) {
-        _navigateTo(const ProfileAvatarSetScreen());
+        _navigateTo(const ProfileAvatarSetScreen(popAfterSuccess: false,));
         return;
       }
 

@@ -1,24 +1,29 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/media.dart';
+import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/club-partner/my_club_partner.dart';
 import 'package:gymklout/screens/find-club/find_gym_center.dart';
 import 'package:gymklout/screens/home/home_screen.dart';
 import 'package:gymklout/screens/my-account/my_account.dart';
 import 'package:iconsax/iconsax.dart';
 
-class BottomNavBarController extends StatefulWidget {
+class BottomNavBarController extends ConsumerStatefulWidget {
   const BottomNavBarController({super.key});
 
   @override
-  State<BottomNavBarController> createState() => _BottomNavBarControllerState();
+  ConsumerState<BottomNavBarController> createState() =>
+      _BottomNavBarControllerState();
 }
 
-class _BottomNavBarControllerState extends State<BottomNavBarController> {
+class _BottomNavBarControllerState
+    extends ConsumerState<BottomNavBarController> {
   final List<Widget> activePages = [
     HomeScreen(),
     FindGymCenterScreen(),
@@ -41,6 +46,8 @@ class _BottomNavBarControllerState extends State<BottomNavBarController> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final profile = ref.watch(currentProfileProvider);
+
     return Scaffold(
       extendBody: true,
       body: activePages[_selectedScreen],
@@ -74,12 +81,39 @@ class _BottomNavBarControllerState extends State<BottomNavBarController> {
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(AppMedia.avatar),
-                          fit: BoxFit.cover,
-                        ),
+                        image: profile?.avatarUrl == null
+                            ? DecorationImage(
+                                image: AssetImage(AppMedia.avatar),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                         shape: BoxShape.circle,
                       ),
+                      child: profile?.avatarUrl != null
+                          ? CachedNetworkImage(
+                              imageUrl: profile?.avatarUrl ?? "",
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Center(child: showSpinner()),
+                              errorWidget: (_, _, _) {
+                                // print(profile?.avatarUrl);
+                                return Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    color: AppDefaults.textColor.withAlpha(40),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: AppDefaults.textColor.withAlpha(40),
+                                  ),
+                                );
+                              },
+                            )
+                          : SizedBox.shrink(),
                     ),
                   ),
                 ],
