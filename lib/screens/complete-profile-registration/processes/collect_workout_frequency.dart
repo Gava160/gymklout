@@ -8,6 +8,7 @@ import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectWorkoutFrequencyScreen extends ConsumerStatefulWidget {
   const CollectWorkoutFrequencyScreen({
@@ -36,6 +37,18 @@ class CollectWorkoutFrequencyScreen extends ConsumerStatefulWidget {
 class _CollectWorkoutFrequencyScreenState
     extends ConsumerState<CollectWorkoutFrequencyScreen> {
   late String selectedFrequency;
+  int workoutFrequencyFromString(String value) {
+    const map = {
+      '1 day a week': 1,
+      '2 days a week': 2,
+      '3 days a week': 3,
+      '4 days a week': 4,
+      '5 days a week': 5,
+      '6 days a week': 6,
+      'Every day': 7,
+    };
+    return map[value] ?? 1;
+  }
 
   @override
   void initState() {
@@ -160,18 +173,34 @@ class _CollectWorkoutFrequencyScreenState
                         ),
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => CollectWorkoutFrequencyScreen(
-                                gender: widget.gender,
-                                age: widget.age,
-                                weight: widget.weight,
-                                height: widget.height,
-                                gymGoal: widget.gymGoal,
-                                targetWeight: widget.targetWeight,
-                                activityLevel: widget.activityLevel,
-                              ),
-                            ),
+                          saveProfile(
+                            ref: ref,
+                            context: context,
+                            selectedGender: widget.gender,
+                            selectedAge: widget.age,
+                            selectedWeight: widget.weight,
+                            selectedTargetWeight: widget.targetWeight,
+                            selectedHeight: widget.height.toDouble(),
+                            selectedActivityLevel: widget.activityLevel,
+                            selectedFitnessLevel: widget.activityLevel,
+                            selectedWorkoutFrequency:
+                                workoutFrequencyFromString(selectedFrequency),
+                            selectedGoal: widget.gymGoal,
+                            nextScreen: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => CollectWorkoutFrequencyScreen(
+                                    gender: widget.gender,
+                                    age: widget.age,
+                                    weight: widget.weight,
+                                    height: widget.height,
+                                    gymGoal: widget.gymGoal,
+                                    targetWeight: widget.targetWeight,
+                                    activityLevel: widget.activityLevel,
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

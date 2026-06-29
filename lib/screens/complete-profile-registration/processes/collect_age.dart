@@ -9,6 +9,7 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_weight.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectAgeScreen extends ConsumerStatefulWidget {
   const CollectAgeScreen({super.key, required this.gender});
@@ -89,7 +90,7 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                         backgroundColor: AppDefaults.textColor.withAlpha(40),
                         foregroundColor: AppDefaults.textColor,
                         onSubmit: () {
-                           HapticFeedback.lightImpact();
+                          HapticFeedback.lightImpact();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -122,13 +123,21 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                         ),
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => CollectWeightScreen(
-                                gender: widget.gender,
-                                age: selectedAge,
-                              ),
-                            ),
+                          saveProfile(
+                            ref: ref,
+                            context: context,
+                            selectedGender: widget.gender,
+                            selectedAge: selectedAge,
+                            nextScreen: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => CollectWeightScreen(
+                                    gender: widget.gender,
+                                    age: selectedAge,
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

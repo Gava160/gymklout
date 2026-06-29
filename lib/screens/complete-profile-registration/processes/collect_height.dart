@@ -9,6 +9,7 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_goal.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectHeightScreen extends ConsumerStatefulWidget {
   const CollectHeightScreen({
@@ -24,7 +25,8 @@ class CollectHeightScreen extends ConsumerStatefulWidget {
   final double targetWeight;
 
   @override
-  ConsumerState<CollectHeightScreen> createState() => _CollectHeightScreenState();
+  ConsumerState<CollectHeightScreen> createState() =>
+      _CollectHeightScreenState();
 }
 
 class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
@@ -69,18 +71,17 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
                             subHeader: "You can always change this later.",
                           ),
                           SizedBox(height: 30),
-                         
-                         NumberPickerDrum(
-                          minValue: 50,
-                          maxValue: 350,
-                          label: "cm",
-                          initialValue: selectedHeight,
-                          onChanged: (value) {
-                            HapticFeedback.lightImpact();
-                            setState(() => selectedHeight = value);
-                          },
-                        ),
-                          
+
+                          NumberPickerDrum(
+                            minValue: 50,
+                            maxValue: 350,
+                            label: "cm",
+                            initialValue: selectedHeight,
+                            onChanged: (value) {
+                              HapticFeedback.lightImpact();
+                              setState(() => selectedHeight = value);
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -134,17 +135,28 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
                           size: 20,
                         ),
                         onSubmit: () {
-                           HapticFeedback.selectionClick();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => CollectGoalScreen(
-                                gender: widget.gender,
-                                age: widget.age,
-                                weight: widget.weight,
-                                targetWeight: widget.targetWeight,
-                                height: selectedHeight,
-                              ),
-                            ),
+                          HapticFeedback.selectionClick();
+                          saveProfile(
+                            ref: ref,
+                            context: context,
+                            selectedGender: widget.gender,
+                            selectedAge: widget.age,
+                            selectedWeight: widget.weight,
+                            selectedTargetWeight: widget.targetWeight,
+                            selectedHeight: selectedHeight.toDouble(),
+                            nextScreen: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => CollectGoalScreen(
+                                    gender: widget.gender,
+                                    age: widget.age,
+                                    weight: widget.weight,
+                                    targetWeight: widget.targetWeight,
+                                    height: selectedHeight,
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

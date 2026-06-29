@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/app-settings/custom_notification.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
-import 'package:gymklout/providers/auth_provider.dart';
-import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_age.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/gender_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 Future<void> startCompleteRegistration(BuildContext context) {
   final topPadding = MediaQuery.of(context).padding.top;
@@ -48,65 +46,6 @@ class __CompleteProfileStarterContainerState
   bool isSubmitting = false;
   bool buttonIsEnabled = false;
   String selectedGender = "";
-
-  // ------
-  Future<void> _saveProfile({
-    String? selectedGender,
-    int? selectedAge,
-    double? selectedWeight,
-    double? selectedHeight,
-    String? selectedGoal,
-    String? selectedActivityLevel,
-    String? selectedFitnessLevel,
-    double? selectedTargetWeight,
-    int? selectedWorkoutFrequency,
-    VoidCallback? nextScreen,
-  }) async {
-    HapticFeedback.lightImpact();
-
-    final isCompleted =
-        selectedGender != null &&
-        selectedAge != null &&
-        selectedWeight != null &&
-        selectedHeight != null &&
-        selectedGoal != null &&
-        selectedActivityLevel != null &&
-        selectedFitnessLevel != null &&
-        selectedTargetWeight != null &&
-        selectedWorkoutFrequency != null;
-
-    try {
-      await ref
-          .read(authProvider.notifier)
-          .completeProfile(
-            gender: selectedGender,
-            age: selectedAge,
-            weightKg: selectedWeight,
-            heightCm: selectedHeight,
-            goal: selectedGoal,
-            activityLevel: selectedActivityLevel,
-            fitnessLevel: selectedFitnessLevel,
-            targetWeightKg: selectedTargetWeight,
-            workoutFrequency: selectedWorkoutFrequency,
-            completedProfileRegistration: isCompleted,
-          );
-
-      if (!mounted) return;
-
-      if (isCompleted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const BottomNavBarController()),
-          (route) => false,
-        );
-      } else {
-        nextScreen;
-      }
-    } catch (e) {
-      if (!mounted) return;
-      HapticFeedback.heavyImpact();
-      showTopAlert(context, message: e.toString(), type: AlertType.error);
-    }
-  }
 
   @override
   void initState() {
@@ -212,7 +151,10 @@ class __CompleteProfileStarterContainerState
                         onSubmit: selectedGender == ""
                             ? null
                             : () {
-                                _saveProfile(
+                                HapticFeedback.selectionClick();
+                                saveProfile(
+                                  ref: ref,
+                                  context: context,
                                   selectedGender: selectedGender,
                                   nextScreen: () {
                                     Navigator.of(context).push(

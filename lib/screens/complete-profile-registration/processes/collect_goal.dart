@@ -9,6 +9,7 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_gym_experience.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectGoalScreen extends ConsumerStatefulWidget {
   const CollectGoalScreen({
@@ -17,7 +18,7 @@ class CollectGoalScreen extends ConsumerStatefulWidget {
     required this.age,
     required this.weight,
     required this.height,
-    required this.targetWeight
+    required this.targetWeight,
   });
   final String gender;
   final int height;
@@ -148,17 +149,29 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
                         ),
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => CollectGymExperienceScreen(
-                                gender: widget.gender,
-                                age: widget.age,
-                                weight: widget.weight,
-                                height: widget.height,
-                                gymGoal: selectedGoal,
-                                targetWeight: widget.targetWeight,
-                              ),
-                            ),
+                          saveProfile(
+                            ref: ref,
+                            context: context,
+                            selectedGender: widget.gender,
+                            selectedAge: widget.age,
+                            selectedWeight: widget.weight,
+                            selectedTargetWeight: widget.targetWeight,
+                            selectedHeight: widget.height.toDouble(),
+                            selectedGoal: selectedGoal,
+                            nextScreen: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => CollectGymExperienceScreen(
+                                    gender: widget.gender,
+                                    age: widget.age,
+                                    weight: widget.weight,
+                                    height: widget.height,
+                                    gymGoal: selectedGoal,
+                                    targetWeight: widget.targetWeight,
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

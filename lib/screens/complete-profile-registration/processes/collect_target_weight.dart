@@ -8,6 +8,7 @@ import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_height.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/weight_selector.dart';
 
 class CollectTargetWeightScreen extends ConsumerStatefulWidget {
@@ -22,16 +23,18 @@ class CollectTargetWeightScreen extends ConsumerStatefulWidget {
   final double weight;
 
   @override
-  ConsumerState<CollectTargetWeightScreen> createState() => _CollectWeightScreenState();
+  ConsumerState<CollectTargetWeightScreen> createState() =>
+      _CollectWeightScreenState();
 }
 
-class _CollectWeightScreenState extends ConsumerState<CollectTargetWeightScreen> {
-   late double selectedTargetWeight;
+class _CollectWeightScreenState
+    extends ConsumerState<CollectTargetWeightScreen> {
+  late double selectedTargetWeight;
 
   @override
   void initState() {
     super.initState();
-    selectedTargetWeight = widget.weight + 10; 
+    selectedTargetWeight = widget.weight + 10;
   }
 
   @override
@@ -139,16 +142,25 @@ class _CollectWeightScreenState extends ConsumerState<CollectTargetWeightScreen>
                         ),
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => CollectHeightScreen(
-                                gender: widget.gender,
-                                age: widget.age,
-                                weight: widget.weight,
-                                targetWeight: selectedTargetWeight,
-
-                              ),
-                            ),
+                          saveProfile(
+                            ref: ref,
+                            context: context,
+                            selectedGender: widget.gender,
+                            selectedAge: widget.age,
+                            selectedWeight: widget.weight,
+                            selectedTargetWeight: selectedTargetWeight,
+                            nextScreen: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => CollectHeightScreen(
+                                    gender: widget.gender,
+                                    age: widget.age,
+                                    weight: widget.weight,
+                                    targetWeight: selectedTargetWeight,
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
