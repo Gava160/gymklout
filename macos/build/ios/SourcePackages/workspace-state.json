@@ -151,6 +151,34 @@
       {
         "basedOn" : null,
         "packageRef" : {
+          "identity" : "image_cropper-12.2.1",
+          "kind" : "fileSystem",
+          "location" : "/Users/jephthahezekiel/flutter-devs/gymklout/ios/Flutter/ephemeral/Packages/.packages/image_cropper-12.2.1",
+          "name" : "image_cropper"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/jephthahezekiel/flutter-devs/gymklout/ios/Flutter/ephemeral/Packages/.packages/image_cropper-12.2.1"
+        },
+        "subpath" : "image_cropper-12.2.1"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "image_picker_ios-0.8.13+6",
+          "kind" : "fileSystem",
+          "location" : "/Users/jephthahezekiel/flutter-devs/gymklout/ios/Flutter/ephemeral/Packages/.packages/image_picker_ios-0.8.13+6",
+          "name" : "image_picker_ios"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/jephthahezekiel/flutter-devs/gymklout/ios/Flutter/ephemeral/Packages/.packages/image_picker_ios-0.8.13+6"
+        },
+        "subpath" : "image_picker_ios-0.8.13+6"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
           "identity" : "interop-ios-for-google-sdks",
           "kind" : "remoteSourceControl",
           "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
@@ -251,6 +279,23 @@
           "path" : "/Users/jephthahezekiel/flutter-devs/gymklout/ios/Flutter/ephemeral/Packages/.packages/sqflite_darwin-2.4.3"
         },
         "subpath" : "sqflite_darwin-2.4.3"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "tocropviewcontroller",
+          "kind" : "remoteSourceControl",
+          "location" : "https://github.com/TimOliver/TOCropViewController.git",
+          "name" : "TOCropViewController"
+        },
+        "state" : {
+          "checkoutState" : {
+            "revision" : "98527150c27eef8b695482c9b4ad5bdab1b1cb2b",
+            "version" : "3.1.2"
+          },
+          "name" : "sourceControlCheckout"
+        },
+        "subpath" : "TOCropViewController"
       }
     ],
     "prebuilts" : [
