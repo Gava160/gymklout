@@ -32,15 +32,18 @@ class GradientCircularAvatar extends StatelessWidget {
           ClipOval(
             child: CachedNetworkImage(
               imageUrl: imagePath,
-              cacheKey: '$imagePath?v=${DateTime.now().millisecondsSinceEpoch}',
+              cacheKey: imagePath,
               width: size * 0.7,
               height: size * 0.7,
               fit: BoxFit.cover,
-              placeholder: (context, url) => CircleAvatar(
-                radius: size * 0.35,
-                backgroundColor: AppDefaults.textColor.withAlpha(20),
-                child: const Icon(Icons.person, size: 24),
-              ),
+              placeholder: (context, url) {
+                // print(imagePath);
+                return CircleAvatar(
+                  radius: size * 0.35,
+                  backgroundColor: AppDefaults.textColor.withAlpha(20),
+                  child: showSpinner(),
+                );
+              },
               errorWidget: (context, url, error) => CircleAvatar(
                 radius: size * 0.35,
                 backgroundColor: AppDefaults.textColor.withAlpha(20),

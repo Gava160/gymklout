@@ -93,8 +93,7 @@ class _BottomNavBarControllerState
                           ? ClipOval(
                               child: CachedNetworkImage(
                                 imageUrl: profile?.avatarUrl ?? "",
-                                cacheKey:
-                                    '${profile?.avatarUrl}?v=${DateTime.now().millisecondsSinceEpoch}',
+                                cacheKey: profile?.avatarUrl,
                                 width: 50,
                                 height: 50,
                                 fit: BoxFit.cover,

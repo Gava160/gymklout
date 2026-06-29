@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/screens/my-account/widgets/gradient_image.dart';
 
 class ProfileHeaderWidget extends ConsumerStatefulWidget {
@@ -9,11 +8,17 @@ class ProfileHeaderWidget extends ConsumerStatefulWidget {
     super.key,
     required this.joined,
     this.anyMembership = false,
-    required this.profileAvatar
+    required this.profileAvatar,
+    required this.showTag,
+    required this.tagColor,
+    required this.tagText,
   });
   final String joined;
   final bool anyMembership;
   final String profileAvatar;
+  final bool showTag;
+  final String tagText;
+  final Color tagColor;
 
   @override
   ConsumerState<ProfileHeaderWidget> createState() =>
@@ -47,34 +52,36 @@ class _ProfileHeaderWidgetState extends ConsumerState<ProfileHeaderWidget> {
                     progress: 0.75, // 75% of the ring filled
                     size: 130,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: darken(AppDefaults.secondaryColor, 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        "GymRat",
-                        style:
-                            AppDefaults.headLiner1(
-                              context,
-                              fontWeight: FontWeight.w700,
-                            ).copyWith(
-                              color: getDefaultHeaderColor(context),
-                              fontSize:
-                                  (AppDefaults.headLiner1(context).fontSize ??
-                                      21) -
-                                  12,
-                            ),
+                  if (widget.showTag) ...[
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: darken(widget.tagColor, 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          widget.tagText,
+                          style:
+                              AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w700,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(context),
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) -
+                                    12,
+                              ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

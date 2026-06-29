@@ -37,12 +37,15 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
               children: [
                 ProfileHeaderWidget(
                   profileAvatar: profile?.avatarUrl??"",
-                  joined: "3 months ago",
+                  joined: timeAgo(profile!.createdAt),
                   anyMembership: true,
+                  showTag: true,
+                  tagColor: AppDefaults.secondaryColor,
+                  tagText: "GymRat",
                 ),
                 SizedBox(height: 8),
                 Text(
-                  "Jephthah",
+                  getFirstName(profile.fullName),
                   style:
                       AppDefaults.headLiner1(
                         context,
@@ -55,7 +58,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                       ),
                 ),
                 Text(
-                  "Ezekiel",
+                  getRemainingName(profile.fullName),
                   style:
                       AppDefaults.headLiner1(
                         context,
@@ -89,7 +92,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                   borderTop: false,
                   onClick: () {},
                 ),
-                if (profile?.completedProfileRegistration == false) ...[
+                if (profile.completedProfileRegistration == false) ...[
                   AccountTODOWidget(
                     tagText: "Not done",
                     showTag: true,
