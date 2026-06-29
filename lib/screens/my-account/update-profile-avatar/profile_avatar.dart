@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +11,16 @@ import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/signin/signin.dart';
+import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 import 'package:gymklout/services/api_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileAvatarSetScreen extends ConsumerStatefulWidget {
-  const ProfileAvatarSetScreen({super.key});
+  const ProfileAvatarSetScreen({super.key, this.popAfterSuccess = false});
+  final bool? popAfterSuccess;
 
   @override
   ConsumerState<ProfileAvatarSetScreen> createState() =>
@@ -158,8 +158,7 @@ class _ProfileAvatarSetScreenState
       final tempFile = File('${tempDir.path}/avatar_upload.jpg');
       await tempFile.writeAsBytes(_croppedBytes!);
 
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('access_token') ?? '';
+      final token = await ApiService.getAccessToken() ?? '';
 
       final uri = Uri.parse('${ApiService.baseUrl}/profiles/avatar');
       final request = http.MultipartRequest('POST', uri)
@@ -176,13 +175,24 @@ class _ProfileAvatarSetScreenState
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
+        HapticFeedback.lightImpact();
         if (mounted) {
           showTopAlert(
             context,
             message: 'Profile photo updated successfully!',
             type: AlertType.success,
           );
-          Navigator.of(context).pop();
+
+          // --------
+
+          if (widget.popAfterSuccess == true) {
+            Navigator.of(context).pop();
+          } else {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const BottomNavBarController()),
+              (route) => false,
+            );
+          }
         }
       } else {
         final body = response.body;

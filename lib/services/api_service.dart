@@ -199,6 +199,14 @@ class ApiService {
       ),
     );
   }
+
+  static Future<String?> getAccessToken() async {
+  if (_inMemoryToken != null) return _inMemoryToken;
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('access_token');
+}
+
+
 }
 
 // ─── ApiException ────────────────────────────────────────────────────────────
