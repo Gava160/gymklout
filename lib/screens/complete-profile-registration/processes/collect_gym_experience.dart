@@ -163,6 +163,7 @@ class _CollectGymExperienceScreenState
                             selectedActivityLevel: selectedLevel,
                             selectedFitnessLevel: selectedLevel,
                             selectedGoal: widget.gymGoal,
+                            onDone: () {},
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

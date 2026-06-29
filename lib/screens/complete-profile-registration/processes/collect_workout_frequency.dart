@@ -186,6 +186,7 @@ class _CollectWorkoutFrequencyScreenState
                             selectedWorkoutFrequency:
                                 workoutFrequencyFromString(selectedFrequency),
                             selectedGoal: widget.gymGoal,
+                            onDone: () {},
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

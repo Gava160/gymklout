@@ -128,6 +128,7 @@ class _CollectAgeScreenState extends ConsumerState<CollectAgeScreen> {
                             context: context,
                             selectedGender: widget.gender,
                             selectedAge: selectedAge,
+                            onDone: () {},
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

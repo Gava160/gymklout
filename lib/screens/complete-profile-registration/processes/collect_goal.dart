@@ -158,6 +158,7 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
                             selectedTargetWeight: widget.targetWeight,
                             selectedHeight: widget.height.toDouble(),
                             selectedGoal: selectedGoal,
+                            onDone: () {},
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

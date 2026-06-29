@@ -20,6 +20,7 @@ class CollectGenderScreen extends ConsumerStatefulWidget {
 
 class _CollectGenderScreenState extends ConsumerState<CollectGenderScreen> {
   String selectedGender = "";
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -122,14 +123,18 @@ class _CollectGenderScreenState extends ConsumerState<CollectGenderScreen> {
                           FluentIcons.arrow_right_12_regular,
                           size: 20,
                         ),
+                        isLoading: isSubmitting,
                         onSubmit: selectedGender == ""
                             ? null
                             : () {
                                 HapticFeedback.selectionClick();
+                                setState(() => isSubmitting = true);
                                 saveProfile(
                                   ref: ref,
                                   context: context,
                                   selectedGender: selectedGender,
+                                  onDone: () =>
+                                      setState(() => isSubmitting = false),
                                   nextScreen: () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(

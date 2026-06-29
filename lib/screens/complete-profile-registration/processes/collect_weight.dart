@@ -139,6 +139,7 @@ class _CollectWeightScreenState extends ConsumerState<CollectWeightScreen> {
                             selectedGender: widget.gender,
                             selectedAge: widget.age,
                             selectedWeight: selectedWeight,
+                            onDone: () {},
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

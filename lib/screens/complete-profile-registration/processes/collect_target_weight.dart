@@ -149,6 +149,7 @@ class _CollectWeightScreenState
                             selectedAge: widget.age,
                             selectedWeight: widget.weight,
                             selectedTargetWeight: selectedTargetWeight,
+                            onDone: () {},
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

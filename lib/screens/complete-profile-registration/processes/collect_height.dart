@@ -144,6 +144,7 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
                             selectedWeight: widget.weight,
                             selectedTargetWeight: widget.targetWeight,
                             selectedHeight: selectedHeight.toDouble(),
+                            onDone: () {},
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

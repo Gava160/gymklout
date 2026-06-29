@@ -19,6 +19,7 @@ Future<void> saveProfile({
   double? selectedTargetWeight,
   int? selectedWorkoutFrequency,
   VoidCallback? nextScreen,
+  required VoidCallback onDone,
 }) async {
   final isCompleted =
       selectedGender != null &&
@@ -30,7 +31,6 @@ Future<void> saveProfile({
       selectedFitnessLevel != null &&
       selectedTargetWeight != null &&
       selectedWorkoutFrequency != null;
-
   try {
     await ref
         .read(authProvider.notifier)
@@ -49,14 +49,17 @@ Future<void> saveProfile({
 
     if (!context.mounted) return;
     if (isCompleted) {
+      onDone();
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const BottomNavBarController()),
         (route) => false,
       );
     } else {
+      onDone();
       nextScreen;
     }
   } catch (e) {
+    onDone();
     if (!context.mounted) return;
     HapticFeedback.heavyImpact();
     showTopAlert(context, message: e.toString(), type: AlertType.error);
