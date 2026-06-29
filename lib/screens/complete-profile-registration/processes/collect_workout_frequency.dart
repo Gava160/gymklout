@@ -39,7 +39,6 @@ class _CollectWorkoutFrequencyScreenState
   late String selectedFrequency;
   bool isSubmitting = false;
 
-  
   int workoutFrequencyFromString(String value) {
     const map = {
       '1 day a week': 1,
@@ -186,13 +185,14 @@ class _CollectWorkoutFrequencyScreenState
                             selectedWeight: widget.weight,
                             selectedTargetWeight: widget.targetWeight,
                             selectedHeight: widget.height.toDouble(),
-                            selectedActivityLevel: widget.activityLevel,
-                            selectedFitnessLevel: widget.activityLevel,
+                            selectedActivityLevel: null,
+                            selectedFitnessLevel: fitnessLevelToBackendValue(
+                              widget.activityLevel,
+                            ),
+                            selectedGoal: goalToBackendValue(widget.gymGoal),
                             selectedWorkoutFrequency:
                                 workoutFrequencyFromString(selectedFrequency),
-                            selectedGoal: widget.gymGoal,
-                            onDone: () =>
-                                      setState(() => isSubmitting = false),
+                            onDone: () => setState(() => isSubmitting = false),
                             nextScreen: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

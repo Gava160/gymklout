@@ -38,6 +38,7 @@ class _CollectGymExperienceScreenState
   String selectedLevel = 'Intermediate';
   bool isSubmitting = false;
 
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -163,9 +164,9 @@ class _CollectGymExperienceScreenState
                             selectedWeight: widget.weight,
                             selectedTargetWeight: widget.targetWeight,
                             selectedHeight: widget.height.toDouble(),
-                            selectedActivityLevel: selectedLevel,
-                            selectedFitnessLevel: selectedLevel,
-                            selectedGoal: widget.gymGoal,
+                            selectedActivityLevel: null,
+                            selectedFitnessLevel: fitnessLevelToBackendValue(selectedLevel),
+                            selectedGoal: goalToBackendValue(widget.gymGoal),
                             onDone: () =>
                                       setState(() => isSubmitting = false),
                             nextScreen: () {

@@ -160,7 +160,7 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
                             selectedWeight: widget.weight,
                             selectedTargetWeight: widget.targetWeight,
                             selectedHeight: widget.height.toDouble(),
-                            selectedGoal: selectedGoal,
+                            selectedGoal: goalToBackendValue(selectedGoal),
                             onDone: () =>
                                       setState(() => isSubmitting = false),
                             nextScreen: () {

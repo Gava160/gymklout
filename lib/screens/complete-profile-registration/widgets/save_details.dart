@@ -60,8 +60,33 @@ Future<void> saveProfile({
     }
   } catch (e) {
     onDone();
+    print(e);
     if (!context.mounted) return;
     HapticFeedback.heavyImpact();
     showTopAlert(context, message: e.toString(), type: AlertType.error);
   }
+}
+
+String goalToBackendValue(String goal) {
+  const map = {
+    'Lose Weight': 'lose_weight',
+    'Build Muscle': 'build_muscle',
+    'Improve Endurance': 'endurance',
+    'Stay Active': 'maintain',
+    'Increase Flexibility': 'flexibility',
+    'Reduce Stress': 'reduce_stress',
+    'Eat Healthier': 'eat_healthier',
+  };
+  return map[goal] ?? 'maintain';
+}
+
+String fitnessLevelToBackendValue(String value) {
+  const map = {
+    'Rookie': 'beginner',
+    'Beginner': 'beginner',
+    'Intermediate': 'intermediate',
+    'Advance': 'advanced',
+    'True Beast': 'advanced',
+  };
+  return map[value] ?? 'beginner';
 }
