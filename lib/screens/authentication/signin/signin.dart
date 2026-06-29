@@ -85,7 +85,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
             // }
 
-            if (profile.avatarUrl != null || profile.avatarUrl != "") {
+            if (profile.avatarUrl != null) {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (_) => const BottomNavBarController(),

@@ -5,6 +5,7 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/signin/signin.dart';
 import 'package:gymklout/screens/bottom-navigation/bottom_nav_bar.dart';
+import 'package:gymklout/screens/my-account/update-profile-avatar/profile_avatar.dart';
 import 'package:gymklout/screens/onboarding/onboarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,16 +30,36 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       _navigateTo(const OnboardingScreen());
       return;
     } else {
-      // Wait for authProvider to finish initializing
       final authState = await ref.read(authProvider.future);
 
       if (authState is AuthAuthenticated) {
+        final profile = authState.data.user.profile;
+
+        // No profile at all — shouldn't happen but guard anyway
+        if (profile == null) {
+          _navigateTo(const SignInScreen());
+          return;
+        }
+
+        // No avatar — must set profile photo first
+        if (profile.avatarUrl == null || profile.avatarUrl!.isEmpty) {
+          _navigateTo(const ProfileAvatarSetScreen());
+          return;
+        }
+
+        // // Avatar set but profile incomplete — push to complete profile flow
+        // if (!profile.completedProfileRegistration) {
+        //   _navigateTo(const CompleteProfileScreen());
+        //   return;
+        // }
+
+        // Fully set up — go home
         _navigateTo(const BottomNavBarController());
+        return;
       } else {
         _navigateTo(const SignInScreen());
+        return;
       }
-
-      return;
     }
   }
 
