@@ -49,8 +49,10 @@ Future<AuthState> _checkExistingSession() async {
       accessToken: accessToken,
       refreshToken: refreshToken ?? '',
     );
+    print('NEW TOKEN: ${result.accessToken.substring(0, 30)}');
     return AuthAuthenticated(result);
-  } catch (_) {
+  } catch (e) {
+    print('RESTORE SESSION ERROR: $e');
     // Token expired or invalid — clear and send to signin
     await ApiService.clearTokens();
     return const AuthUnauthenticated();

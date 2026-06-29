@@ -1,17 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/models/auth_model.dart';
 import 'package:gymklout/models/profile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class ApiService {
   static String get baseUrl =>
       dotenv.env['API_BASE_URL'] ?? 'http://localhost:3000/api/v1';
 
   static const Duration _timeout = Duration(seconds: 15);
+
+  // ─── In-memory token cache ──────────────────────────────────────────────────
+  static String? _inMemoryToken;
+
+  static void setToken(String token) {
+    _inMemoryToken = token;
+  }
 
   Future<Map<String, dynamic>> request({
     required String method,
@@ -61,13 +68,13 @@ class ApiService {
 
       if (body != null) {
         final encoded = jsonEncode(body);
-        request.contentLength = encoded.length;
-        request.write(encoded);
+        final bytes = utf8.encode(encoded);
+        request.contentLength = bytes.length;
+        request.add(bytes);
       }
 
       final response = await request.close().timeout(_timeout);
       final responseBody = await response.transform(utf8.decoder).join();
-      debugPrint(responseBody);
       final decoded = jsonDecode(responseBody) as Map<String, dynamic>;
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -116,31 +123,45 @@ class ApiService {
     String path,
     Map<String, dynamic> body, {
     bool requiresAuth = false,
-  }) => request(method: 'POST', path: path, body: body, requiresAuth: requiresAuth);
+  }) => request(
+    method: 'POST',
+    path: path,
+    body: body,
+    requiresAuth: requiresAuth,
+  );
 
   Future<Map<String, dynamic>> patch(
     String path,
     Map<String, dynamic> body, {
     bool requiresAuth = false,
-  }) => request(method: 'PATCH', path: path, body: body, requiresAuth: requiresAuth);
+  }) => request(
+    method: 'PATCH',
+    path: path,
+    body: body,
+    requiresAuth: requiresAuth,
+  );
 
   // ─── Token helpers ──────────────────────────────────────────────────────────
   static Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
   }) async {
+    _inMemoryToken = accessToken; // 👈 always update in-memory first
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', accessToken);
     await prefs.setString('refresh_token', refreshToken);
   }
 
   static Future<void> clearTokens() async {
+    _inMemoryToken = null; // 👈 clear in-memory too
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('access_token');
     await prefs.remove('refresh_token');
   }
 
   static Future<String?> _getAccessToken() async {
+    // Use in-memory token first — avoids stale SharedPreferences reads
+    if (_inMemoryToken != null) return _inMemoryToken;
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('access_token');
   }
@@ -151,31 +172,33 @@ class ApiService {
   }
 
   Future<LoginResponseModel> restoreSession({
-  required String accessToken,
-  required String refreshToken,
-}) async {
-  final response = await post('/auth/refresh', {
-    'refreshToken': refreshToken,
-  });
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    final response = await post('/auth/refresh', {
+      'refreshToken': refreshToken,
+    });
 
-  await ApiService.saveTokens(
-    accessToken: response['accessToken'] as String,
-    refreshToken: response['refreshToken'] as String,
-  );
+    // Save new tokens — updates in-memory immediately
+    await ApiService.saveTokens(
+      accessToken: response['accessToken'] as String,
+      refreshToken: response['refreshToken'] as String,
+    );
 
-  final profileResponse = await get('/auth/me', requiresAuth: true);
+    // Fetch profile with the new token
+    final profileResponse = await get('/auth/me', requiresAuth: true);
 
-  return LoginResponseModel(
-    accessToken: response['accessToken'] as String,
-    refreshToken: response['refreshToken'] as String,
-    expiresAt: response['expiresAt'] as int?,
-    user: AuthUserModel(
-      id: profileResponse['id'] as String,
-      email: profileResponse['email'] as String,
-      profile: ProfileModel.fromJson(profileResponse),
-    ),
-  );
-}
+    return LoginResponseModel(
+      accessToken: response['accessToken'] as String,
+      refreshToken: response['refreshToken'] as String,
+      expiresAt: response['expiresAt'] as int?,
+      user: AuthUserModel(
+        id: profileResponse['id'] as String,
+        email: profileResponse['email'] as String,
+        profile: ProfileModel.fromJson(profileResponse),
+      ),
+    );
+  }
 }
 
 // ─── ApiException ────────────────────────────────────────────────────────────
@@ -188,6 +211,7 @@ class ApiException implements Exception {
   @override
   String toString() => message;
 }
+
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 final apiServiceProvider = Provider<ApiService>((ref) => ApiService());
