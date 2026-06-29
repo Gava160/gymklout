@@ -10,6 +10,8 @@ import 'package:gymklout/app-settings/custom_notification.dart';
 import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
+import 'package:gymklout/providers/auth_provider.dart';
+import 'package:gymklout/screens/authentication/signin/signin.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 import 'package:gymklout/services/api_service.dart';
 import 'package:image_picker/image_picker.dart';
@@ -159,7 +161,7 @@ class _ProfileAvatarSetScreenState
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('access_token') ?? '';
 
-      final uri = Uri.parse('${ApiService.baseUrl}/api/v1/profiles/avatar');
+      final uri = Uri.parse('${ApiService.baseUrl}/profiles/avatar');
       final request = http.MultipartRequest('POST', uri)
         ..headers['Authorization'] = 'Bearer $token'
         ..files.add(
@@ -438,9 +440,16 @@ class _ProfileAvatarSetScreenState
                           icon: FluentIcons.arrow_left_12_regular,
                           backgroundColor: AppDefaults.textColor.withAlpha(40),
                           foregroundColor: AppDefaults.textColor,
-                          onSubmit: () {
+                          onSubmit: () async {
                             HapticFeedback.lightImpact();
-                            Navigator.of(context).pop();
+                            await ref.read(authProvider.notifier).logout();
+                            if (!context.mounted) return;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (_) => const SignInScreen(),
+                              ),
+                              (route) => false,
+                            );
                           },
                         ),
                       ),
