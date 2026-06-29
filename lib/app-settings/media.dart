@@ -7,6 +7,8 @@ class AppMedia {
   static const logoIconColored = "$_baseImage/logo/logo-icon-colored.png";
   static const logoIconWhite = "$_baseImage/logo/logo-icon-light.png";
 
+  static const logoTextWithCaption = "$_baseImage/logo/gymklout-logo-black-text.png";
+
   static const onboarding1 = "$_baseImage/onboarding-1.png";
   static const onboarding2 = "$_baseImage/onboarding-2.png";
   static const onboarding3 = "$_baseImage/onboarding-3.png";
@@ -18,4 +20,9 @@ class AppMedia {
 
   static const gymDumbellColoredIcon = "$_baseImage/vectors/gym_dumbell_icon_colored.png";
   static const gymDumbellIcon = "$_baseImage/vectors/gym_dumbell_icon.png";
+
+  static const updateAppBG1 = "$_baseImage/update-app-bg-1.jpg";
+  static const updateAppBG2 = "$_baseImage/update-app-bg-2.jpg";
+
+  
 }

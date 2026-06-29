@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/custom_notification.dart';
 import 'package:gymklout/common/appbar.dart';
+import 'package:gymklout/common/bottom-sheets/open_update_block.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
@@ -385,7 +386,8 @@ class _ProfileAvatarSetScreenState
                         isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          _uploadAvatar();
+                          // _uploadAvatar();
+                          openUpdateSheet(context);
                         },
                       ),
                     ),
