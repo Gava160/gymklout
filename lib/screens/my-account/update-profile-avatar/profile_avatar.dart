@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -141,6 +142,7 @@ class _ProfileAvatarSetScreenState
 
   // ─── Upload to backend ────────────────────────────────────────────────────────
   Future<void> _uploadAvatar() async {
+    final profile = ref.read(currentProfileProvider);
     if (_croppedBytes == null) {
       showTopAlert(
         context,
@@ -185,9 +187,13 @@ class _ProfileAvatarSetScreenState
 
           // --------
           ref.invalidate(currentProfileProvider);
+          await CachedNetworkImage.evictFromCache(profile?.avatarUrl ?? "");
+
           if (widget.popAfterSuccess == true) {
+            if (!mounted) return;
             Navigator.of(context).pop();
           } else {
+            if (!mounted) return;
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const BottomNavBarController()),
               (route) => false,
