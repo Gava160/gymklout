@@ -9,7 +9,6 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_workout_frequency.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectGymExperienceScreen extends ConsumerStatefulWidget {
   const CollectGymExperienceScreen({
@@ -155,22 +154,7 @@ class _CollectGymExperienceScreenState
                         isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          setState(() => isSubmitting = true);
-                          saveProfile(
-                            ref: ref,
-                            context: context,
-                            selectedGender: widget.gender,
-                            selectedAge: widget.age,
-                            selectedWeight: widget.weight,
-                            selectedTargetWeight: widget.targetWeight,
-                            selectedHeight: widget.height.toDouble(),
-                            selectedActivityLevel: null,
-                            selectedFitnessLevel: fitnessLevelToBackendValue(selectedLevel),
-                            selectedGoal: goalToBackendValue(widget.gymGoal),
-                            onDone: () =>
-                                      setState(() => isSubmitting = false),
-                            nextScreen: () {
-                              Navigator.of(context).push(
+                          Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => CollectWorkoutFrequencyScreen(
                                     gender: widget.gender,
@@ -183,8 +167,6 @@ class _CollectGymExperienceScreenState
                                   ),
                                 ),
                               );
-                            },
-                          );
                         },
                       ),
                     ),

@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_height.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/process_appbar.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/weight_selector.dart';
 
 class CollectTargetWeightScreen extends ConsumerStatefulWidget {
@@ -49,7 +48,11 @@ class _CollectWeightScreenState
         child: SafeArea(
           child: Padding(
             padding: AppDefaults.defaultPadding,
-            child: CustomAppBar(title: "", actions: []),
+            child: ProcessAppbar(
+              title: "",
+              progressValue: 47,
+              progressPreviousValue: 35,
+            ),
           ),
         ),
       ),
@@ -144,18 +147,7 @@ class _CollectWeightScreenState
                         isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          setState(() => isSubmitting = true);
-                          saveProfile(
-                            ref: ref,
-                            context: context,
-                            selectedGender: widget.gender,
-                            selectedAge: widget.age,
-                            selectedWeight: widget.weight,
-                            selectedTargetWeight: selectedTargetWeight,
-                            onDone: () =>
-                                      setState(() => isSubmitting = false),
-                            nextScreen: () {
-                              Navigator.of(context).push(
+                           Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => CollectHeightScreen(
                                     gender: widget.gender,
@@ -165,8 +157,6 @@ class _CollectWeightScreenState
                                   ),
                                 ),
                               );
-                            },
-                          );
                         },
                       ),
                     ),

@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gymklout/app-settings/app_data.dart';
 
 class CustomAlertModal {
   static Future<T?> show<T>({
@@ -28,22 +30,13 @@ class CustomAlertModal {
           onSecondary: onSecondary,
         ),
         transitionsBuilder: (_, animation, _, child) {
-          final scale = Tween<double>(
-            begin: .82,
-            end: 1,
-          ).animate(
-            CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutBack,
-            ),
+          final scale = Tween<double>(begin: .82, end: 1).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
           );
 
           return FadeTransition(
             opacity: animation,
-            child: ScaleTransition(
-              scale: scale,
-              child: child,
-            ),
+            child: ScaleTransition(scale: scale, child: child),
           );
         },
       ),
@@ -77,13 +70,8 @@ class _IOSAlertDialog extends StatelessWidget {
         children: [
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 12,
-                sigmaY: 12,
-              ),
-              child: Container(
-                color: Colors.black.withAlpha(65),
-              ),
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: Container(color: Colors.black.withAlpha(55)),
             ),
           ),
 
@@ -91,10 +79,7 @@ class _IOSAlertDialog extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(34),
               child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 25,
-                  sigmaY: 25,
-                ),
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                 child: Container(
                   width: 340,
                   padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
@@ -108,10 +93,17 @@ class _IOSAlertDialog extends StatelessWidget {
                       Text(
                         title,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style:
+                            AppDefaults.textStyle(
+                              context,
+                              fontWeight: FontWeight.w600,
+                            ).copyWith(
+                              color: Colors.black,
+                              fontSize:
+                                  (AppDefaults.textStyle(context).fontSize ??
+                                      21) +
+                                  4,
+                            ),
                       ),
 
                       const SizedBox(height: 16),
@@ -119,11 +111,16 @@ class _IOSAlertDialog extends StatelessWidget {
                       Text(
                         message,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey.shade800,
-                          height: 1.4,
-                        ),
+                        style:
+                            AppDefaults.textStyle(
+                              context,
+                              fontWeight: FontWeight.w400,
+                            ).copyWith(
+                              color: Colors.black.withAlpha(200),
+                              fontSize:
+                                  (AppDefaults.textStyle(context).fontSize ??
+                                  21),
+                            ),
                       ),
 
                       const SizedBox(height: 28),
@@ -133,13 +130,14 @@ class _IOSAlertDialog extends StatelessWidget {
                           Expanded(
                             child: FilledButton(
                               onPressed: () {
+                                HapticFeedback.selectionClick();
                                 Navigator.pop(context);
                                 onSecondary?.call();
                               },
                               style: FilledButton.styleFrom(
                                 backgroundColor: Colors.grey.shade300,
                                 foregroundColor: Colors.black,
-                                minimumSize: const Size.fromHeight(56),
+                                minimumSize: const Size.fromHeight(46),
                                 shape: const StadiumBorder(),
                                 elevation: 0,
                               ),
@@ -152,12 +150,16 @@ class _IOSAlertDialog extends StatelessWidget {
                           Expanded(
                             child: FilledButton(
                               onPressed: () {
+                                HapticFeedback.selectionClick();
                                 Navigator.pop(context);
                                 onPrimary?.call();
                               },
                               style: FilledButton.styleFrom(
-                                minimumSize: const Size.fromHeight(56),
+                                minimumSize: const Size.fromHeight(46),
                                 shape: const StadiumBorder(),
+                                backgroundColor: AppDefaults.primaryColor,
+                                foregroundColor: Colors.white,
+
                                 elevation: 0,
                               ),
                               child: Text(primaryText),
@@ -176,18 +178,3 @@ class _IOSAlertDialog extends StatelessWidget {
     );
   }
 }
-
-// IOSAlert.show(
-//   context: context,
-//   title: 'Allow "R↧Download" to connect to "snapvid.net"?',
-//   message:
-//       'This might allow "R↧Download" to share content with "snapvid.net" and potentially other websites.',
-//   primaryText: 'Allow',
-//   secondaryText: "Don't Allow",
-//   onPrimary: () {
-//     debugPrint('Allowed');
-//   },
-//   onSecondary: () {
-//     debugPrint('Denied');
-//   },
-// );

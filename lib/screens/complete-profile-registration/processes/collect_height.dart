@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_goal.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/num_picker_drum.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/process_appbar.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectHeightScreen extends ConsumerStatefulWidget {
   const CollectHeightScreen({
@@ -44,7 +43,11 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
         child: SafeArea(
           child: Padding(
             padding: AppDefaults.defaultPadding,
-            child: CustomAppBar(title: "", actions: []),
+            child: ProcessAppbar(
+              title: "",
+              progressValue: 65,
+              progressPreviousValue: 47,
+            ),
           ),
         ),
       ),
@@ -138,19 +141,7 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
                         isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          setState(() => isSubmitting = true);
-                          saveProfile(
-                            ref: ref,
-                            context: context,
-                            selectedGender: widget.gender,
-                            selectedAge: widget.age,
-                            selectedWeight: widget.weight,
-                            selectedTargetWeight: widget.targetWeight,
-                            selectedHeight: selectedHeight.toDouble(),
-                            onDone: () =>
-                                      setState(() => isSubmitting = false),
-                            nextScreen: () {
-                              Navigator.of(context).push(
+                           Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => CollectGoalScreen(
                                     gender: widget.gender,
@@ -161,8 +152,6 @@ class _CollectHeightScreenState extends ConsumerState<CollectHeightScreen> {
                                   ),
                                 ),
                               );
-                            },
-                          );
                         },
                       ),
                     ),

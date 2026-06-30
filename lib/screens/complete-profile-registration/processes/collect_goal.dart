@@ -9,7 +9,6 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_gym_experience.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectGoalScreen extends ConsumerStatefulWidget {
   const CollectGoalScreen({
@@ -151,20 +150,7 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
                         isLoading: isSubmitting,
                         onSubmit: () {
                           HapticFeedback.selectionClick();
-                          setState(() => isSubmitting = true);
-                          saveProfile(
-                            ref: ref,
-                            context: context,
-                            selectedGender: widget.gender,
-                            selectedAge: widget.age,
-                            selectedWeight: widget.weight,
-                            selectedTargetWeight: widget.targetWeight,
-                            selectedHeight: widget.height.toDouble(),
-                            selectedGoal: goalToBackendValue(selectedGoal),
-                            onDone: () =>
-                                      setState(() => isSubmitting = false),
-                            nextScreen: () {
-                              Navigator.of(context).push(
+                           Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => CollectGymExperienceScreen(
                                     gender: widget.gender,
@@ -176,8 +162,6 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
                                   ),
                                 ),
                               );
-                            },
-                          );
                         },
                       ),
                     ),

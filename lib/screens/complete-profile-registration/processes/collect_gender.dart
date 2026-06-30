@@ -7,8 +7,8 @@ import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_age.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/gender_selector.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/process_appbar.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
-import 'package:gymklout/screens/complete-profile-registration/widgets/save_details.dart';
 
 class CollectGenderScreen extends ConsumerStatefulWidget {
   const CollectGenderScreen({super.key});
@@ -38,7 +38,11 @@ class _CollectGenderScreenState extends ConsumerState<CollectGenderScreen> {
         child: SafeArea(
           child: Padding(
             padding: AppDefaults.defaultPadding,
-            child: CustomAppBar(title: "", actions: []),
+            child: ProcessAppbar(
+              title: "",
+              progressValue: 10,
+              progressPreviousValue: 0,
+            ),
           ),
         ),
       ),
@@ -128,22 +132,12 @@ class _CollectGenderScreenState extends ConsumerState<CollectGenderScreen> {
                             ? null
                             : () {
                                 HapticFeedback.selectionClick();
-                                setState(() => isSubmitting = true);
-                                saveProfile(
-                                  ref: ref,
-                                  context: context,
-                                  selectedGender: selectedGender,
-                                  onDone: () =>
-                                      setState(() => isSubmitting = false),
-                                  nextScreen: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => CollectAgeScreen(
-                                          gender: selectedGender,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => CollectAgeScreen(
+                                      gender: selectedGender,
+                                    ),
+                                  ),
                                 );
                               },
                       ),
