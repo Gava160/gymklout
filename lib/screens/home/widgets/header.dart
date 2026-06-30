@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/providers/auth_provider.dart';
+import 'package:iconsax/iconsax.dart';
 
 class Header extends ConsumerWidget {
   const Header({super.key});
@@ -38,49 +39,62 @@ class Header extends ConsumerWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                "Hello ",
-                style:
-                    AppDefaults.headLiner1(
-                      context,
-                      fontWeight: FontWeight.w200,
-                    ).copyWith(
-                      color: getDefaultHeaderColor(context),
-                      fontSize:
-                          (AppDefaults.headLiner1(context).fontSize ?? 21) + 15,
-                    ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Hello ",
+                    style:
+                        AppDefaults.headLiner1(
+                          context,
+                          fontWeight: FontWeight.w200,
+                        ).copyWith(
+                          color: getDefaultHeaderColor(context),
+                          fontSize:
+                              (AppDefaults.headLiner1(context).fontSize ?? 21) +
+                              15,
+                        ),
+                  ),
+                  Text(
+                    toTitleCase(profile?.fullName.split(' ').last ?? ''),
+                    style:
+                        AppDefaults.headLiner1(
+                          context,
+                          fontWeight: FontWeight.w800,
+                        ).copyWith(
+                          color: getDefaultHeaderColor(context),
+                          fontSize:
+                              (AppDefaults.headLiner1(context).fontSize ?? 21) +
+                              15,
+                        ),
+                  ),
+                ],
               ),
               Text(
-                toTitleCase(profile?.fullName.split(' ').last ?? ''),
-                style:
-                    AppDefaults.headLiner1(
-                      context,
-                      fontWeight: FontWeight.w800,
-                    ).copyWith(
-                      color: getDefaultHeaderColor(context),
-                      fontSize:
-                          (AppDefaults.headLiner1(context).fontSize ?? 21) + 15,
-                    ),
+                getGreeting(),
+                style: AppDefaults.textStyle(context).copyWith(
+                  color: AppDefaults.textStyle(context).color,
+                  fontWeight: FontWeight.w100,
+                  fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 3,
+                ),
               ),
             ],
           ),
-          Text(
-            getGreeting(),
-            style: AppDefaults.textStyle(context).copyWith(
-              color: AppDefaults.textStyle(context).color,
-              fontWeight: FontWeight.w100,
-              fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) + 3,
-            ),
-          ),
+          Spacer(),
+          Container(
+            padding: EdgeInsets.only(top: 6),
+            child: Icon(Iconsax.notification, size: 35,)),
+            SizedBox(width: 16,)
         ],
       ),
     );

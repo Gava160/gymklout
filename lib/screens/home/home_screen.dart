@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/screens/home/sections/recommended_gyms_section.dart';
@@ -17,9 +19,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      extendBodyBehindAppBar: true,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kTextTabBarHeight + 45),
-        child: SafeArea(child: Header()),
+        preferredSize: const Size.fromHeight(100),
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              padding: EdgeInsets.only(bottom: 5),
+              child: SafeArea(child: Header()),
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: AppDefaults.defaultPadding,
@@ -31,17 +42,16 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 NoGymMembershipWidget(
                   title: "Find Gym Membership",
-                  desc: "You need a gym membership to unlock all the features of ${AppDefaults.appName}",
-                  onClick: () {
-
-                  },
+                  desc:
+                      "You need a gym membership to unlock all the features of ${AppDefaults.appName}",
+                  onClick: () {},
                 ),
                 SizedBox(height: 20),
                 ReuseableBlockHeader(
                   title: "Recommended for you",
                   actionText: "",
                 ),
-                const RecommendedGymsSection(maxItems: 5)
+                const RecommendedGymsSection(maxItems: 5),
               ],
             ),
           ),
