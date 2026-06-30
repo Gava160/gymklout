@@ -142,7 +142,9 @@ class _ProfileAvatarSetScreenState
 
   // ─── Upload to backend ────────────────────────────────────────────────────────
   Future<void> _uploadAvatar() async {
-    final profile = ref.read(currentProfileProvider);
+    final oldAvatarUrl = ref.read(authProvider).value is AuthAuthenticated
+      ? (ref.read(authProvider).value as AuthAuthenticated).data.user.profile?.avatarUrl
+      : null;
     if (_croppedBytes == null) {
       showTopAlert(
         context,
@@ -186,8 +188,9 @@ class _ProfileAvatarSetScreenState
           );
 
           // --------
-          ref.invalidate(currentProfileProvider);
-          await CachedNetworkImage.evictFromCache(profile?.avatarUrl ?? "");
+          
+          await CachedNetworkImage.evictFromCache(oldAvatarUrl ?? "");
+          await ref.read(authProvider.notifier).refreshProfile();
 
           if (widget.popAfterSuccess == true) {
             if (!mounted) return;

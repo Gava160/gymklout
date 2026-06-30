@@ -29,13 +29,11 @@ class CustomAppBar extends StatelessWidget {
       child: AppBar(
         title: Text(
           title ?? "",
-          style: AppDefaults.headLine3(context).copyWith(
-            color: isDark
-                ? AppDefaults.white
-                : AppDefaults.headLine3(context).color,
-            fontSize: (AppDefaults.textStyle((context)).fontSize ?? 16) + 2,
-            fontWeight: FontWeight.w900,
-          ),
+          style: AppDefaults.headLiner1(context, fontWeight: FontWeight.w600)
+              .copyWith(
+                color: getDefaultHeaderColor(context, lightAlpha: 230),
+                fontSize: (AppDefaults.headLiner1(context).fontSize ?? 21) - 4,
+              ),
         ),
         backgroundColor: backgroundColor ?? Colors.transparent,
         automaticallyImplyLeading: false,

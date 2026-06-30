@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/common/bottom-sheets/open_update_avatar.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/authentication/signin/signin.dart';
 import 'package:gymklout/screens/complete-profile-registration/start_process.dart';
+import 'package:gymklout/screens/my-account/edit-profile/edit_profile.dart';
 import 'package:gymklout/screens/my-account/widgets/account_todo_widget.dart';
 import 'package:gymklout/screens/my-account/widgets/link_wrapper.dart';
 import 'package:gymklout/screens/my-account/widgets/profile_header.dart';
@@ -36,7 +36,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ProfileHeaderWidget(
-                  profileAvatar: profile?.avatarUrl??"",
+                  profileAvatar: profile?.avatarUrl ?? "",
                   joined: timeAgo(profile!.createdAt),
                   anyMembership: true,
                   showTag: true,
@@ -77,7 +77,10 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                   borderBottom: true,
                   borderTop: true,
                   onClick: () {
-                    openUpdateAvatarSheet(context, popAfterSuccess: true);
+                    HapticFeedback.selectionClick();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => EditProfileScreen()),
+                    );
                   },
                 ),
                 AccountLinkWrapper(

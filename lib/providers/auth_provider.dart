@@ -49,10 +49,9 @@ Future<AuthState> _checkExistingSession() async {
       accessToken: accessToken,
       refreshToken: refreshToken ?? '',
     );
-    print('NEW TOKEN: ${result.accessToken.substring(0, 30)}');
+    
     return AuthAuthenticated(result);
   } catch (e) {
-    print('RESTORE SESSION ERROR: $e');
     // Token expired or invalid — clear and send to signin
     await ApiService.clearTokens();
     return const AuthUnauthenticated();
@@ -139,6 +138,21 @@ Future<void> completeProfile({
   );
 
   // Refresh auth state so profile changes reflect everywhere
+  final prefs = await SharedPreferences.getInstance();
+  final accessToken = prefs.getString('access_token');
+  final refreshToken = prefs.getString('refresh_token');
+
+  if (accessToken != null) {
+    final result = await _authService.restoreSession(
+      accessToken: accessToken,
+      refreshToken: refreshToken ?? '',
+    );
+    state = AsyncData(AuthAuthenticated(result));
+  }
+}
+
+// ─── Refresh Profile ──────────────────────────────────────────────────────────
+Future<void> refreshProfile() async {
   final prefs = await SharedPreferences.getInstance();
   final accessToken = prefs.getString('access_token');
   final refreshToken = prefs.getString('refresh_token');
