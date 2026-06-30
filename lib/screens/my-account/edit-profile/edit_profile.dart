@@ -90,14 +90,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                         ),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.selectionClick();
-                                    openUpdateAvatarSheet(context, popAfterSuccess: true);
-                                  },
-                                  child: Positioned(
-                                    bottom: 10,
-                                    right: 5,
+                                Positioned(
+                                  bottom: 10,
+                                  right: 5,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.selectionClick();
+                                      openUpdateAvatarSheet(
+                                        context,
+                                        popAfterSuccess: true,
+                                      );
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 10,
