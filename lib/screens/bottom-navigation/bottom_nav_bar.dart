@@ -9,7 +9,7 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/app-settings/media.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/screens/club-partner/my_club_partner.dart';
-import 'package:gymklout/screens/find-club/find_gym_center.dart';
+import 'package:gymklout/screens/find-gym-center/find_gym_center.dart';
 import 'package:gymklout/screens/home/home_screen.dart';
 import 'package:gymklout/screens/my-account/my_account.dart';
 import 'package:iconsax/iconsax.dart';

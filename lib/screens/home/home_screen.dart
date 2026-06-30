@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/screens/find-gym-center/find_gym_center.dart';
 import 'package:gymklout/screens/home/sections/recommended_gyms_section.dart';
 import 'package:gymklout/screens/home/widgets/header.dart';
 import 'package:gymklout/screens/home/widgets/no_gym_membership.dart';
@@ -41,10 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 NoGymMembershipWidget(
-                  title: "Find Gym Membership",
+                  title: "Find Gym Center",
                   desc:
                       "You need a gym membership to unlock all the features of ${AppDefaults.appName}",
-                  onClick: () {},
+                  onClick: () {
+                    HapticFeedback.selectionClick();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => FindGymCenterScreen()),
+                    );
+                  },
                 ),
                 SizedBox(height: 20),
                 ReuseableBlockHeader(

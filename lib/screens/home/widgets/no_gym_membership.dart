@@ -68,7 +68,7 @@ class NoGymMembershipWidget extends StatelessWidget {
                     ),
               ),
               icon: Icon(Iconsax.search_normal, size: 20),
-              onSubmit: () {},
+              onSubmit: onClick,
             ),
           ),
         ],
