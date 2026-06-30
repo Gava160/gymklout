@@ -45,7 +45,7 @@ class _RecommendedGymsSectionState
     if (_checkingPermission) {
       return SizedBox(
         height: MediaQuery.of(context).size.height * 0.50,
-        child: const Center(child: CircularProgressIndicator()),
+        child:  Center(child: showSpinner()),
       );
     }
 
@@ -70,7 +70,7 @@ class _GymsCarousel extends ConsumerWidget {
     return nearbyGymsAsync.when(
       loading: () => SizedBox(
         height: MediaQuery.of(context).size.height * 0.50,
-        child: const Center(child: CircularProgressIndicator()),
+        child:  Center(child: showSpinner()),
       ),
       error: (error, stackTrace) => _ErrorState(
         message: error is LocationException

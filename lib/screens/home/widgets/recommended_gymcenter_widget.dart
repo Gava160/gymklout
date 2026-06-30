@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/models/index.dart';
@@ -62,14 +63,18 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
           double scale = (1 - (distance * 0.12)).clamp(0.88, 1.0);
 
           final gym = _items[index];
-          final isClosest = widget.closestGymId != null &&
-              gym.id == widget.closestGymId;
+          final isClosest =
+              widget.closestGymId != null && gym.id == widget.closestGymId;
 
           return Transform.scale(
             scale: scale,
             child: GestureDetector(
               onTap: widget.onTap != null ? () => widget.onTap!(gym) : null,
-              child: _GymCard(gym: gym, isClosest: isClosest, isFirst: index == 0),
+              child: _GymCard(
+                gym: gym,
+                isClosest: isClosest,
+                isFirst: index == 0,
+              ),
             ),
           );
         },
@@ -93,9 +98,16 @@ class _GymCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasImage = gym.coverUrl != null || gym.logoUrl != null;
-    final imageProvider = hasImage
-        ? NetworkImage(gym.coverUrl ?? gym.logoUrl!) as ImageProvider
-        : const AssetImage('assets/images/gym_placeholder.png');
+    // final imageProvider = hasImage
+    //     ? NetworkImage(gym.coverUrl ?? gym.logoUrl!) as ImageProvider
+    //     : const AssetImage('assets/images/gym_placeholder.png');
+
+   final imageProvider = hasImage
+    ? CachedNetworkImageProvider(
+        gym.coverUrl ?? gym.logoUrl!,
+        cacheKey: gym.coverUrl ?? gym.logoUrl!,
+      ) as ImageProvider
+    : const AssetImage('assets/images/gym_placeholder.png');
 
     final locationLine = [
       if (gym.city != null) gym.city,
@@ -132,7 +144,10 @@ class _GymCard extends StatelessWidget {
             // tag — CLOSEST TO YOU or VERIFIED
             if (isClosest || gym.isVerified)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppDefaults.primaryColor,
                   borderRadius: BorderRadius.circular(6),
@@ -196,8 +211,11 @@ class _GymCard extends StatelessWidget {
             if (gym.address != null)
               Row(
                 children: [
-                  Icon(Icons.location_on_outlined,
-                      color: AppDefaults.white.withAlpha(180), size: 18),
+                  Icon(
+                    Icons.location_on_outlined,
+                    color: AppDefaults.white.withAlpha(180),
+                    size: 18,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
