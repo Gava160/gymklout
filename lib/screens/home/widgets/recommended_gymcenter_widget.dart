@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/app-settings/media.dart';
+import 'package:gymklout/models/index.dart';
 
 class RecommendedGymCenters extends StatefulWidget {
-  const RecommendedGymCenters({super.key});
+  final List<GymModel> gyms;
+  final int maxItems;
+  final String? closestGymId;
+  final void Function(GymModel gym)? onTap;
+
+  const RecommendedGymCenters({
+    super.key,
+    required this.gyms,
+    this.maxItems = 5,
+    this.closestGymId,
+    this.onTap,
+  });
 
   @override
   State<RecommendedGymCenters> createState() => _RecommendedGymCentersState();
@@ -13,39 +24,8 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
   late PageController _pageController;
   double _currentPage = 0;
 
-  // dummy data — replace with your real model later
-  final List<Map<String, String>> _items = [
-    {
-      'image': AppMedia.onboarding3, // replace with your images
-      'tag': 'CLOSEST TO YOU',
-      'category': 'AERIAL WORKOUTS',
-      'title': 'Lift it again',
-      'subtitle': 'Upper Body • Weights',
-      'duration': 'Beginner • 24 min',
-      'trainerName': 'Jane Doe',
-      'trainerRole': 'Aerial Workouts Trainer',
-    },
-    {
-      'image': AppMedia.onboarding2,
-      'tag': 'HOT',
-      'category': 'STRENGTH',
-      'title': 'Power Up',
-      'subtitle': 'Full Body • Barbell',
-      'duration': 'Intermediate • 45 min',
-      'trainerName': 'John Smith',
-      'trainerRole': 'Strength Coach',
-    },
-    {
-      'image': AppMedia.onboarding1,
-      'tag': 'NEW',
-      'category': 'CARDIO',
-      'title': 'Burn Zone',
-      'subtitle': 'Lower Body • HIIT',
-      'duration': 'Advanced • 30 min',
-      'trainerName': 'Sara Lee',
-      'trainerRole': 'Cardio Specialist',
-    },
-  ];
+  List<GymModel> get _items =>
+      widget.gyms.take(widget.maxItems).toList(growable: false);
 
   @override
   void initState() {
@@ -66,6 +46,10 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
 
   @override
   Widget build(BuildContext context) {
+    if (_items.isEmpty) {
+      return const SizedBox.shrink(); // or an empty-state widget
+    }
+
     final double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
       height: screenHeight * 0.50,
@@ -77,9 +61,16 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
           double distance = (_currentPage - index).abs();
           double scale = (1 - (distance * 0.12)).clamp(0.88, 1.0);
 
+          final gym = _items[index];
+          final isClosest = widget.closestGymId != null &&
+              gym.id == widget.closestGymId;
+
           return Transform.scale(
             scale: scale,
-            child: _GymCard(item: _items[index], isFirst: index == 0),
+            child: GestureDetector(
+              onTap: widget.onTap != null ? () => widget.onTap!(gym) : null,
+              child: _GymCard(gym: gym, isClosest: isClosest, isFirst: index == 0),
+            ),
           );
         },
       ),
@@ -89,28 +80,40 @@ class _RecommendedGymCentersState extends State<RecommendedGymCenters> {
 
 // The Card Widget
 class _GymCard extends StatelessWidget {
-  final Map<String, String> item;
+  final GymModel gym;
+  final bool isClosest;
   final bool isFirst;
-  const _GymCard({required this.item, this.isFirst = false});
+
+  const _GymCard({
+    required this.gym,
+    required this.isClosest,
+    this.isFirst = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = gym.coverUrl != null || gym.logoUrl != null;
+    final imageProvider = hasImage
+        ? NetworkImage(gym.coverUrl ?? gym.logoUrl!) as ImageProvider
+        : const AssetImage('assets/images/gym_placeholder.png');
+
+    final locationLine = [
+      if (gym.city != null) gym.city,
+      if (gym.state != null) gym.state,
+    ].whereType<String>().join(', ');
+
     return Container(
       margin: EdgeInsets.only(
-        left: isFirst ? 0 : 8, // 👈 no left margin on first card
+        left: isFirst ? 0 : 8,
         right: 0,
         top: 10,
         bottom: 10,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: AssetImage(item['image']!),
-          fit: BoxFit.cover,
-        ),
+        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
       ),
       child: Container(
-        // dark overlay
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
@@ -126,91 +129,89 @@ class _GymCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // NEW / HOT tag
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppDefaults.primaryColor,
-                borderRadius: BorderRadius.circular(6),
+            // tag — CLOSEST TO YOU or VERIFIED
+            if (isClosest || gym.isVerified)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppDefaults.primaryColor,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  isClosest ? 'CLOSEST TO YOU' : 'VERIFIED',
+                  style: AppDefaults.textStyle(
+                    context,
+                    fontWeight: FontWeight.w600,
+                  ).copyWith(color: AppDefaults.white, fontSize: 11),
+                ),
               ),
-              child: Text(
-                item['tag']!,
-                style: AppDefaults.textStyle(
-                  context,
-                  fontWeight: FontWeight.w600,
-                ).copyWith(color: AppDefaults.white, fontSize: 11),
-              ),
-            ),
 
             const Spacer(),
 
-            // category
-            Text(
-              item['category']!,
-              style: AppDefaults.textStyle(context).copyWith(
-                color: AppDefaults.white.withAlpha(180),
-                fontSize: 11,
-                letterSpacing: 1.5,
+            // first amenity as category-style label
+            if (gym.amenities.isNotEmpty)
+              Text(
+                gym.amenities.first.toUpperCase(),
+                style: AppDefaults.textStyle(context).copyWith(
+                  color: AppDefaults.white.withAlpha(180),
+                  fontSize: 11,
+                  letterSpacing: 1.5,
+                ),
               ),
-            ),
             const SizedBox(height: 4),
 
-            // title
+            // gym name
             Text(
-              item['title']!,
+              gym.name,
               style: AppDefaults.headLiner1(
                 context,
                 fontWeight: FontWeight.w800,
               ).copyWith(color: AppDefaults.white, fontSize: 22),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
 
-            // subtitle + duration
-            Text(
-              item['subtitle']!,
-              style: AppDefaults.textStyle(
-                context,
-              ).copyWith(color: AppDefaults.white),
-            ),
-            Text(
-              item['duration']!,
-              style: AppDefaults.textStyle(
-                context,
-              ).copyWith(color: AppDefaults.white),
-            ),
+            // city/state
+            if (locationLine.isNotEmpty)
+              Text(
+                locationLine,
+                style: AppDefaults.textStyle(
+                  context,
+                ).copyWith(color: AppDefaults.white),
+              ),
+
+            // distance
+            if (gym.distanceLabel.isNotEmpty)
+              Text(
+                gym.distanceLabel,
+                style: AppDefaults.textStyle(
+                  context,
+                ).copyWith(color: AppDefaults.white),
+              ),
+
             const SizedBox(height: 12),
 
-            // trainer row
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage(
-                    item['image']!,
-                  ), // replace with trainer image
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item['trainerName']!,
-                      style: AppDefaults.textStyle(
-                        context,
-                        fontWeight: FontWeight.w600,
-                      ).copyWith(color: AppDefaults.white),
-                    ),
-                    Text(
-                      item['trainerRole']!,
+            // address row (replaces trainer row — no member data on this model yet)
+            if (gym.address != null)
+              Row(
+                children: [
+                  Icon(Icons.location_on_outlined,
+                      color: AppDefaults.white.withAlpha(180), size: 18),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      gym.address!,
                       style: AppDefaults.textStyle(context).copyWith(
                         color: AppDefaults.white.withAlpha(180),
-                        fontSize: 11,
+                        fontSize: 12,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),

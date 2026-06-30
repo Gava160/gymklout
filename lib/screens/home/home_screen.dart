@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gymklout/app-settings/app_data.dart';
+import 'package:gymklout/screens/home/sections/recommended_gyms_section.dart';
 import 'package:gymklout/screens/home/widgets/header.dart';
 import 'package:gymklout/screens/home/widgets/no_gym_membership.dart';
-import 'package:gymklout/screens/home/widgets/recommended_gymcenter_widget.dart';
 import 'package:gymklout/screens/home/widgets/reuseable_header.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: "Recommended for you",
                   actionText: "",
                 ),
-                RecommendedGymCenters(),
+                const RecommendedGymsSection(maxItems: 5)
               ],
             ),
           ),
