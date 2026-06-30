@@ -91,6 +91,14 @@ class LocationService {
 
     return permission == LocationPermission.denied ? false : true;
   }
+
+  Future<bool> hasPermission() async {
+  final permission = await Geolocator.checkPermission();
+  return permission == LocationPermission.always ||
+      permission == LocationPermission.whileInUse;
+}
+
+
 }
 
 final locationServiceProvider = Provider<LocationService>(
