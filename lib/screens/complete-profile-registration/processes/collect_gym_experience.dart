@@ -8,6 +8,7 @@ import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_workout_frequency.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/process_appbar.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
 class CollectGymExperienceScreen extends ConsumerStatefulWidget {
@@ -49,7 +50,11 @@ class _CollectGymExperienceScreenState
         child: SafeArea(
           child: Padding(
             padding: AppDefaults.defaultPadding,
-            child: CustomAppBar(title: "", actions: []),
+            child:  ProcessAppbar(
+              title: "",
+              progressValue: 84,
+              progressPreviousValue: 75,
+            ),
           ),
         ),
       ),

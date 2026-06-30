@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
-import 'package:gymklout/common/appbar.dart';
 import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/screens/complete-profile-registration/processes/collect_gym_experience.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/custom_text_selector.dart';
+import 'package:gymklout/screens/complete-profile-registration/widgets/process_appbar.dart';
 import 'package:gymklout/screens/complete-profile-registration/widgets/process_header.dart';
 
 class CollectGoalScreen extends ConsumerStatefulWidget {
@@ -44,7 +44,11 @@ class _CollectGoalScreenState extends ConsumerState<CollectGoalScreen> {
         child: SafeArea(
           child: Padding(
             padding: AppDefaults.defaultPadding,
-            child: CustomAppBar(title: "", actions: []),
+            child: ProcessAppbar(
+              title: "",
+              progressValue: 75,
+              progressPreviousValue: 65,
+            ),
           ),
         ),
       ),
