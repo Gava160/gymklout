@@ -63,7 +63,7 @@ class _BottomNavBarControllerState
                 backgroundColor: Colors.transparent,
                 color: isDark ? AppDefaults.white : AppDefaults.black,
                 activeColor: AppDefaults.white,
-                tabBackgroundColor: AppDefaults.primaryColor.withAlpha(150),
+                tabBackgroundColor: AppDefaults.primaryColor,
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 onTabChange: (index) => _selectNavBar(index),
                 tabs: [

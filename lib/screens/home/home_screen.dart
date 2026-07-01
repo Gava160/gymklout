@@ -37,25 +37,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: membershipAsync.when(
         loading: () => Center(child: showSpinner()),
         error: (e, _) {
-          print(e);
           return Text('Error: $e');
         },
         data: (state) {
           if (state is MembershipNone) {
-            print("Membership loaded: ");
             return NoGymMembershipHomeScreen(); // 👈 return
           }
           if (state is MembershipLoaded) {
-
-            print("Membership loaded: ${state.current.gym?.name}, Status: ${state.sessionStatus}");
             final membership = state.current;
             final status = state.sessionStatus;
-            return HomeMembershipWidget(
-              membership: membership,
-              status: status,
-            );
+            return HomeMembershipWidget(membership: membership, status: status);
           }
-           print("Membership loaded: ");
 
           return const SizedBox.shrink(); // 👈 return
         },
