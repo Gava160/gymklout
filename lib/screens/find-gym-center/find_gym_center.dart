@@ -79,12 +79,13 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
                 overlayColor: WidgetStateProperty.all(Colors.transparent),
                 dividerColor: Colors.transparent,
                 indicatorSize: TabBarIndicatorSize.tab,
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(
-                    color: darken(AppDefaults.primaryColor, 0.3),
-                    width: 7,
-                  ),
-                ),
+                // indicator: UnderlineTabIndicator(
+                //   borderSide: BorderSide(
+                //     color: darken(AppDefaults.primaryColor, 0.3),
+                //     width: 7,
+                //   ),
+                // ),
+                indicator: MyTabIndicator(),
                 labelColor: Colors.white,
                 unselectedLabelColor: AppDefaults.textColor,
                 tabs: [
@@ -108,7 +109,7 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
                             ).copyWith(
                               fontSize:
                                   (AppDefaults.textStyle(context).fontSize ??
-                                      21),
+                                  21),
                             ),
                       ),
                     ),
@@ -133,7 +134,7 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
                             ).copyWith(
                               fontSize:
                                   (AppDefaults.textStyle(context).fontSize ??
-                                      21),
+                                  21),
                             ),
                       ),
                     ),
@@ -143,13 +144,37 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
             ),
 
             // const SizedBox(height: 16),
-
             Expanded(
-              child: TabBarView(children: [GymCentersMapWidget(), GymCentersNearbyWidget()]),
+              child: TabBarView(
+                children: [GymCentersMapWidget(), GymCentersNearbyWidget()],
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class MyTabIndicator extends Decoration {
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return _MyPainter();
+  }
+}
+
+class _MyPainter extends BoxPainter {
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration config) {
+    LinearGradient(
+      colors: [Color(0xff232323), Color(0xff1A1A1A), Color(0xff101010)],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+    Border(
+      top: BorderSide(color: Colors.white10),
+      bottom: BorderSide(color: Colors.black54),
+    );
+    [BoxShadow(color: Colors.black54, blurRadius: 12, offset: Offset(0, 4))];
   }
 }

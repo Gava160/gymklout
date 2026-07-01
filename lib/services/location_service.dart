@@ -78,6 +78,10 @@ class LocationService {
     );
   }
 
+  Future<bool> requestPermission() async {
+    return _ensurePermission();
+  }
+
   Future<bool> _ensurePermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
@@ -93,12 +97,10 @@ class LocationService {
   }
 
   Future<bool> hasPermission() async {
-  final permission = await Geolocator.checkPermission();
-  return permission == LocationPermission.always ||
-      permission == LocationPermission.whileInUse;
-}
-
-
+    final permission = await Geolocator.checkPermission();
+    return permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse;
+  }
 }
 
 final locationServiceProvider = Provider<LocationService>(
