@@ -9,6 +9,8 @@ import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/models/membership_model.dart';
 import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/providers/membership_provider.dart';
+import 'package:gymklout/screens/home/sections/widgets/visits_calendar.dart';
+import 'package:gymklout/screens/home/sections/widgets/visits_charts.dart';
 import 'package:iconsax/iconsax.dart';
 
 class HomeMembershipWidget extends ConsumerStatefulWidget {
@@ -181,7 +183,6 @@ class _NoGymMembershipHomeScreenState
                   child: GestureDetector(
                     onTap: () {
                       HapticFeedback.selectionClick();
-                      print(profile?.id);
                       showinformationSheet(
                         context,
                         header: "Currently",
@@ -231,6 +232,13 @@ class _NoGymMembershipHomeScreenState
                     ),
                   ),
                 ),
+
+                const SizedBox(height: 30,),
+                VisitCalendarWidget(),
+                VisitsBarChartWidget(),
+
+
+                const SizedBox(height: 30,),
               ],
             ),
           ),
