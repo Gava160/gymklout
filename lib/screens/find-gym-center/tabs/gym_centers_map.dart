@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/models/index.dart';
@@ -24,6 +28,50 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
 
+  StreamSubscription<Position>? _locationSubscription;
+  StreamSubscription<CompassEvent>? _compassSubscription;
+  double _currentBearing = 0;
+  bool _isTrackingMode = false;
+
+  void _startTracking() {
+    setState(() => _isTrackingMode = true);
+
+    // Listen to live location
+    _locationSubscription =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 5, // update every 5 metres
+          ),
+        ).listen((position) {
+          if (!_isTrackingMode || _mapController == null) return;
+          _mapController!.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 17,
+                tilt: 60, // slanted view
+                bearing: _currentBearing,
+              ),
+            ),
+          );
+        });
+
+    // Listen to compass for bearing
+    _compassSubscription = FlutterCompass.events?.listen((event) {
+      if (event.heading == null) return;
+      setState(() => _currentBearing = event.heading!);
+    });
+  }
+
+  void _stopTracking() {
+    setState(() => _isTrackingMode = false);
+    _locationSubscription?.cancel();
+    _compassSubscription?.cancel();
+    _locationSubscription = null;
+    _compassSubscription = null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -33,14 +81,14 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
       duration: const Duration(milliseconds: 350),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-      reverseCurve: Curves.easeIn,
-    ));
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOut,
+            reverseCurve: Curves.easeIn,
+          ),
+        );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
@@ -53,6 +101,8 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
 
   @override
   void dispose() {
+    _locationSubscription?.cancel();
+    _compassSubscription?.cancel();
     _animationController.dispose();
     _mapController?.dispose();
     super.dispose();
@@ -83,13 +133,10 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
         markerId: MarkerId(gym.id),
         position: LatLng(gym.latitude, gym.longitude),
         icon: isClosest
-            ? BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueOrange)
+            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange)
             : isSelected
-                ? BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueRed)
-                : BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueAzure),
+            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)
+            : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         infoWindow: InfoWindow(title: gym.name),
         onTap: () => _onMarkerTapped(gym),
       );
@@ -135,8 +182,11 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.location_off_outlined,
-                  size: 36, color: AppDefaults.textColor.withAlpha(150)),
+              Icon(
+                Icons.location_off_outlined,
+                size: 36,
+                color: AppDefaults.textColor.withAlpha(150),
+              ),
               const SizedBox(height: 12),
               Text(
                 'Could not load gyms.\nPlease try again.',
@@ -145,8 +195,7 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () =>
-                    ref.read(mapGymsProvider.notifier).refresh(),
+                onPressed: () => ref.read(mapGymsProvider.notifier).refresh(),
                 child: const Text('Try again'),
               ),
             ],
@@ -176,6 +225,23 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
                 ),
               ),
 
+              Positioned(
+                right: 16,
+                bottom: 120,
+                child: FloatingActionButton.small(
+                  backgroundColor: _isTrackingMode
+                      ? AppDefaults.primaryColor
+                      : Colors.white,
+                  onPressed: _isTrackingMode ? _stopTracking : _startTracking,
+                  child: Icon(
+                    Icons.navigation_rounded,
+                    color: _isTrackingMode
+                        ? Colors.white
+                        : AppDefaults.primaryColor,
+                  ),
+                ),
+              ),
+
               // ── Gym detail card ─────────────────────────────────────────
               Positioned(
                 left: 0,
@@ -188,9 +254,7 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
                       opacity: _fadeAnimation,
                       child: _selectedGym != null
                           ? GestureDetector(
-                              onTap: () {
-                                
-                              },
+                              onTap: () {},
                               child: ReuseableGymCenterWrapper(
                                 gym: _selectedGym!,
                               ),
