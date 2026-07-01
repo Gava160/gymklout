@@ -21,19 +21,19 @@ class _VisitCalendarWidgetState extends ConsumerState<VisitCalendarWidget> {
     final visitsAsync = ref.watch(visitsProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final colorScheme = theme.colorScheme;
+    // final colorScheme = theme.colorScheme;
 
     // Accent stays consistent across themes; surface/text adapt.
-    const accent = Color(0xFF6C5CE7);
+    // const accent = Color(0xFF6C5CE7);
     final cardColor = isDark ? const Color(0xFF1E1E22) : Colors.white;
     final primaryText = isDark ? Colors.white : Colors.black87;
     final secondaryText = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
-    final mutedCellColor = isDark ? Colors.grey.shade800 : Colors.grey.shade200;
+    // final mutedCellColor = isDark ? Colors.grey.shade800 : Colors.grey.shade200;
 
     return visitsAsync.when(
-      loading: () => const SizedBox(
+      loading: () =>  SizedBox(
         height: 340,
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: showSpinner()),
       ),
       error: (err, _) => SizedBox(
         height: 340,

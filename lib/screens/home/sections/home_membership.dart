@@ -7,10 +7,10 @@ import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/bottom-sheets/information_block_sheet.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/models/membership_model.dart';
-import 'package:gymklout/providers/auth_provider.dart';
 import 'package:gymklout/providers/membership_provider.dart';
 import 'package:gymklout/screens/home/sections/widgets/visits_calendar.dart';
 import 'package:gymklout/screens/home/sections/widgets/visits_charts.dart';
+import 'package:gymklout/screens/home/widgets/reuseable_header.dart';
 import 'package:iconsax/iconsax.dart';
 
 class HomeMembershipWidget extends ConsumerStatefulWidget {
@@ -30,11 +30,18 @@ class HomeMembershipWidget extends ConsumerStatefulWidget {
 
 class _NoGymMembershipHomeScreenState
     extends ConsumerState<HomeMembershipWidget> {
+  final List<Widget> activeHistoryViewType = [
+    VisitCalendarWidget(),
+    VisitsBarChartWidget(),
+  ];
+
+  int _selectedViewHistoryType = 0;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final gymMembership = widget.membership.gym!;
-    final profile = ref.watch(currentProfileProvider);
+    // final profile = ref.watch(currentProfileProvider);
 
     final hasImage =
         gymMembership.coverUrl != null || gymMembership.logoUrl != null;
@@ -233,12 +240,44 @@ class _NoGymMembershipHomeScreenState
                   ),
                 ),
 
-                const SizedBox(height: 30,),
-                VisitCalendarWidget(),
-                VisitsBarChartWidget(),
+                const SizedBox(height: 30),
 
+                ReuseableBlockHeader(
+                  title: "My Visit History",
+                  actions: [
+                    GestureDetector(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        setState(() {
+                          _selectedViewHistoryType = 0;
+                        });
+                      },
+                      child: Icon(
+                        Iconsax.calendar,
+                        color: AppDefaults.primaryColor,
+                        size: 28,
+                      ),
+                    ),
+                    SizedBox(width: 5,),
+                    GestureDetector(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        setState(() {
+                          _selectedViewHistoryType = 1;
+                        });
+                      },
+                      child: Icon(
+                        Iconsax.trend_up,
+                        color: AppDefaults.primaryColor,
+                        size: 28,
+                      ),
+                    ),
+                    //  SizedBox(width: 25,),
+                  ],
+                ),
+                activeHistoryViewType[_selectedViewHistoryType],
 
-                const SizedBox(height: 30,),
+                const SizedBox(height: 30),
               ],
             ),
           ),

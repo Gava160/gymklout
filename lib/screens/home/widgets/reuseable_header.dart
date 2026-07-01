@@ -5,12 +5,12 @@ class ReuseableBlockHeader extends StatelessWidget {
   const ReuseableBlockHeader({
     super.key,
     required this.title,
-    required this.actionText,
+    required this.actions,
     this.smallerText = false,
   });
 
   final String title;
-  final String actionText;
+  final List<Widget> actions;
   final bool smallerText;
 
   @override
@@ -29,14 +29,9 @@ class ReuseableBlockHeader extends StatelessWidget {
                 : (AppDefaults.textStyle(context).fontSize ?? 16) + 6,
           ),
         ),
-        Text(
-          actionText,
-          style: AppDefaults.textStyle(context).copyWith(
-            color: AppDefaults.primaryColor,
-            fontWeight: FontWeight.w900,
-            fontSize: (AppDefaults.textStyle(context).fontSize ?? 16) - 1,
-          ),
-        ),
+        Row(
+          children: actions,
+        )
       ],
     );
   }

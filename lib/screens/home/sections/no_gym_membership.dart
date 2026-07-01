@@ -39,7 +39,7 @@ class _NoGymMembershipHomeScreenState extends State<NoGymMembershipHomeScreen> {
               SizedBox(height: 20),
               ReuseableBlockHeader(
                 title: "Recommended for you",
-                actionText: "",
+                actions: [],
               ),
               const RecommendedGymsSection(maxItems: 5),
             ],
