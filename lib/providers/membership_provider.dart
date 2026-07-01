@@ -45,7 +45,7 @@ class ActiveMembershipNotifier extends AsyncNotifier<ActiveMembershipState> {
 
     // Fetch all memberships for the current user
     final response = await api.get('/memberships/my', requiresAuth: true);
-    final membershipsJson = response['memberships'] as List<dynamic>? ?? [];
+    final membershipsJson = response['data'] as List<dynamic>? ?? [];
 
     if (membershipsJson.isEmpty) return MembershipNone();
 
