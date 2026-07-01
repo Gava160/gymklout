@@ -71,5 +71,6 @@ flutter:
     - assets/images/vectors/
     - assets/images/animations/
     - assets/images/logo/
+    - assets/map_styles/dark_map.json
     - .env
 

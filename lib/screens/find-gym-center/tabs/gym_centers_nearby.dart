@@ -113,44 +113,12 @@ class _GymCentersNearbyWidgetState
             final isClosest = gym.id == state.closestGymId;
 
             return Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: AppDefaults.defaultPadding.copyWith(bottom: 0),
               child: GestureDetector(
                 onTap: () {
-                  // TODO: navigate to gym detail screen
+                  // HapticFeedback.selectionClick();
                 },
-                child: Stack(
-                  children: [
-                    ReuseableGymCenterWrapper(gym: gym),
-                    if (isClosest)
-                      Positioned(
-                        top: 0,
-                        right: 20,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppDefaults.primaryColor,
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(8),
-                              bottomRight: Radius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            'CLOSEST TO YOU',
-                            style: AppDefaults.textStyle(
-                              context,
-                              fontWeight: FontWeight.w600,
-                            ).copyWith(
-                              color: Colors.white,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                child: ReuseableGymCenterWrapper(gym: gym, isClosestGym: isClosest),
               ),
             );
           },

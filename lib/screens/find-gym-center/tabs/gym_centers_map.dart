@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -33,7 +34,10 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
   double _currentBearing = 0;
   bool _isTrackingMode = false;
 
+  String? _mapStyle;
+
   void _startTracking() {
+    HapticFeedback.selectionClick();
     setState(() => _isTrackingMode = true);
 
     // Listen to live location
@@ -65,6 +69,7 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
   }
 
   void _stopTracking() {
+    HapticFeedback.selectionClick();
     setState(() => _isTrackingMode = false);
     _locationSubscription?.cancel();
     _compassSubscription?.cancel();
@@ -72,10 +77,17 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
     _compassSubscription = null;
   }
 
+  Future<void> _loadMapStyle() async {
+    final style = await rootBundle.loadString(
+      'assets/map_styles/dark_map.json',
+    );
+    setState(() => _mapStyle = style);
+  }
+
   @override
   void initState() {
     super.initState();
-
+    _loadMapStyle();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 350),
@@ -167,6 +179,12 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
           ),
         );
         _onMarkerTapped(closest);
+
+        // 👇 Auto-start tracking mode after map loads
+        Future.delayed(const Duration(milliseconds: 400), () {
+          if (!mounted) return;
+          _startTracking();
+        });
       });
     }
   }
@@ -212,10 +230,10 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
                   onMapCreated: (controller) =>
                       _onMapCreated(controller, state.gyms, state.closestGymId),
                   initialCameraPosition: const CameraPosition(
-                    // Warri default — immediately overridden in onMapCreated
                     target: LatLng(5.5167, 5.7500),
                     zoom: 14,
                   ),
+                  style: _mapStyle, // 👈 only this line is new
                   markers: markers,
                   onTap: _onMapTapped,
                   myLocationEnabled: true,
@@ -226,8 +244,8 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
               ),
 
               Positioned(
-                right: 16,
-                bottom: 120,
+                right: 10,
+                top: 90,
                 child: FloatingActionButton.small(
                   backgroundColor: _isTrackingMode
                       ? AppDefaults.primaryColor

@@ -7,8 +7,13 @@ import 'package:iconsax/iconsax.dart';
 
 class ReuseableGymCenterWrapper extends StatelessWidget {
   final GymModel gym;
+  final bool isClosestGym;
 
-  const ReuseableGymCenterWrapper({super.key, required this.gym});
+  const ReuseableGymCenterWrapper({
+    super.key,
+    required this.gym,
+    this.isClosestGym = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +57,10 @@ class ReuseableGymCenterWrapper extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: imageUrl,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Image.asset(
-                            AppMedia.avatar,
-                            fit: BoxFit.cover,
-                          ),
-                          errorWidget: (context, url, error) => Image.asset(
-                            AppMedia.avatar,
-                            fit: BoxFit.cover,
-                          ),
+                          placeholder: (context, url) =>
+                              Image.asset(AppMedia.avatar, fit: BoxFit.cover),
+                          errorWidget: (context, url, error) =>
+                              Image.asset(AppMedia.avatar, fit: BoxFit.cover),
                         )
                       : Image.asset(AppMedia.avatar, fit: BoxFit.cover),
                 ),
@@ -76,18 +77,21 @@ class ReuseableGymCenterWrapper extends StatelessWidget {
                           Expanded(
                             child: Text(
                               gym.name,
-                              style: AppDefaults.textStyle(
-                                context,
-                                fontWeight: FontWeight.w700,
-                              ).copyWith(
-                                color: isDark
-                                    ? Colors.white.withAlpha(200)
-                                    : Colors.black,
-                                fontSize:
-                                    (AppDefaults.textStyle(context).fontSize ??
-                                        14) +
-                                    2,
-                              ),
+                              style:
+                                  AppDefaults.textStyle(
+                                    context,
+                                    fontWeight: FontWeight.w700,
+                                  ).copyWith(
+                                    color: isDark
+                                        ? Colors.white.withAlpha(200)
+                                        : Colors.black,
+                                    fontSize:
+                                        (AppDefaults.textStyle(
+                                              context,
+                                            ).fontSize ??
+                                            14) +
+                                        2,
+                                  ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -104,18 +108,21 @@ class ReuseableGymCenterWrapper extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 '4.6 (120+)',
-                                style: AppDefaults.textStyle(
-                                  context,
-                                  fontWeight: FontWeight.w400,
-                                ).copyWith(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(150)
-                                      : Colors.black.withAlpha(150),
-                                  fontSize:
-                                      (AppDefaults.textStyle(context).fontSize ??
-                                          14) -
-                                      1,
-                                ),
+                                style:
+                                    AppDefaults.textStyle(
+                                      context,
+                                      fontWeight: FontWeight.w400,
+                                    ).copyWith(
+                                      color: isDark
+                                          ? Colors.white.withAlpha(150)
+                                          : Colors.black.withAlpha(150),
+                                      fontSize:
+                                          (AppDefaults.textStyle(
+                                                context,
+                                              ).fontSize ??
+                                              14) -
+                                          1,
+                                    ),
                               ),
                             ],
                           ),
@@ -132,18 +139,21 @@ class ReuseableGymCenterWrapper extends StatelessWidget {
                               addressLine.isNotEmpty
                                   ? addressLine
                                   : 'Address not available',
-                              style: AppDefaults.textStyle(
-                                context,
-                                fontWeight: FontWeight.w400,
-                              ).copyWith(
-                                color: isDark
-                                    ? Colors.white.withAlpha(150)
-                                    : Colors.black.withAlpha(150),
-                                fontSize:
-                                    (AppDefaults.textStyle(context).fontSize ??
-                                        14) -
-                                    1,
-                              ),
+                              style:
+                                  AppDefaults.textStyle(
+                                    context,
+                                    fontWeight: FontWeight.w400,
+                                  ).copyWith(
+                                    color: isDark
+                                        ? Colors.white.withAlpha(150)
+                                        : Colors.black.withAlpha(150),
+                                    fontSize:
+                                        (AppDefaults.textStyle(
+                                              context,
+                                            ).fontSize ??
+                                            14) -
+                                        1,
+                                  ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -152,18 +162,21 @@ class ReuseableGymCenterWrapper extends StatelessWidget {
                           // Dummy price tier — replace when model supports it
                           Text(
                             '\$\$\$',
-                            style: AppDefaults.textStyle(
-                              context,
-                              fontWeight: FontWeight.w400,
-                            ).copyWith(
-                              color: isDark
-                                  ? Colors.white.withAlpha(150)
-                                  : Colors.black.withAlpha(150),
-                              fontSize:
-                                  (AppDefaults.textStyle(context).fontSize ??
-                                      14) -
-                                  1,
-                            ),
+                            style:
+                                AppDefaults.textStyle(
+                                  context,
+                                  fontWeight: FontWeight.w400,
+                                ).copyWith(
+                                  color: isDark
+                                      ? Colors.white.withAlpha(150)
+                                      : Colors.black.withAlpha(150),
+                                  fontSize:
+                                      (AppDefaults.textStyle(
+                                            context,
+                                          ).fontSize ??
+                                          14) -
+                                      1,
+                                ),
                           ),
                         ],
                       ),
@@ -172,16 +185,38 @@ class ReuseableGymCenterWrapper extends StatelessWidget {
                       if (gym.distanceLabel.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            gym.distanceLabel,
-                            style: AppDefaults.textStyle(context).copyWith(
-                              color: AppDefaults.primaryColor,
-                              fontSize:
-                                  (AppDefaults.textStyle(context).fontSize ??
-                                      14) -
-                                  2,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          child: Row(
+                            children: [
+                              Text(
+                                gym.distanceLabel,
+                                style: AppDefaults.textStyle(context).copyWith(
+                                  color: AppDefaults.primaryColor,
+                                  fontSize:
+                                      (AppDefaults.textStyle(
+                                            context,
+                                          ).fontSize ??
+                                          14) -
+                                      2,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              if (isClosestGym) ...[
+                                Text(
+                                  " - closest to you",
+                                  style: AppDefaults.textStyle(context)
+                                      .copyWith(
+                                        color: AppDefaults.primaryColor,
+                                        fontSize:
+                                            (AppDefaults.textStyle(
+                                                  context,
+                                                ).fontSize ??
+                                                14) -
+                                            2,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                     ],

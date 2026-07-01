@@ -146,6 +146,7 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
             // const SizedBox(height: 16),
             Expanded(
               child: TabBarView(
+                physics: NeverScrollableScrollPhysics(),
                 children: [GymCentersMapWidget(), GymCentersNearbyWidget()],
               ),
             ),
