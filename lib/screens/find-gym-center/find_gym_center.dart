@@ -31,7 +31,7 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
         child: Column(
           children: [
             Padding(
-              padding: AppDefaults.defaultPadding,
+              padding: AppDefaults.defaultPadding.copyWith(top: 0,),
               child: Material(
                 color: Colors.transparent,
                 child: Container(
@@ -163,19 +163,37 @@ class MyTabIndicator extends Decoration {
     return _MyPainter();
   }
 }
-
 class _MyPainter extends BoxPainter {
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration config) {
-    LinearGradient(
-      colors: [Color(0xff232323), Color(0xff1A1A1A), Color(0xff101010)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
+    final rect = offset & (config.size ?? Size.zero);
+
+    final gradient = LinearGradient(
+      colors: [
+        darken(AppDefaults.primaryColor, 0.3),
+        AppDefaults.primaryColor,
+        darken(AppDefaults.primaryColor, 0.3),
+      ],
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
     );
-    Border(
-      top: BorderSide(color: Colors.white10),
-      bottom: BorderSide(color: Colors.black54),
+
+    final paint = Paint()
+      ..shader = gradient.createShader(
+        Rect.fromLTWH(
+          rect.left + 24,
+          rect.bottom - 3,
+          rect.width - 48,
+          3,
+        ),
+      )
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawLine(
+      Offset(rect.left + 24, rect.bottom - 1.5),
+      Offset(rect.right - 24, rect.bottom - 1.5),
+      paint,
     );
-    [BoxShadow(color: Colors.black54, blurRadius: 12, offset: Offset(0, 4))];
   }
 }

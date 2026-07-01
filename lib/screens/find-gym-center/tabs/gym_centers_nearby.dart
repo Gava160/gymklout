@@ -23,7 +23,7 @@ class _GymCentersNearbyWidgetState
     final nearbyGymsAsync = ref.watch(nearbyGymsProvider);
 
     return nearbyGymsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () =>  Center(child: showSpinner()),
       error: (error, _) => Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -62,7 +62,7 @@ class _GymCentersNearbyWidgetState
         final hasMore = _visibleCount < state.gyms.length;
 
         return ListView.builder(
-          padding: const EdgeInsets.only(top: 12, bottom: 32),
+          // padding: const EdgeInsets.only(top: 12, bottom: 32),
           itemCount: visibleGyms.length + 1, // +1 for load more / end label
           itemBuilder: (context, index) {
             // Load more button / end label

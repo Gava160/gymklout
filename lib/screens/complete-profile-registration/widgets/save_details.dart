@@ -60,7 +60,7 @@ Future<void> saveProfile({
     }
   } catch (e) {
     onDone();
-    print(e);
+    // print(e);
     if (!context.mounted) return;
     HapticFeedback.heavyImpact();
     showTopAlert(context, message: e.toString(), type: AlertType.error);

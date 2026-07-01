@@ -20,7 +20,7 @@ class GymCentersMapWidget extends ConsumerStatefulWidget {
 }
 
 class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   GoogleMapController? _mapController;
   GymModel? _selectedGym;
 
@@ -78,15 +78,25 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
   }
 
   Future<void> _loadMapStyle() async {
-    final style = await rootBundle.loadString(
-      'assets/map_styles/dark_map.json',
-    );
-    setState(() => _mapStyle = style);
+  final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+  if (brightness == Brightness.dark) {
+    final style = await rootBundle.loadString('assets/map_styles/dark_map.json');
+    if (mounted) setState(() => _mapStyle = style);
+  } else {
+    if (mounted) setState(() => _mapStyle = null); // null = default Google Maps style
   }
+}
+
+@override
+void didChangePlatformBrightness() {
+  super.didChangePlatformBrightness();
+  _loadMapStyle();
+}
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); 
     _loadMapStyle();
     _animationController = AnimationController(
       vsync: this,
@@ -155,39 +165,72 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
     }).toSet();
   }
 
-  void _onMapCreated(
-    GoogleMapController controller,
-    List<GymModel> gyms,
-    String? closestGymId,
-  ) {
-    _mapController = controller;
+  // void _onMapCreated(
+  //   GoogleMapController controller,
+  //   List<GymModel> gyms,
+  //   String? closestGymId,
+  // ) {
+  //   _mapController = controller;
 
-    // Auto-select and center on closest gym on load
-    if (gyms.isNotEmpty) {
-      final closest = gyms.firstWhere(
-        (g) => g.id == closestGymId,
-        orElse: () => gyms.first,
+  //   // Auto-select and center on closest gym on load
+  //   if (gyms.isNotEmpty) {
+  //     final closest = gyms.firstWhere(
+  //       (g) => g.id == closestGymId,
+  //       orElse: () => gyms.first,
+  //     );
+
+  //     // Slight delay lets the map fully render before animating
+  //     Future.delayed(const Duration(milliseconds: 600), () {
+  //       if (!mounted) return;
+  //       _mapController?.animateCamera(
+  //         CameraUpdate.newLatLngZoom(
+  //           LatLng(closest.latitude, closest.longitude),
+  //           14,
+  //         ),
+  //       );
+  //       _onMarkerTapped(closest);
+
+  //       // 👇 Auto-start tracking mode after map loads
+  //       // Future.delayed(const Duration(milliseconds: 400), () {
+  //       //   if (!mounted) return;
+  //       //   _startTracking();
+  //       // });
+  //     });
+  //   }
+  // }
+
+  void _onMapCreated(
+  GoogleMapController controller,
+  List<GymModel> gyms,
+  String? closestGymId,
+) {
+  _mapController = controller;
+
+  if (gyms.isNotEmpty) {
+    final closest = gyms.firstWhere(
+      (g) => g.id == closestGymId,
+      orElse: () => gyms.first,
+    );
+
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (!mounted) return;
+
+      // Tilted view centered on closest gym — no tracking, fully interactive
+      _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(closest.latitude, closest.longitude),
+            zoom: 15,
+            tilt: 45,       // slanted view
+            bearing: 0,     // north-facing
+          ),
+        ),
       );
 
-      // Slight delay lets the map fully render before animating
-      Future.delayed(const Duration(milliseconds: 600), () {
-        if (!mounted) return;
-        _mapController?.animateCamera(
-          CameraUpdate.newLatLngZoom(
-            LatLng(closest.latitude, closest.longitude),
-            14,
-          ),
-        );
-        _onMarkerTapped(closest);
-
-        // 👇 Auto-start tracking mode after map loads
-        Future.delayed(const Duration(milliseconds: 400), () {
-          if (!mounted) return;
-          _startTracking();
-        });
-      });
-    }
+      _onMarkerTapped(closest);
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +238,7 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
 
     return SizedBox.expand(
       child: mapGymsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () =>  Center(child: showSpinner()),
         error: (error, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -264,7 +307,7 @@ class _GymCentersMapWidgetState extends ConsumerState<GymCentersMapWidget>
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 20,
+                bottom: 40,
                 child: SafeArea(
                   child: SlideTransition(
                     position: _slideAnimation,
