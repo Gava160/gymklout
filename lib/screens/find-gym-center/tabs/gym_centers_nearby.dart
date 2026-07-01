@@ -16,7 +16,7 @@ class _GymCentersNearbyWidgetState extends State<GymCentersNearbyWidget> {
         children: List.generate(
           5,
           (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(top: 12),
             child: ReuseableGymCenterWrapper(),
           ),
         ),

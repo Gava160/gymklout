@@ -66,10 +66,8 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
             ),
             Container(
               height: 50,
-              // padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: Colors.transparent,
-                // borderRadius: BorderRadius.circular(30),
                 border: Border(
                   top: BorderSide(color: Colors.grey.withAlpha(20), width: 1),
                 ),
@@ -144,7 +142,7 @@ class _FindGymCenterScreenState extends State<FindGymCenterScreen> {
               ),
             ),
 
-            const SizedBox(height: 16),
+            // const SizedBox(height: 16),
 
             Expanded(
               child: TabBarView(children: [GymCentersMapWidget(), GymCentersNearbyWidget()]),
