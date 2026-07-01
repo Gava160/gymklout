@@ -47,7 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             return HomeMembershipWidget(
               membership: membership,
               status: status,
-            ); // 👈 return
+            );
           }
 
           return const SizedBox.shrink(); // 👈 return
