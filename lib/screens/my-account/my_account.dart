@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/providers/auth_provider.dart';
+import 'package:gymklout/providers/membership_provider.dart';
 import 'package:gymklout/screens/authentication/signin/signin.dart';
 import 'package:gymklout/screens/complete-profile-registration/start_process.dart';
 import 'package:gymklout/screens/my-account/edit-profile/edit_profile.dart';
@@ -125,6 +126,7 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                     setState(() => isLoggingOut = true);
                     HapticFeedback.selectionClick();
                     await ref.read(authProvider.notifier).logout();
+                    await ref.read(activeMembershipProvider.notifier).clear();
                     if (!context.mounted) return;
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (_) => const SignInScreen()),
