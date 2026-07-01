@@ -6,6 +6,12 @@ import 'package:gymklout/providers/nearby_gyms_provider.dart';
 import 'package:gymklout/screens/home/widgets/recommended_gymcenter_widget.dart';
 import 'package:gymklout/services/location_service.dart';
 
+enum LocationState {
+  checking,
+  ready,
+  denied,
+}
+
 class RecommendedGymsSection extends ConsumerStatefulWidget {
   final int maxItems;
 
@@ -18,8 +24,7 @@ class RecommendedGymsSection extends ConsumerStatefulWidget {
 
 class _RecommendedGymsSectionState
     extends ConsumerState<RecommendedGymsSection> {
-  bool _checkingPermission = true;
-  bool _readyToFetch = false;
+ LocationState _locationState = LocationState.checking;
 
   @override
   void initState() {
@@ -27,24 +32,28 @@ class _RecommendedGymsSectionState
     _checkInitialPermission();
   }
 
-  Future<void> _checkInitialPermission() async {
-    final locationService = ref.read(locationServiceProvider);
-    final granted = await locationService.hasPermission();
-    if (!mounted) return;
+Future<void> _checkInitialPermission() async {
+  final locationService = ref.read(locationServiceProvider);
+  final granted = await locationService.hasPermission();
 
-    if (granted) {
-      setState(() {
-        _readyToFetch = true;
-        _checkingPermission = false;
-      });
-    } else {
-      setState(() => _checkingPermission = false);
-      // Fire modal after first frame so the home screen renders underneath
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _showLocationModal();
-      });
-    }
+  if (!mounted) return;
+
+  if (granted) {
+    setState(() {
+      _locationState = LocationState.ready;
+    });
+  } else {
+    setState(() {
+      _locationState = LocationState.denied;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _showLocationModal();
+      }
+    });
   }
+}
 
 Future<void> _showLocationModal() async {
   CustomAlertModal.show(
@@ -54,41 +63,103 @@ Future<void> _showLocationModal() async {
         'GymKlout uses your location to find the gyms closest to you and sort them by distance. Your location is only used for discovery and is never shared with other users.',
     primaryText: 'Enable Location',
     secondaryText: 'Maybe Later',
-
     onPrimary: () async {
-      // Navigator.pop(context); // Close the modal
-
       final locationService = ref.read(locationServiceProvider);
 
       final granted = await locationService.requestPermission();
 
       if (!mounted) return;
 
-      if (granted) {
-        setState(() {
-          _readyToFetch = true;
-        });
-      }
-    },
+      // Navigator.of(context).pop();
 
+      setState(() {
+        _locationState =
+            granted ? LocationState.ready : LocationState.denied;
+      });
+    },
     onSecondary: () {
-      // Navigator.pop(context); // Just close the modal
+      // Navigator.of(context).pop();
+
+      setState(() {
+        _locationState = LocationState.denied;
+      });
     },
   );
 }
 
-  @override
-  Widget build(BuildContext context) {
-    // While checking permission or waiting for modal interaction,
-    // show a subtle placeholder so the section doesn't feel empty
-    if (_checkingPermission || !_readyToFetch) {
+ @override
+Widget build(BuildContext context) {
+  switch (_locationState) {
+    case LocationState.checking:
       return _GymCarouselSkeleton();
-    }
 
-    return _GymsCarousel(maxItems: widget.maxItems);
+    case LocationState.ready:
+      return _GymsCarousel(
+        maxItems: widget.maxItems,
+      );
+
+    case LocationState.denied:
+      return _LocationPermissionRequired(
+        onEnable: _showLocationModal,
+      );
   }
 }
+}
 
+
+class _LocationPermissionRequired extends StatelessWidget {
+  final VoidCallback onEnable;
+
+  const _LocationPermissionRequired({
+    required this.onEnable,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 220,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppDefaults.darkBgColor.withAlpha(12),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Colors.grey.withAlpha(40),
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.location_off_rounded,
+            size: 42,
+            color: AppDefaults.primaryColor,
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Location permission required',
+            style: AppDefaults.textStyle(
+              context,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Enable location to discover gyms closest to you.',
+            textAlign: TextAlign.center,
+            style: AppDefaults.textStyle(context).copyWith(
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: onEnable,
+            child: const Text('Enable Location'),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 // ─── Skeleton placeholder shown behind the modal ──────────────────────────────
 class _GymCarouselSkeleton extends StatelessWidget {
@@ -133,7 +204,7 @@ class _GymsCarousel extends ConsumerWidget {
     return nearbyGymsAsync.when(
       loading: () => SizedBox(
         height: MediaQuery.of(context).size.height * 0.50,
-        child: const Center(child: CircularProgressIndicator()),
+        child:  Center(child: showSpinner()),
       ),
       error: (error, stackTrace) => _ErrorState(
         message: error is LocationException
