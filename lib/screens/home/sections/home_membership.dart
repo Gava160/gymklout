@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymklout/app-settings/app_data.dart';
 import 'package:gymklout/common/bottom-sheets/information_block_sheet.dart';
+import 'package:gymklout/common/buttons/custom_button.dart';
 import 'package:gymklout/common/buttons/icon_custom_button.dart';
 import 'package:gymklout/models/membership_model.dart';
 import 'package:gymklout/providers/membership_provider.dart';
@@ -44,6 +45,10 @@ class _NoGymMembershipHomeScreenState
     final gymMembership = widget.membership.gym!;
     final thisMembership = widget.membership;
     // final profile = ref.watch(currentProfileProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final expiringWarning = getMembershipExpiryWarning(
+      thisMembership.expiresAt,
+    );
 
     final hasImage =
         gymMembership.coverUrl != null || gymMembership.logoUrl != null;
@@ -130,20 +135,41 @@ class _NoGymMembershipHomeScreenState
                                     14,
                               ),
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          "Until ${formateDateToText(thisMembership.expiresAt!)}",
-                          style:
-                              AppDefaults.textStyle(
-                                context,
-                                fontWeight: FontWeight.w400,
-                              ).copyWith(
-                                color: getDefaultHeaderColor(context),
-                                fontSize:
-                                    AppDefaults.textStyle(context).fontSize ??
-                                    21,
-                              ),
-                        ),
+                        if (expiringWarning != null) ...[
+                          SizedBox(height: 5),
+                          Text(
+                            expiringWarning,
+                            style:
+                                AppDefaults.textStyle(
+                                  context,
+                                  fontWeight: FontWeight.w400,
+                                ).copyWith(
+                                  color: expiringWarning == 'Expired'
+                                      ? AppDefaults.errorColor
+                                      : Colors.orange,
+                                  fontSize:
+                                      AppDefaults.textStyle(context).fontSize ??
+                                      21,
+                                ),
+                          ),
+                        ],
+
+                        if (expiringWarning == null) ...[
+                          SizedBox(height: 5),
+                          Text(
+                            "Until ${formateDateToText(thisMembership.expiresAt!)}",
+                            style:
+                                AppDefaults.textStyle(
+                                  context,
+                                  fontWeight: FontWeight.w400,
+                                ).copyWith(
+                                  color: getDefaultHeaderColor(context),
+                                  fontSize:
+                                      AppDefaults.textStyle(context).fontSize ??
+                                      21,
+                                ),
+                          ),
+                        ],
                       ],
                     ),
                   ],
@@ -265,6 +291,77 @@ class _NoGymMembershipHomeScreenState
                 ),
 
                 const SizedBox(height: 30),
+                if (expiringWarning == null) ...[
+                  SizedBox(height: 15),
+                  Center(
+                    child: Text(
+                      "You gym membership",
+                      style: AppDefaults.textStyle(context).copyWith(
+                        color: isDark ? AppDefaults.white : AppDefaults.black,
+                        fontWeight: FontWeight.w700,
+                        fontSize:
+                            (AppDefaults.textStyle(context).fontSize ?? 16),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: expiringWarning == 'Expired'
+                            ? AppDefaults.errorColor.withAlpha(30)
+                            : Colors.orange.withAlpha(30),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        expiringWarning ?? "Expiring",
+                        style: AppDefaults.textStyle(context).copyWith(
+                          color: expiringWarning == 'Expired'
+                              ? AppDefaults.errorColor
+                              : Colors.orange,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Center(
+                    child: SizedBox(
+                      width: size.width * 0.40,
+                      child: AppCustomButton(
+                        noPadding: true,
+                        setPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 15,
+                        ),
+                        label: Text(
+                          "Renew",
+                          style:
+                              AppDefaults.textStyle(
+                                context,
+                                fontWeight: FontWeight.w800,
+                              ).copyWith(
+                                color: AppDefaults.white,
+                                fontSize:
+                                    (AppDefaults.textStyle(context).fontSize ??
+                                        16) +
+                                    4,
+                              ),
+                        ),
+                        onSubmit: () {
+                          HapticFeedback.selectionClick();
+                        },
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+                ],
 
                 ReuseableBlockHeader(
                   title: "My Visit History",
