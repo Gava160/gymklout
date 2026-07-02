@@ -11,6 +11,7 @@ import 'package:gymklout/providers/membership_provider.dart';
 import 'package:gymklout/screens/home/sections/widgets/visits_calendar.dart';
 import 'package:gymklout/screens/home/sections/widgets/visits_charts.dart';
 import 'package:gymklout/screens/home/widgets/reuseable_header.dart';
+import 'package:gymklout/utils/tools.dart';
 import 'package:iconsax/iconsax.dart';
 
 class HomeMembershipWidget extends ConsumerStatefulWidget {
@@ -41,6 +42,7 @@ class _NoGymMembershipHomeScreenState
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final gymMembership = widget.membership.gym!;
+    final thisMembership = widget.membership;
     // final profile = ref.watch(currentProfileProvider);
 
     final hasImage =
@@ -93,7 +95,8 @@ class _NoGymMembershipHomeScreenState
               children: [
                 const SizedBox(height: 10),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       gymMembership.name,
@@ -108,23 +111,44 @@ class _NoGymMembershipHomeScreenState
                           ),
                     ),
                     Spacer(),
-                    Text(
-                      "Active Membership",
-                      style:
-                          AppDefaults.headLiner1(
-                            context,
-                            fontWeight: FontWeight.w700,
-                          ).copyWith(
-                            color: AppDefaults.successColor,
-                            fontSize:
-                                (AppDefaults.headLiner1(context).fontSize ??
-                                    21) -
-                                14,
-                          ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 5),
+                        Text(
+                          "Active Membership",
+                          style:
+                              AppDefaults.headLiner1(
+                                context,
+                                fontWeight: FontWeight.w700,
+                              ).copyWith(
+                                color: AppDefaults.successColor,
+                                fontSize:
+                                    (AppDefaults.headLiner1(context).fontSize ??
+                                        21) -
+                                    14,
+                              ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "Until ${formateDateToText(thisMembership.expiresAt!)}",
+                          style:
+                              AppDefaults.textStyle(
+                                context,
+                                fontWeight: FontWeight.w400,
+                              ).copyWith(
+                                color: getDefaultHeaderColor(context),
+                                fontSize:
+                                    AppDefaults.textStyle(context).fontSize ??
+                                    21,
+                              ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                // const SizedBox(height: 10),
                 Row(
                   children: [
                     Icon(Iconsax.location, size: 15),
@@ -223,7 +247,7 @@ class _NoGymMembershipHomeScreenState
                         ),
                         SizedBox(width: 5),
                         Text(
-                          "OPEN",
+                          "OPEN NOW",
                           style:
                               AppDefaults.textStyle(
                                 context,
@@ -258,7 +282,7 @@ class _NoGymMembershipHomeScreenState
                         size: 28,
                       ),
                     ),
-                    SizedBox(width: 5,),
+                    SizedBox(width: 5),
                     GestureDetector(
                       onTap: () {
                         HapticFeedback.selectionClick();
