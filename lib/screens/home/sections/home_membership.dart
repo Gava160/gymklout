@@ -336,7 +336,7 @@ class _NoGymMembershipHomeScreenState
                       child: AppCustomButton(
                         noPadding: true,
                         setPadding: EdgeInsets.symmetric(
-                          vertical: 10,
+                          vertical: 8,
                           horizontal: 15,
                         ),
                         label: Text(
